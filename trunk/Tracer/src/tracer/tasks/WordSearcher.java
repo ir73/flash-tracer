@@ -46,9 +46,18 @@ public class WordSearcher {
     
     protected JTextComponent comp;
     
+    private int _lastCaretPos = 0;
+    
+    private boolean wasSearching = false;
+    
+    private boolean highlightAll = false;
+    
+    private boolean forcedScreenScroll = true;
+    
     //protected Highlighter.HighlightPainter painter;
     // An instance of the private subclass of the default highlight painter
     Highlighter.HighlightPainter painter = new MyHighlightPainter(Color.red);
+    Highlighter.HighlightPainter yellowPainter = new MyHighlightPainter(Color.yellow);
     
     // A private subclass of the default highlight painter
     class MyHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
@@ -69,18 +78,11 @@ public class WordSearcher {
     }
     
     public int search(String word, int lastCaretPos) {
-        System.out.println("word = "+ word);
+        //System.out.println("word = "+ word);
         int firstOffset = -1;
         Highlighter highlighter = comp.getHighlighter();
         
-        // Remove any existing highlights for last word
-        Highlighter.Highlight[] highlights = highlighter.getHighlights();
-        for (int i = 0; i < highlights.length; i++) {
-            Highlighter.Highlight h = highlights[i];
-            if (h.getPainter() instanceof Highlighter.HighlightPainter) {
-                highlighter.removeHighlight(h);
-            }
-        }
+        clearHighlights();
         
         if (word == null || word.equals("")) {
             return -1;
@@ -101,21 +103,85 @@ public class WordSearcher {
         word = word.toLowerCase();
         int lastIndex = lastCaretPos;
         int wordSize = word.length();
-        
+        //int hNum = 0;
         if ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
             int endIndex = lastIndex + wordSize;
+            
             try {
+                //highlighter.removeHighlight(highlighter.getHighlights()[hNum++]);
                 highlighter.addHighlight(lastIndex, endIndex, painter);
-            } catch (BadLocationException e) {
+            } catch (Exception e) {
                 // Nothing to do
             }
             if (firstOffset == -1) {
                 firstOffset = lastIndex;
             }
-            //lastIndex = endIndex;
         }
-        System.out.println("firstOffset="+firstOffset);
+        
+        lastIndex = 0;
+        
+        if (highlightAll) {
+           while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
+                int endIndex = lastIndex + wordSize;
+                try {
+                    highlighter.addHighlight(lastIndex, endIndex, yellowPainter);
+                } catch (BadLocationException e) {
+                    break;
+                }
+
+                lastIndex = endIndex;
+            }
+        }
+        
+        
+        //System.out.println("firstOffset="+firstOffset);
         return firstOffset;
+    }
+
+    public int getLastCaretPos() {
+        return _lastCaretPos;
+    }
+
+    public void setLastCaretPos(int lastCaretPos) {
+        this._lastCaretPos = lastCaretPos;
+    }
+
+    public boolean isWasSearching() {
+        return wasSearching;
+    }
+
+    public void setWasSearching(boolean wasSearching) {
+        this.wasSearching = wasSearching;
+    }
+
+    public boolean isHighlightAll() {
+        return highlightAll;
+    }
+
+    public void setHighlightAll(boolean highlightAll) {
+        this.highlightAll = highlightAll;
+    }
+
+    public void clearHighlights() {
+        Highlighter highlighter = comp.getHighlighter();
+        highlighter.removeAllHighlights();
+        /*
+        // Remove any existing highlights for last word
+        Highlighter.Highlight[] highlights = highlighter.getHighlights();
+        for (int i = 0; i < highlights.length; i++) {
+            Highlighter.Highlight h = highlights[i];
+            if (h.getPainter() instanceof Highlighter.HighlightPainter) {
+                highlighter.removeHighlight(h);
+            }
+        }*/
+    }
+
+    public boolean isForcedScreenScroll() {
+        return forcedScreenScroll;
+    }
+
+    public void setForcedScreenScroll(boolean forcedScreenScroll) {
+        this.forcedScreenScroll = forcedScreenScroll;
     }
     
     

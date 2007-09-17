@@ -33,19 +33,19 @@ public class LoadFileTask extends TimerTask {
     private String fileName;
 
     private EventQueue eventDispather;
+
+    private File inputFile;
     
     
     /** Creates a new instance of LoadFileTask */
     public LoadFileTask(String fileName) {
         this.fileName = fileName;
+        inputFile = new File(fileName);
     }
  
 
     public void run() {
-        File inputFile = new File(fileName);
-       // System.out.println("getAbsolutePath = " + inputFile.getAbsolutePath());
-        //System.out.println("getPath = " + inputFile.getPath());
-        //System.out.println("getCanonicalPath = " + inputFile.getCanonicalPath());
+
         try {
 
                 // read input file contents
@@ -57,8 +57,8 @@ public class LoadFileTask extends TimerTask {
                 StringBuffer inputFileBuff = new StringBuffer("");
 
                 while ((str = in.readLine()) != null) {
-                        inputFileBuff.append(str);
-                        inputFileBuff.append(System.getProperty("line.separator"));
+                    inputFileBuff.append(str);
+                    inputFileBuff.append(System.getProperty("line.separator"));
                 }
                 in.close();
                     
@@ -69,7 +69,7 @@ public class LoadFileTask extends TimerTask {
                 System.out.println("Cannot read file: " + fileName);
         } catch (FileNotFoundException e) {
                 System.out.println("File not found: " + fileName);
-                //this.cancel();
+
         } catch (IOException e) {
                 System.out.println("Cannot read file!");
         }

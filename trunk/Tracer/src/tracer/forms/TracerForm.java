@@ -7,8 +7,16 @@
 package tracer.forms;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.Properties;
 import java.util.Timer;
+import javax.swing.JScrollBar;
 import javax.swing.text.BadLocationException;
 import tracer.tasks.DeleteFile;
 import tracer.tasks.LoadFileTask;
@@ -22,9 +30,9 @@ public class TracerForm extends javax.swing.JFrame {
     
     /** Creates new form TracerForm */
     public TracerForm() {
+        loadProperties();
         initComponents();
-        searcher = new WordSearcher(jTextArea1);
-        startTimer();
+        initVars();
     }
     
     /** This method is called from within the constructor to
@@ -35,51 +43,83 @@ public class TracerForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jTextField1 = new javax.swing.JTextField();
+        jAutorefreshCheckBox = new javax.swing.JCheckBox();
+        jWordWrapCheckbox = new javax.swing.JCheckBox();
+        jSearchTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jButton1 = new javax.swing.JButton();
+        jTraceTextArea = new javax.swing.JTextArea();
+        jClearTraceButton = new javax.swing.JButton();
         label1 = new java.awt.Label();
+        jLabel1 = new javax.swing.JLabel();
+        jClearSearchButton = new javax.swing.JButton();
+        jHighlightAllCheckbox = new javax.swing.JCheckBox();
+        jOnTopCheckbox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Flash Debugger");
-        jCheckBox1.setSelected(true);
-        jCheckBox1.setText("Aurorefresh");
-        jCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+        jAutorefreshCheckBox.setSelected(true);
+        jAutorefreshCheckBox.setText("Autorefresh");
+        jAutorefreshCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jAutorefreshCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAutorefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                autorefreshChecked(evt);
+                jAutorefreshCheckboxChecked(evt);
             }
         });
 
-        jCheckBox2.setSelected(true);
-        jCheckBox2.setText("Word Wrap");
-        jCheckBox2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jCheckBox2.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+        jWordWrapCheckbox.setSelected(true);
+        jWordWrapCheckbox.setText("Word Wrap");
+        jWordWrapCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jWordWrapCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jWordWrapCheckbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wordWrapActionPerformed(evt);
+                jWordWrapCheckboxChecked(evt);
             }
         });
 
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+        jSearchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                textAreaKeyReleased(evt);
+                jTextFieldKeyReleased(evt);
             }
         });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        jTraceTextArea.setColumns(20);
+        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12));
+        jTraceTextArea.setLineWrap(true);
+        jTraceTextArea.setRows(5);
+        jScrollPane1.setViewportView(jTraceTextArea);
 
-        jButton1.setText("Delete");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jClearTraceButton.setText("Clear");
+        jClearTraceButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Search:");
+
+        jClearSearchButton.setText("X");
+        jClearSearchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jClearSearchButtonActionPerformed(evt);
+            }
+        });
+
+        jHighlightAllCheckbox.setText("Highlight All");
+        jHighlightAllCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jHighlightAllCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jHighlightAllCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jHighlightAllCheckboxChecked(evt);
+            }
+        });
+
+        jOnTopCheckbox.setText("Always On Top");
+        jOnTopCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jOnTopCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jOnTopCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jOnTopCheckboxChecked(evt);
             }
         });
 
@@ -87,34 +127,48 @@ public class TracerForm extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jCheckBox1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jAutorefreshCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox2)
+                        .addComponent(jWordWrapCheckbox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(label1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE))
+                        .addComponent(jOnTopCheckbox)
+                        .addGap(33, 33, 33)
+                        .addComponent(jClearTraceButton))
+                    .addComponent(label1, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSearchTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jClearSearchButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jHighlightAllCheckbox)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1)
+                .addGap(3, 3, 3)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jHighlightAllCheckbox)
+                    .addComponent(jClearSearchButton)
+                    .addComponent(jSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jCheckBox2)
-                    .addComponent(jButton1))
+                    .addComponent(jAutorefreshCheckBox)
+                    .addComponent(jWordWrapCheckbox)
+                    .addComponent(jClearTraceButton)
+                    .addComponent(jOnTopCheckbox))
                 .addContainerGap())
         );
 
@@ -130,33 +184,48 @@ public class TracerForm extends javax.swing.JFrame {
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jOnTopCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOnTopCheckboxChecked
+        saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
+        setOnTop(jOnTopCheckbox.isSelected());
+    }//GEN-LAST:event_jOnTopCheckboxChecked
+
+    private void jHighlightAllCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jHighlightAllCheckboxChecked
+        saveSetting("highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
+        setHighlightAll(jHighlightAllCheckbox.isSelected());
+    }//GEN-LAST:event_jHighlightAllCheckboxChecked
+
+    private void jClearSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearSearchButtonActionPerformed
+        jSearchTextField.setText("");
+        searcher.clearHighlights();
+        searcher.setWasSearching(false);
+    }//GEN-LAST:event_jClearSearchButtonActionPerformed
     
-    private void textAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textAreaKeyReleased
+    private void jTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            startSearch();
+            searcher.setWasSearching(true);
+            startSearch(true);
         } else {
-            lastCaretPos = 0;
+            searcher.setWasSearching(false);
+            searcher.setLastCaretPos(0);
             label1.setText("");
         }
         
-    }//GEN-LAST:event_textAreaKeyReleased
+    }//GEN-LAST:event_jTextFieldKeyReleased
     
-    private void wordWrapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wordWrapActionPerformed
-        this.jTextArea1.setLineWrap(this.jCheckBox2.isSelected());
-    }//GEN-LAST:event_wordWrapActionPerformed
+    private void jWordWrapCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWordWrapCheckboxChecked
+        saveSetting("wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
+        setWordWrap(jWordWrapCheckbox.isSelected());
+    }//GEN-LAST:event_jWordWrapCheckboxChecked
     
-    private void autorefreshChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autorefreshChecked
-        if (jCheckBox1.isSelected()) {
-            startTimer();
-        } else {
-            stopTimer();
-        }
-    }//GEN-LAST:event_autorefreshChecked
+    private void jAutorefreshCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAutorefreshCheckboxChecked
+        saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
+        setAutoRefresh(jAutorefreshCheckBox.isSelected());
+    }//GEN-LAST:event_jAutorefreshCheckboxChecked
     
     private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
         new DeleteFile(fileName);
-        jTextArea1.setText("");
-        //jTextArea1.set
+        jTraceTextArea.setText("");
     }//GEN-LAST:event_deleteActionPerformed
     
     /**
@@ -175,8 +244,15 @@ public class TracerForm extends javax.swing.JFrame {
     }
     
     public void onFileRead(StringBuffer inputFileBuff) {
-        jTextArea1.setText(inputFileBuff.toString());
-        jTextArea1.setCaretPosition( jTextArea1.getDocument().getLength() );
+        jTraceTextArea.setText(inputFileBuff.toString());
+        if (((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
+            jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
+        }
+        if (searcher.isWasSearching()) {
+            int add = jSearchTextField.getText().length() > 1 ? jSearchTextField.getText().length()-1 : 0;
+            startSearch(searcher.getLastCaretPos() - 1, false);
+        }
+        
     }
     
     private void startTimer() {
@@ -187,43 +263,132 @@ public class TracerForm extends javax.swing.JFrame {
     }
     
     private void stopTimer() {
-        t.cancel();
+        if (t != null) {
+            t.cancel();
+        }
+    }
+   
+    private void startSearch(int lastCarPos, boolean forcedScroll) {
+        String word = jSearchTextField.getText();
+        int offset = searcher.search(word, lastCarPos);
+        if (offset != -1) {
+            label1.setText("Word '" + word + "' found.");
+            if (forcedScroll || ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
+                try {
+                    jTraceTextArea.scrollRectToVisible(jTraceTextArea
+                            .modelToView(offset));
+                    searcher.setLastCaretPos(offset + 1);
+                } catch (BadLocationException e) {
+                }
+            }
+            
+        } else {
+            searcher.setLastCaretPos(0);
+            label1.setText("No '" + word + "' occurence in the text.");
+        }
+    }
+
+    private void startSearch(boolean forcedScroll) {
+        startSearch(searcher.getLastCaretPos(), forcedScroll);
     }
     
     private void startSearch() {
-        String word = jTextField1.getText();
-        int offset = searcher.search(word, lastCaretPos);
-        if (offset != -1) {
-            label1.setText("Word '" + word + "' found.");
-            try {
-                jTextArea1.scrollRectToVisible(jTextArea1
-                        .modelToView(offset));
-                lastCaretPos = offset + 1;
-            } catch (BadLocationException e) {
-            }
+        startSearch(true);
+    }
+
+    private void initVars() {
+        this.vbar = jScrollPane1.getVerticalScrollBar();
+        this.searcher = new WordSearcher(jTraceTextArea);
+//        this.setAlwaysOnTop(props.getProperty("settings.alwaysontop", "true") == "true");
+//        if (props.getProperty("settings.autorefresh", "true") == "true") {
+//            startTimer();
+//        } else {
+//            stopTimer();
+//        }
+        LoadFileTask lft = new LoadFileTask(fileName);
+        lft.setActionListener(this);
+        lft.run();
+        setOnTop(props.getProperty("settings.alwaysontop", "true").equals("true"));
+        setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
+        setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
+        setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
+        
+    }
+    
+    
+
+    private void loadProperties() {
+        props = new Properties();
+        try {
+            props.load(new FileInputStream(new File("tracer.properties")));
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void saveSetting(String key, String val) {
+        props.setProperty("settings." + key, val);
+        try {
+            props.store(new FileOutputStream(settingsFile), "");
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void setOnTop (boolean b) {
+        
+        jOnTopCheckbox.setSelected(b);
+        setAlwaysOnTop(b);
+    }
+
+    private void setHighlightAll(boolean b) {
+        jHighlightAllCheckbox.setSelected(b);
+        searcher.setHighlightAll(b);
+    }
+
+    private void setWordWrap(boolean b) {
+        jWordWrapCheckbox.setSelected(b);
+        this.jTraceTextArea.setLineWrap(b);
+    }
+
+    private void setAutoRefresh(boolean b) {
+        jAutorefreshCheckBox.setSelected(b);
+        if (b) {
+            startTimer();
         } else {
-            lastCaretPos = 0;
-            label1.setText("No '" + word + "' occurence in the text.");
+            stopTimer();
         }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jAutorefreshCheckBox;
+    private javax.swing.JButton jClearSearchButton;
+    private javax.swing.JButton jClearTraceButton;
+    private javax.swing.JCheckBox jHighlightAllCheckbox;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBox jOnTopCheckbox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jSearchTextField;
+    private javax.swing.JTextArea jTraceTextArea;
+    private javax.swing.JCheckBox jWordWrapCheckbox;
     private java.awt.Label label1;
     // End of variables declaration//GEN-END:variables
     
     private Timer t;
     
     private WordSearcher searcher;
-    
-    private int lastCaretPos = 0;
 
-    public static String fileName = "flashlog.txt";
+    public static String fileName = "C:\\Documents and Settings\\admin\\Application Data\\Macromedia\\Flash Player\\Logs\\flashlog.txt";
+
+    private JScrollBar vbar;
+
+    private Properties props;
+
+    private File settingsFile = new File("tracer.properties");
     
 }
