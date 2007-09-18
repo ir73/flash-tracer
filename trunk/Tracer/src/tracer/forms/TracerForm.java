@@ -7,6 +7,7 @@
 package tracer.forms;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,6 +58,12 @@ public class TracerForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Flash Debugger");
+        jPanel1.addContainerListener(new java.awt.event.ContainerAdapter() {
+            public void componentRemoved(java.awt.event.ContainerEvent evt) {
+                jPanelRemoved(evt);
+            }
+        });
+
         jAutorefreshCheckBox.setSelected(true);
         jAutorefreshCheckBox.setText("Autorefresh");
         jAutorefreshCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -185,13 +192,17 @@ public class TracerForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jPanelRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_jPanelRemoved
+        
+    }//GEN-LAST:event_jPanelRemoved
+
     private void jOnTopCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOnTopCheckboxChecked
-        saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
+//        saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
         setOnTop(jOnTopCheckbox.isSelected());
     }//GEN-LAST:event_jOnTopCheckboxChecked
 
     private void jHighlightAllCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jHighlightAllCheckboxChecked
-        saveSetting("highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
+        //saveSetting("highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
         setHighlightAll(jHighlightAllCheckbox.isSelected());
     }//GEN-LAST:event_jHighlightAllCheckboxChecked
 
@@ -214,12 +225,12 @@ public class TracerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldKeyReleased
     
     private void jWordWrapCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWordWrapCheckboxChecked
-        saveSetting("wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
+        //saveSetting("wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
         setWordWrap(jWordWrapCheckbox.isSelected());
     }//GEN-LAST:event_jWordWrapCheckboxChecked
     
     private void jAutorefreshCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAutorefreshCheckboxChecked
-        saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
+        //saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
         setAutoRefresh(jAutorefreshCheckBox.isSelected());
     }//GEN-LAST:event_jAutorefreshCheckboxChecked
     
@@ -308,11 +319,26 @@ public class TracerForm extends javax.swing.JFrame {
         LoadFileTask lft = new LoadFileTask(fileName);
         lft.setActionListener(this);
         lft.run();
-        setOnTop(props.getProperty("settings.alwaysontop", "true").equals("true"));
-        setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
+        setOnTop(props.getProperty("settings.alwaysontop", "false").equals("true"));
+        setHighlightAll(props.getProperty("settings.highlight_all", "false").equals("true"));
         setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
         setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
         
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(WindowEvent winEvt) {
+                saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
+                saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
+                saveSetting("highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
+                saveSetting("wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
+                try {
+                    props.store(new FileOutputStream(settingsFile), "");
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
     
     
@@ -330,13 +356,7 @@ public class TracerForm extends javax.swing.JFrame {
 
     private void saveSetting(String key, String val) {
         props.setProperty("settings." + key, val);
-        try {
-            props.store(new FileOutputStream(settingsFile), "");
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        
     }
     
     public void setOnTop (boolean b) {
@@ -383,7 +403,7 @@ public class TracerForm extends javax.swing.JFrame {
     
     private WordSearcher searcher;
 
-    public static String fileName = "C:\\Documents and Settings\\admin\\Application Data\\Macromedia\\Flash Player\\Logs\\flashlog.txt";
+    public static String fileName = "flashlog.txt";
 
     private JScrollBar vbar;
 
