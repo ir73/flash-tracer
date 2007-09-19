@@ -103,18 +103,30 @@ public class WordSearcher {
         word = word.toLowerCase();
         int lastIndex = lastCaretPos;
         int wordSize = word.length();
-        //int hNum = 0;
         if ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
             int endIndex = lastIndex + wordSize;
             
             try {
-                //highlighter.removeHighlight(highlighter.getHighlights()[hNum++]);
                 highlighter.addHighlight(lastIndex, endIndex, painter);
             } catch (Exception e) {
                 // Nothing to do
             }
             if (firstOffset == -1) {
                 firstOffset = lastIndex;
+            }
+        } else {
+            lastIndex = 0;
+            if ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
+                int endIndex = lastIndex + wordSize;
+
+                try {
+                    highlighter.addHighlight(lastIndex, endIndex, painter);
+                } catch (Exception e) {
+                    // Nothing to do
+                }
+                if (firstOffset == -1) {
+                    firstOffset = lastIndex;
+                }
             }
         }
         

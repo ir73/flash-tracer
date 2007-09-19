@@ -8,8 +8,8 @@
  */
 
 package tracer.tasks;
- 
-import java.io.File;;
+
+import java.io.File;
 
 /**
  *

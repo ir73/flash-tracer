@@ -58,12 +58,6 @@ public class TracerForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Flash Debugger");
-        jPanel1.addContainerListener(new java.awt.event.ContainerAdapter() {
-            public void componentRemoved(java.awt.event.ContainerEvent evt) {
-                jPanelRemoved(evt);
-            }
-        });
-
         jAutorefreshCheckBox.setSelected(true);
         jAutorefreshCheckBox.setText("Autorefresh");
         jAutorefreshCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -84,6 +78,11 @@ public class TracerForm extends javax.swing.JFrame {
             }
         });
 
+        jSearchTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jSearchTextFieldFocusLost(evt);
+            }
+        });
         jSearchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextFieldKeyReleased(evt);
@@ -192,9 +191,8 @@ public class TracerForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jPanelRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_jPanelRemoved
-        
-    }//GEN-LAST:event_jPanelRemoved
+    private void jSearchTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jSearchTextFieldFocusLost
+    }//GEN-LAST:event_jSearchTextFieldFocusLost
 
     private void jOnTopCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOnTopCheckboxChecked
 //        saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
@@ -256,12 +254,14 @@ public class TracerForm extends javax.swing.JFrame {
     
     public void onFileRead(StringBuffer inputFileBuff) {
         jTraceTextArea.setText(inputFileBuff.toString());
-        if (((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
-            jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
-        }
+        
         if (searcher.isWasSearching()) {
             int add = jSearchTextField.getText().length() > 1 ? jSearchTextField.getText().length()-1 : 0;
             startSearch(searcher.getLastCaretPos() - 1, false);
+        }
+        
+        if (((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
+            jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
         }
         
     }
@@ -284,7 +284,7 @@ public class TracerForm extends javax.swing.JFrame {
         int offset = searcher.search(word, lastCarPos);
         if (offset != -1) {
             label1.setText("Word '" + word + "' found.");
-            if (forcedScroll || ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
+            if (forcedScroll/* || ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())*/) {
                 try {
                     jTraceTextArea.scrollRectToVisible(jTraceTextArea
                             .modelToView(offset));
