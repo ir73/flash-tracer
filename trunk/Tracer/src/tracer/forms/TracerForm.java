@@ -424,7 +424,7 @@ public class TracerForm extends javax.swing.JFrame {
     
     private WordSearcher searcher;
 
-    public static String fileName = "C:\\Documents and Settings\\admin\\Application Data\\Macromedia\\Flash Player\\Logs\\flashlog.txt";
+    public static String fileName = "flashlog.txt";
 
     private JScrollBar vbar;
 
