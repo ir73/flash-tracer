@@ -369,9 +369,9 @@ public class TracerForm extends javax.swing.JFrame {
         try {
             props.load(new FileInputStream(new File("tracer.properties")));
         } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
         }
     }
 
