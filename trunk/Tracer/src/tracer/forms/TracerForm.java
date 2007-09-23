@@ -56,6 +56,7 @@ public class TracerForm extends javax.swing.JFrame {
         jClearSearchButton = new javax.swing.JButton();
         jHighlightAllCheckbox = new javax.swing.JCheckBox();
         jOnTopCheckbox = new javax.swing.JCheckBox();
+        jFilterCheckbox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Flash Debugger");
@@ -138,6 +139,15 @@ public class TracerForm extends javax.swing.JFrame {
             }
         });
 
+        jFilterCheckbox.setText("Filter");
+        jFilterCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jFilterCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jFilterCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFilterCheckboxChecked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -156,7 +166,9 @@ public class TracerForm extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jHighlightAllCheckbox))
+                        .addComponent(jHighlightAllCheckbox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jFilterCheckbox))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jSearchTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
@@ -171,7 +183,8 @@ public class TracerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jHighlightAllCheckbox))
+                    .addComponent(jHighlightAllCheckbox)
+                    .addComponent(jFilterCheckbox))
                 .addGap(3, 3, 3)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jClearSearchButton)
@@ -201,6 +214,10 @@ public class TracerForm extends javax.swing.JFrame {
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jFilterCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFilterCheckboxChecked
+        setFiltering(jFilterCheckbox.isSelected());
+    }//GEN-LAST:event_jFilterCheckboxChecked
 
     private void jTraceTextAreaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTraceTextAreaKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_F3) {
@@ -274,10 +291,14 @@ public class TracerForm extends javax.swing.JFrame {
     }
     
     public void onFileRead(StringBuffer inputFileBuff) {
-        jTraceTextArea.setText(inputFileBuff.toString());
+        traceContent = inputFileBuff.toString();
+        
+        jTraceTextArea.setText(traceContent);
+        
+        traceLinesCount = jTraceTextArea.getLineCount();
         
         if (searcher.isWasSearching()) {
-            int add = jSearchTextField.getText().length() > 1 ? jSearchTextField.getText().length()-1 : 0;
+            //int add = jSearchTextField.getText().length() > 1 ? jSearchTextField.getText().length()-1 : 0;
             startSearch(searcher.getLastCaretPos() - 1, false);
         }
         
@@ -302,22 +323,32 @@ public class TracerForm extends javax.swing.JFrame {
    
     private void startSearch(int lastCarPos, boolean forcedScroll) {
         String word = jSearchTextField.getText();
-        int offset = searcher.search(word, lastCarPos);
-        if (offset != -1) {
-            label1.setText("Word '" + word + "' found.");
-            if (forcedScroll/* || ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())*/) {
-                try {
-                    jTraceTextArea.scrollRectToVisible(jTraceTextArea
-                            .modelToView(offset));
-                    searcher.setLastCaretPos(offset + 1);
-                } catch (BadLocationException e) {
-                }
+        if (searcher.isFilter()) {
+            try {
+                jTraceTextArea.setText(searcher.filter(traceContent, word, traceLinesCount));
+            } catch (Exception ex) {
+                //System.out.println("error");
+                //ex.printStackTrace();
             }
-            
         } else {
-            searcher.setLastCaretPos(0);
-            label1.setText("No '" + word + "' occurence in the text.");
+            int offset = searcher.search(traceContent, word, lastCarPos);
+            if (offset != -1) {
+                label1.setText("Word         '" + word + "'         found.");
+                if (forcedScroll) {
+                    try {
+                        jTraceTextArea.scrollRectToVisible(jTraceTextArea
+                                .modelToView(offset));
+                        searcher.setLastCaretPos(offset + 1);
+                    } catch (BadLocationException e) {
+                    }
+                }
+
+            } else {
+                searcher.setLastCaretPos(0);
+                label1.setText("'" + word + "'        not found!");
+            }
         }
+        
     }
 
     private void startSearch(boolean forcedScroll) {
@@ -331,12 +362,7 @@ public class TracerForm extends javax.swing.JFrame {
     private void initVars() {
         this.vbar = jScrollPane1.getVerticalScrollBar();
         this.searcher = new WordSearcher(jTraceTextArea);
-//        this.setAlwaysOnTop(props.getProperty("settings.alwaysontop", "true") == "true");
-//        if (props.getProperty("settings.autorefresh", "true") == "true") {
-//            startTimer();
-//        } else {
-//            stopTimer();
-//        }
+
         LoadFileTask lft = new LoadFileTask(fileName);
         lft.setActionListener(this);
         lft.run();
@@ -344,6 +370,7 @@ public class TracerForm extends javax.swing.JFrame {
         setHighlightAll(props.getProperty("settings.highlight_all", "false").equals("true"));
         setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
         setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
+        setFiltering(props.getProperty("settings.filter", "false").equals("true"));
         
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
@@ -351,12 +378,13 @@ public class TracerForm extends javax.swing.JFrame {
                 saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
                 saveSetting("highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
                 saveSetting("wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
+                saveSetting("filter", String.valueOf(jFilterCheckbox.isSelected()));
                 try {
                     props.store(new FileOutputStream(settingsFile), "");
                 } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
+                    System.err.println("error saving setting 1.");
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    System.err.println("error saving setting 2.");
                 }
             }
         });
@@ -404,11 +432,21 @@ public class TracerForm extends javax.swing.JFrame {
             stopTimer();
         }
     }
+
+    private void setFiltering(boolean b) {
+        jFilterCheckbox.setSelected(b);
+        searcher.setIsFilter(b);
+        jHighlightAllCheckbox.setEnabled(!b);
+        if (b && jSearchTextField.getText() != null && jSearchTextField.getText().length() > 0) {
+            startSearch();
+        }
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAutorefreshCheckBox;
     private javax.swing.JButton jClearSearchButton;
     private javax.swing.JButton jClearTraceButton;
+    private javax.swing.JCheckBox jFilterCheckbox;
     private javax.swing.JCheckBox jHighlightAllCheckbox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JCheckBox jOnTopCheckbox;
@@ -424,12 +462,17 @@ public class TracerForm extends javax.swing.JFrame {
     
     private WordSearcher searcher;
 
+    //public static String fileName = "C:\\Documents and Settings\\admin\\Application Data\\Macromedia\\Flash Player\\Logs\\flashlog.txt";
     public static String fileName = "flashlog.txt";
 
     private JScrollBar vbar;
+    
+    private String traceContent;
 
     private Properties props;
 
     private File settingsFile = new File("tracer.properties");
+
+    private int traceLinesCount;
     
 }

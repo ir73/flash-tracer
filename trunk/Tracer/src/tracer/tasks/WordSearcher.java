@@ -23,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
@@ -44,7 +45,7 @@ import javax.swing.text.View;
  */
 public class WordSearcher {
     
-    protected JTextComponent comp;
+    protected JTextArea comp;
     
     private int _lastCaretPos = 0;
     
@@ -52,9 +53,10 @@ public class WordSearcher {
     
     private boolean highlightAll = false;
     
+    private boolean isFilter = false;
+    
     private boolean forcedScreenScroll = true;
     
-    //protected Highlighter.HighlightPainter painter;
     // An instance of the private subclass of the default highlight painter
     Highlighter.HighlightPainter painter = new MyHighlightPainter(Color.red);
     Highlighter.HighlightPainter yellowPainter = new MyHighlightPainter(Color.yellow);
@@ -66,19 +68,22 @@ public class WordSearcher {
         }
     }
     
-    public WordSearcher(JTextComponent comp) {
+    public WordSearcher(JTextArea comp) {
         this.comp = comp;
     }
     
     // Search for a word and return the offset of the
     // first occurrence. Highlights are added for all
     // occurrences found.
-    public int search(String word) {
-        return search(word, 0);
+    public int search(String content, String word) {
+        return search(content, word, 0);
     }
     
-    public int search(String word, int lastCaretPos) {
+    public int search(String content, String word, int lastCaretPos) {
         //System.out.println("word = "+ word);
+        word = word.toLowerCase();
+        content = content.toLowerCase();
+        
         int firstOffset = -1;
         Highlighter highlighter = comp.getHighlighter();
         
@@ -88,19 +93,6 @@ public class WordSearcher {
             return -1;
         }
         
-        // Look for the word we are given - insensitive search
-        String content = null;
-        try {
-            Document d = comp.getDocument();
-            content = d.getText(0, d.getLength()).toLowerCase();
-//            System.out.println("content " + content);
-        } catch (BadLocationException e) {
-            // Cannot happen
-            //System.err.println("bad = " + e.getMessage());
-            return -1;
-        }
-        
-        word = word.toLowerCase();
         int lastIndex = lastCaretPos;
         int wordSize = word.length();
         if ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
@@ -144,9 +136,6 @@ public class WordSearcher {
                 lastIndex = endIndex;
             }
         }
-        
-        
-        //System.out.println("firstOffset="+firstOffset);
         return firstOffset;
     }
 
@@ -177,15 +166,6 @@ public class WordSearcher {
     public void clearHighlights() {
         Highlighter highlighter = comp.getHighlighter();
         highlighter.removeAllHighlights();
-        /*
-        // Remove any existing highlights for last word
-        Highlighter.Highlight[] highlights = highlighter.getHighlights();
-        for (int i = 0; i < highlights.length; i++) {
-            Highlighter.Highlight h = highlights[i];
-            if (h.getPainter() instanceof Highlighter.HighlightPainter) {
-                highlighter.removeHighlight(h);
-            }
-        }*/
     }
 
     public boolean isForcedScreenScroll() {
@@ -194,6 +174,57 @@ public class WordSearcher {
 
     public void setForcedScreenScroll(boolean forcedScreenScroll) {
         this.forcedScreenScroll = forcedScreenScroll;
+    }
+
+    public boolean isFilter() {
+        return isFilter;
+    }
+
+    public void setIsFilter(boolean isFilter) {
+        this.isFilter = isFilter;
+    }
+
+    public String filter(String content, String word, int traceLinesCount) throws Exception {
+        word = word.toLowerCase();
+        
+        Highlighter highlighter = comp.getHighlighter();
+        
+        clearHighlights();
+        
+        if (word == null || word.equals("")) {
+            throw new Exception("invalid argument");
+        }
+        
+        StringBuilder sb = new StringBuilder("");
+        comp.setText(content);
+        int totalLines = comp.getLineCount();
+        for (int i=0; i < totalLines; i++) {
+            int start = comp.getLineStartOffset(i);
+            int end   = comp.getLineEndOffset(i);
+            String lineText = content.substring(start, end);
+            if (lineText.toLowerCase().indexOf(word) != -1) {
+                sb.append(lineText);
+            }
+        }
+        
+        // TODO: implement highlight all functionality for filtering
+//        int lastIndex = 0;
+//        content = content.toLowerCase();
+//        int wordSize = word.length();
+//        if (highlightAll) {
+//           while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
+//                int endIndex = lastIndex + wordSize;
+//                try {
+//                    highlighter.addHighlight(lastIndex, endIndex, yellowPainter);
+//                } catch (BadLocationException e) {
+//                    break;
+//                }
+//
+//                lastIndex = endIndex;
+//            }
+//        }
+        
+        return sb.toString();
     }
     
     
