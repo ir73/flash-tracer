@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
+import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.text.BadLocationException;
 import tracer.tasks.DeleteFile;
@@ -101,22 +102,22 @@ public class TracerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jOptionsDialogLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jWarnLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3))
-                    .addGroup(jOptionsDialogLayout.createSequentialGroup()
                         .addGap(154, 154, 154)
                         .addComponent(jOKButton))
                     .addComponent(jLabel4)
-                    .addGroup(jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jFlashLogTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jOptionsDialogLayout.createSequentialGroup()
-                            .addComponent(jFontNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(21, 21, 21)
-                            .addComponent(jFontSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(31, Short.MAX_VALUE))
+                    .addComponent(jFlashLogTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .addGroup(jOptionsDialogLayout.createSequentialGroup()
+                        .addGroup(jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jOptionsDialogLayout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jWarnLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jFontNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jFontSizeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                            .addComponent(jLabel3))))
+                .addContainerGap())
         );
         jOptionsDialogLayout.setVerticalGroup(
             jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -127,15 +128,15 @@ public class TracerForm extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addComponent(jLabel2))
                     .addComponent(jWarnLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jFontSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jFontNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jFlashLogTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(17, 17, 17)
                 .addComponent(jOKButton)
                 .addContainerGap())
         );
@@ -336,6 +337,10 @@ public class TracerForm extends javax.swing.JFrame {
                 startTimer();
             }
             
+            if (jOnTopCheckbox.isSelected()) {
+                setAlwaysOnTop(true);
+            }
+            
         } catch (Exception ex) {
             
         }
@@ -343,10 +348,14 @@ public class TracerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jOKButtonActionPerformed
 
     private void jOptionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOptionsButtonActionPerformed
+        if (jOnTopCheckbox.isSelected()) {
+            setAlwaysOnTop(false);
+        }
         jFontNameTextField.setText(jTraceTextArea.getFont().getName());
         jFontSizeTextField.setText(String.valueOf(jTraceTextArea.getFont().getSize()));
         jFlashLogTextField.setText(fileName);
         jOptionsDialog.setVisible(true);
+        
     }//GEN-LAST:event_jOptionsButtonActionPerformed
 
     private void jFilterCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFilterCheckboxChecked
@@ -380,7 +389,7 @@ public class TracerForm extends javax.swing.JFrame {
         searcher.clearHighlights();
         searcher.setWasSearching(false);
         jSearchTextField.setText("");
-        jLabel1.setText("");
+        label1.setText("");
     }//GEN-LAST:event_jClearSearchButtonActionPerformed
     
     private void jTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKeyReleased
@@ -428,6 +437,11 @@ public class TracerForm extends javax.swing.JFrame {
     public void onFileRead(StringBuffer inputFileBuff) {
         traceContent = inputFileBuff.toString();
         
+        boolean needToScrolldown = false;
+        if (((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
+            needToScrolldown = true;
+        }
+        
         jTraceTextArea.setText(traceContent);
         
         traceLinesCount = jTraceTextArea.getLineCount();
@@ -437,8 +451,14 @@ public class TracerForm extends javax.swing.JFrame {
             startSearch(searcher.getLastCaretPos() - 1, false);
         }
         
-        if (((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
+        if (needToScrolldown) {
             jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
+//            try {
+//                jTraceTextArea.scrollRectToVisible(jTraceTextArea
+//                                    .modelToView(traceContent.length()));
+//            } catch (BadLocationException ex) {
+//                ex.printStackTrace();
+//            }
         }
         
     }
@@ -524,7 +544,11 @@ public class TracerForm extends javax.swing.JFrame {
         setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
         setFiltering(props.getProperty("settings.filter", "false").equals("true"));
         setTraceFont(props.getProperty("settings.font.name", "Courier New"), props.getProperty("settings.font.size", "12"));
-        
+        setDialogLocation(props.getProperty("settings.window.x", String.valueOf(this.getX())),
+                props.getProperty("settings.window.y", String.valueOf(this.getY())),
+                props.getProperty("settings.window.width", String.valueOf(this.getWidth())),
+                props.getProperty("settings.window.height", String.valueOf(this.getHeight())));
+        jMainFrame = this;
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
                 saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
@@ -535,6 +559,11 @@ public class TracerForm extends javax.swing.JFrame {
                 saveSetting("font.name", jTraceTextArea.getFont().getName());
                 saveSetting("font.size", String.valueOf(jTraceTextArea.getFont().getSize()));
                 saveSetting("filename", fileName);
+                saveSetting("window.x", String.valueOf(jMainFrame.getX()));
+                saveSetting("window.y", String.valueOf(jMainFrame.getY()));
+                saveSetting("window.width", String.valueOf(jMainFrame.getWidth()));
+                saveSetting("window.height", String.valueOf(jMainFrame.getHeight()));
+                
                 try {
                     props.store(new FileOutputStream(settingsFile), "");
                 } catch (FileNotFoundException ex) {
@@ -605,6 +634,11 @@ public class TracerForm extends javax.swing.JFrame {
     private void setFlashLogFile(String filen) {
         fileName = filen;
     }
+
+    private void setDialogLocation(String x, String y, String w, String h) {
+        this.setLocation(Integer.parseInt(x), Integer.parseInt(y));
+        this.setSize(Integer.parseInt(w), Integer.parseInt(h));
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAutorefreshCheckBox;
@@ -636,8 +670,8 @@ public class TracerForm extends javax.swing.JFrame {
     
     private WordSearcher searcher;
 
-    public static String fileName = "C:\\Documents and Settings\\admin\\Application Data\\Macromedia\\Flash Player\\Logs\\flashlog.txt";
-    //public static String fileName = "flashlog.txt";
+    //public static String fileName = "C:\\Documents and Settings\\admin\\Application Data\\Macromedia\\Flash Player\\Logs\\flashlog.txt";
+    public static String fileName = "flashlog.txt";
 
     private JScrollBar vbar;
     
@@ -648,5 +682,7 @@ public class TracerForm extends javax.swing.JFrame {
     private File settingsFile = new File("tracer.properties");
 
     private int traceLinesCount;
+
+    private TracerForm jMainFrame;
     
 }
