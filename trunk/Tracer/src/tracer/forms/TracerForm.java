@@ -59,6 +59,9 @@ public class TracerForm extends javax.swing.JFrame {
         jWarnLabel = new javax.swing.JLabel();
         jFlashLogTextField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
+        jRestoreCheckBox = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jAutorefreshCheckBox = new javax.swing.JCheckBox();
         jWordWrapCheckbox = new javax.swing.JCheckBox();
@@ -94,6 +97,14 @@ public class TracerForm extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel4.setText("flashlog.txt location:");
 
+        jRestoreCheckBox.setText("Restore window on trace update if minimized");
+        jRestoreCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRestoreCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        jLabel5.setText("--------------------------------------------------------------------------------------------------------");
+
+        jLabel6.setText("--------------------------------------------------------------------------------------------------------");
+
         javax.swing.GroupLayout jOptionsDialogLayout = new javax.swing.GroupLayout(jOptionsDialog.getContentPane());
         jOptionsDialog.getContentPane().setLayout(jOptionsDialogLayout);
         jOptionsDialogLayout.setHorizontalGroup(
@@ -117,8 +128,17 @@ public class TracerForm extends javax.swing.JFrame {
                             .addComponent(jLabel4)
                             .addComponent(jFlashLogTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)))
                     .addGroup(jOptionsDialogLayout.createSequentialGroup()
-                        .addGap(181, 181, 181)
-                        .addComponent(jOKButton)))
+                        .addGap(177, 177, 177)
+                        .addComponent(jOKButton))
+                    .addGroup(jOptionsDialogLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jRestoreCheckBox))
+                    .addGroup(jOptionsDialogLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel5))
+                    .addGroup(jOptionsDialogLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel6)))
                 .addContainerGap())
         );
         jOptionsDialogLayout.setVerticalGroup(
@@ -134,13 +154,19 @@ public class TracerForm extends javax.swing.JFrame {
                 .addGroup(jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jFontSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jFontNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
+                .addGap(5, 5, 5)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jFlashLogTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRestoreCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jOKButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -365,6 +391,8 @@ public class TracerForm extends javax.swing.JFrame {
                 setAlwaysOnTop(true);
             }
             
+            restoreOnUpdate = jRestoreCheckBox.isSelected();
+            
         } catch (Exception ex) {
             
         }
@@ -378,6 +406,7 @@ public class TracerForm extends javax.swing.JFrame {
         jFontNameTextField.setText(jTraceTextArea.getFont().getName());
         jFontSizeTextField.setText(String.valueOf(jTraceTextArea.getFont().getSize()));
         jFlashLogTextField.setText(fileName);
+        jRestoreCheckBox.setSelected(restoreOnUpdate);
         jOptionsDialog.setVisible(true);
         
     }//GEN-LAST:event_jOptionsButtonActionPerformed
@@ -460,6 +489,11 @@ public class TracerForm extends javax.swing.JFrame {
     
     public void onFileRead(StringBuffer inputFileBuff) {
         traceContent = inputFileBuff.toString();
+        
+        if (restoreOnUpdate && traceIsModified()) {
+            setExtendedState(JFrame.NORMAL);
+        }
+        recentTraceContent = traceContent;
         
         boolean needToScrolldown = false;
         if (((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
@@ -562,6 +596,7 @@ public class TracerForm extends javax.swing.JFrame {
         LoadFileTask lft = new LoadFileTask(fileName);
         lft.setActionListener(this);
         lft.run();
+        setRestoreOnUpdate(props.getProperty("settings.restore", "false").equals("true"));
         setOnTop(props.getProperty("settings.alwaysontop", "false").equals("true"));
         setHighlightAll(props.getProperty("settings.highlight_all", "false").equals("true"));
         setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
@@ -587,7 +622,7 @@ public class TracerForm extends javax.swing.JFrame {
                 saveSetting("window.y", String.valueOf(jMainFrame.getY()));
                 saveSetting("window.width", String.valueOf(jMainFrame.getWidth()));
                 saveSetting("window.height", String.valueOf(jMainFrame.getHeight()));
-                
+                saveSetting("restore", String.valueOf(restoreOnUpdate));
                 try {
                     props.store(new FileOutputStream(settingsFile), "");
                 } catch (FileNotFoundException ex) {
@@ -663,6 +698,15 @@ public class TracerForm extends javax.swing.JFrame {
         this.setLocation(Integer.parseInt(x), Integer.parseInt(y));
         this.setSize(Integer.parseInt(w), Integer.parseInt(h));
     }
+
+    private boolean traceIsModified() {
+        return !traceContent.equals(recentTraceContent);
+    }
+
+    private void setRestoreOnUpdate(boolean b) {
+        jRestoreCheckBox.setSelected(b);
+        restoreOnUpdate = b;
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAutorefreshCheckBox;
@@ -677,11 +721,14 @@ public class TracerForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JButton jOKButton;
     private javax.swing.JCheckBox jOnTopCheckbox;
     private javax.swing.JButton jOptionsButton;
     private javax.swing.JDialog jOptionsDialog;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JCheckBox jRestoreCheckBox;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jSearchTextField;
     private javax.swing.JTextArea jTraceTextArea;
@@ -708,5 +755,9 @@ public class TracerForm extends javax.swing.JFrame {
     private int traceLinesCount;
 
     private TracerForm jMainFrame;
+
+    private String recentTraceContent;
+
+    private boolean restoreOnUpdate = false;
     
 }
