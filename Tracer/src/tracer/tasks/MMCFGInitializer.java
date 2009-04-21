@@ -2,15 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package tracer.tasks;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.CharBuffer;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +24,7 @@ import java.util.logging.Logger;
  * @author sergeil
  */
 public class MMCFGInitializer {
+
     private String traceFileLocation;
 
     public void init() {
@@ -41,37 +46,59 @@ public class MMCFGInitializer {
         if (!logPath.equals("")) {
             setTraceFileLocation(logPath);
         }
-        
+
         if (!home.equals("")) {
             try {
                 File mmcfg = new File(home + File.separator + "mm.cfg");
                 if (mmcfg.exists()) {
+
+                    FileInputStream fis = null;
+                    ByteArrayOutputStream bo = null;
                     try {
-                      BufferedReader input =  new BufferedReader(new FileReader(mmcfg));
-                      try {
-                        String line = null; //not declared within while loop
-                        while (( line = input.readLine()) != null){
+                        fis = new FileInputStream(mmcfg);
+
+                        bo = new ByteArrayOutputStream();
+                        byte[] b = new byte[1024];
+                        int count = 0;
+                        while ((count = fis.read(b)) != -1) {
+                            bo.write(b, 0, count);
+                        }
+                        String s = new String(bo.toByteArray(), "UTF-8");
+                        
+                        String[] lines = s.split(System.getProperty("line.separator"));
+                        for (String line : lines) {
                             String[] keys = line.split("=");
                             if (keys[0].equals("TraceOutputFileName")) {
                                 setTraceFileLocation(keys[1]);
                                 break;
                             }
                         }
-                      }
-                      finally {
-                        input.close();
-                      }
+                    } catch (IOException ex) {
+                        Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        fis.close();
+                        bo.close();
                     }
-                    catch (IOException ex){
-                      ex.printStackTrace();
-                    }
+                    
                 } else {
-                    Properties props = new Properties();
-                    props.setProperty("TraceOutputFileEnable", "1");
-                    props.setProperty("ErrorReportingEnable", "1");
-                    props.store(new FileOutputStream(mmcfg), "");
+                    OutputStreamWriter osr = null;
+                    try {
+                        osr = new OutputStreamWriter(new FileOutputStream(mmcfg), "UTF-8");
+
+                        osr.write("TraceOutputFileEnable=1" + System.getProperty("line.separator"));
+                        osr.write("ErrorReportingEnable=1");
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        osr.close();
+                    }
+//                    Properties props = new Properties();
+//                    props.setProperty("TraceOutputFileEnable", "1");
+//                    props.setProperty("ErrorReportingEnable", "1");
+//                    props.store(new FileOutputStream(mmcfg), "");
                 }
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -90,5 +117,4 @@ public class MMCFGInitializer {
     public void setTraceFileLocation(String traceFileLocation) {
         this.traceFileLocation = traceFileLocation;
     }
-
 }
