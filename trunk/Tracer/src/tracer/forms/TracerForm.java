@@ -60,7 +60,7 @@ public class TracerForm extends javax.swing.JFrame {
     }
 
     private LoadFileTask createLoadTimerTask() {
-        return new LoadFileTask(fileName, maxNumLines, maxNumLinesEnabled, this);
+        return new LoadFileTask(fileName, maxNumLines, maxNumLinesEnabled, isUTF, this);
     }
     
     /** This method is called from within the constructor to
@@ -936,6 +936,8 @@ public class TracerForm extends javax.swing.JFrame {
     private long maxNumLines = 20;
 
     private boolean maxNumLinesEnabled = false;
+
+    private boolean isUTF = true;
 
     private JScrollBar vbar;
     
