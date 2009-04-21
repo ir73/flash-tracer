@@ -6,14 +6,16 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package tracer.tasks;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import tracer.forms.TracerForm;
 
 /**
@@ -23,85 +25,63 @@ import tracer.forms.TracerForm;
 public class LoadFileTask extends TimerTask {
 
     private TracerForm tracerForm;
-
     private String fileName;
-
     private long maxNumLines;
-
     private boolean numMaxLinesEnabled;
-    
+    private boolean isUTF;
+
     /** Creates a new instance of LoadFileTask */
-    public LoadFileTask(String fileName, long maxNumLines, boolean numMaxLinesEnabled, TracerForm tracerForm) {
+    public LoadFileTask(String fileName, long maxNumLines, boolean numMaxLinesEnabled, boolean isUTF, TracerForm tracerForm) {
         this.fileName = fileName;
         this.maxNumLines = maxNumLines;
         this.numMaxLinesEnabled = numMaxLinesEnabled;
         this.tracerForm = tracerForm;
+        this.isUTF = isUTF;
     }
- 
 
     public void run() {
 
-
-        
+        ByteArrayOutputStream bo = null;
+        RandomAccessFile raf = null;
         try {
-            //System.out.println(fileName);
             File inputFile = new File(fileName);
-            FileReader fr;
-            fr = new FileReader(inputFile);
+            raf = new RandomAccessFile(inputFile, "r");
+            bo = new ByteArrayOutputStream();
 
-            char[] c = null;
-            int l1 = (int)inputFile.length();
-            if (numMaxLinesEnabled && l1 > maxNumLines) {
-                c = new char[(int)maxNumLines];
-                //System.out.println(l1 + ", " + maxNumLines);
-                fr.skip(l1 - maxNumLines);
-            } else {
-                c = new char[(int)inputFile.length()];
+            int len = (int) raf.length();
+            if (numMaxLinesEnabled && len > maxNumLines) {
+                int v = (int) (len - maxNumLines);
+                raf.seek(v);
             }
 
-            fr.read(c);
-            fr.close();
+            byte[] b = new byte[4096];
+            int count = 0;
+            while ((count = raf.read(b)) != -1) {
+                bo.write(b, 0, count);
+            }
 
-            StringBuffer sbuf = new StringBuffer();
-            sbuf.append(c);
+            String s = null;
+            if (isUTF) {
+                s = new String(bo.toByteArray(), "UTF-8");
+            } else {
+                s = new String(bo.toByteArray());
+            }
 
-            //System.out.println(sbuf.substring(0, 10).toString() + "...");
+            tracerForm.onFileRead(s);
 
-            tracerForm.onFileRead(sbuf);
-
-        } catch (Exception ex) {
+        } catch (OutOfMemoryError ex) {
+            tracerForm.onOutOfMemory();
             Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            //Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                bo.close();
+                raf.close();
+            } catch (Exception ex) {
+                //Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-/*
-        try {
 
-                // read input file contents
-               // BufferedReader in = new BufferedReader(new FileReader(inputFile));
-                Reader in2 = new InputStreamReader(new FileInputStream(inputFile), "UTF-8");
-                BufferedReader in = new BufferedReader(in2);
-
-                String str;
-                StringBuffer inputFileBuff = new StringBuffer("");
-
-                while ((str = in.readLine()) != null) {
-                    inputFileBuff.append(str);
-                    inputFileBuff.append(System.getProperty("line.separator"));
-                }
-                in.close();
-                    
-               tracerForm.onFileRead(inputFileBuff);
-                
-
-        } catch (SecurityException ex) {
-                System.out.println("Cannot read file: " + getFileName());
-        } catch (FileNotFoundException e) {
-                System.out.println("File not found: " + getFileName());
-
-        } catch (IOException e) {
-                System.out.println("Cannot read file!");
-        }*/
     }
-
-    
-    
 }

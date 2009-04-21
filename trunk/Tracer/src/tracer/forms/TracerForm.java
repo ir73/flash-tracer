@@ -7,25 +7,33 @@
 package tracer.forms;
 
 
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -41,6 +49,9 @@ import tracer.tasks.WordSearcher;
  * @author  Admin
  */
 public class TracerForm extends javax.swing.JFrame {
+    
+    private boolean needToScrolldown = true;
+    private boolean isCapturingScroll = false;
        
     /** Creates new form TracerForm */
     public TracerForm() throws ClassNotFoundException {
@@ -57,6 +68,47 @@ public class TracerForm extends javax.swing.JFrame {
         loadProperties();
         initComponents();
         initVars();
+
+        jTraceTextArea.addMouseWheelListener(new MouseWheelListener() {
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                vbar.dispatchEvent(e);
+                adjustScroller();
+            }
+        });
+        vbar.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {
+            }
+            public void mousePressed(MouseEvent e) {
+                isCapturingScroll = true;
+            }
+            public void mouseReleased(MouseEvent e) {
+                isCapturingScroll = false;
+            }
+            public void mouseEntered(MouseEvent e) {
+            }
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+
+        vbar.addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (isCapturingScroll) {
+                    adjustScroller();
+                }
+            }
+        });
+    }
+
+    private void adjustScroller() {
+        int sum = vbar.getValue() + vbar.getVisibleAmount();
+        int am = vbar.getMaximum();
+        if (sum >= am) {
+            //System.out.println("max!");
+            needToScrolldown = true;
+        } else {
+            //System.out.println("no!");
+            needToScrolldown = false;
+        }
     }
 
     private LoadFileTask createLoadTimerTask() {
@@ -81,6 +133,7 @@ public class TracerForm extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jFlashLogTextField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
+        jUTFCheckBox = new javax.swing.JCheckBox();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jNumLinesEnabledCheckBox = new javax.swing.JCheckBox();
         jLabel11 = new javax.swing.JLabel();
@@ -91,6 +144,8 @@ public class TracerForm extends javax.swing.JFrame {
         jLayeredPane3 = new javax.swing.JLayeredPane();
         jHTMLCheckBox = new javax.swing.JCheckBox();
         jOKButton = new javax.swing.JButton();
+        jLayeredPane5 = new javax.swing.JLayeredPane();
+        jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jAutorefreshCheckBox = new javax.swing.JCheckBox();
         jWordWrapCheckbox = new javax.swing.JCheckBox();
@@ -105,7 +160,7 @@ public class TracerForm extends javax.swing.JFrame {
         jMultipleLabel = new javax.swing.JLabel();
         jSearchTextField = new javax.swing.JTextField();
         jClearSearchButton = new javax.swing.JButton();
-        warnLabelsearch = new java.awt.Label();
+        jSearchWarnLabel = new javax.swing.JLabel();
 
         jOptionsDialog.setTitle("Options");
 
@@ -115,7 +170,7 @@ public class TracerForm extends javax.swing.JFrame {
 
         jLabel3.setText("Font size:");
 
-        jWarnLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jWarnLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -157,6 +212,8 @@ public class TracerForm extends javax.swing.JFrame {
 
         jLabel4.setText("flashlog.txt location:");
 
+        jUTFCheckBox.setText("read file as UTF-8");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -164,15 +221,20 @@ public class TracerForm extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jFlashLogTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE))
+                    .addComponent(jFlashLogTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
+                        .addComponent(jUTFCheckBox)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(jLabel4)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jUTFCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jFlashLogTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(16, Short.MAX_VALUE))
@@ -188,7 +250,7 @@ public class TracerForm extends javax.swing.JFrame {
                 jNumLinesEnabledCheckBoxActionPerformed(evt);
             }
         });
-        jNumLinesEnabledCheckBox.setBounds(10, 10, 370, 15);
+        jNumLinesEnabledCheckBox.setBounds(10, 10, 360, 15);
         jLayeredPane1.add(jNumLinesEnabledCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when your log file gets too big and Tracer crashes.</html>");
@@ -197,9 +259,9 @@ public class TracerForm extends javax.swing.JFrame {
         jLayeredPane1.add(jLabel11, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load:");
-        jLabel8.setBounds(10, 70, 142, 14);
+        jLabel8.setBounds(10, 70, 370, 14);
         jLayeredPane1.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jNumLinesTextField.setBounds(10, 90, 51, 20);
+        jNumLinesTextField.setBounds(10, 90, 140, 20);
         jLayeredPane1.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -236,6 +298,17 @@ public class TracerForm extends javax.swing.JFrame {
             }
         });
 
+        jLayeredPane5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel1.setText("<html><a href=\"http://google.com\">Check for updates...</a></html>");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+        jLabel1.setBounds(10, 10, 370, 14);
+        jLayeredPane5.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout jOptionsDialogLayout = new javax.swing.GroupLayout(jOptionsDialog.getContentPane());
         jOptionsDialog.getContentPane().setLayout(jOptionsDialogLayout);
         jOptionsDialogLayout.setHorizontalGroup(
@@ -244,40 +317,36 @@ public class TracerForm extends javax.swing.JFrame {
                 .addGroup(jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jOptionsDialogLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE))
-                    .addGroup(jOptionsDialogLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLayeredPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                            .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLayeredPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                            .addComponent(jLayeredPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)))
                     .addGroup(jOptionsDialogLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLayeredPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE))
-                    .addGroup(jOptionsDialogLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLayeredPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)))
+                        .addGap(181, 181, 181)
+                        .addComponent(jOKButton)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jOptionsDialogLayout.createSequentialGroup()
-                .addContainerGap(184, Short.MAX_VALUE)
-                .addComponent(jOKButton)
-                .addGap(180, 180, 180))
         );
         jOptionsDialogLayout.setVerticalGroup(
             jOptionsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jOptionsDialogLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jOptionsDialogLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLayeredPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLayeredPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLayeredPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLayeredPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLayeredPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jOKButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(7, 7, 7))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -304,17 +373,9 @@ public class TracerForm extends javax.swing.JFrame {
         });
 
         jTraceTextArea.setColumns(20);
-        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
+        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12));
         jTraceTextArea.setLineWrap(true);
         jTraceTextArea.setRows(5);
-        jTraceTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jTraceTextAreaMousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jTraceTextAreaMouseReleased(evt);
-            }
-        });
         jTraceTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jTraceTextAreaKeyPressed(evt);
@@ -338,7 +399,7 @@ public class TracerForm extends javax.swing.JFrame {
             }
         });
 
-        jOptionsButton.setText("Options >>");
+        jOptionsButton.setText("Options...");
         jOptionsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jOptionsButtonActionPerformed(evt);
@@ -402,8 +463,10 @@ public class TracerForm extends javax.swing.JFrame {
         });
         jClearSearchButton.setBounds(390, 40, 87, 21);
         jLayeredPane4.add(jClearSearchButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        warnLabelsearch.setBounds(10, 60, 490, 20);
-        jLayeredPane4.add(warnLabelsearch, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jSearchWarnLabel.setText("<html></html>");
+        jSearchWarnLabel.setBounds(10, 65, 580, 16);
+        jLayeredPane4.add(jSearchWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -421,7 +484,7 @@ public class TracerForm extends javax.swing.JFrame {
                         .addComponent(jOnTopCheckbox)
                         .addGap(18, 18, 18)
                         .addComponent(jClearTraceButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 207, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 215, Short.MAX_VALUE)
                         .addComponent(jOptionsButton))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE))
                 .addContainerGap())
@@ -490,19 +553,15 @@ public class TracerForm extends javax.swing.JFrame {
                 jTraceTextArea.setText("");
             }
 
-            maxNumLinesEnabled = jNumLinesEnabledCheckBox.isSelected();
-            maxNumLines = Long.parseLong(jNumLinesTextField.getText());
+            setMaxNumLinesEnabled(jNumLinesEnabledCheckBox.isSelected());
+            setMaxNumLines(jNumLinesTextField.getText());
+            setUTF(jUTFCheckBox.isSelected());
             
-            if (jAutorefreshCheckBox.isSelected()) {
-                stopTimer();
-                startTimer();
-            }
-            
-            if (jOnTopCheckbox.isSelected()) {
-                setAlwaysOnTop(true);
-            }
-            
-            restoreOnUpdate = jRestoreCheckBox.isSelected();
+            setAutoRefresh(jAutorefreshCheckBox.isSelected());
+
+            setAlwaysOnTop(jOnTopCheckbox.isSelected());
+
+            setRestoreOnUpdate(jRestoreCheckBox.isSelected());
             
         } catch (Exception ex) {
             
@@ -544,7 +603,7 @@ public class TracerForm extends javax.swing.JFrame {
         searcher.clearHighlights();
         searcher.setWasSearching(false);
         jSearchTextField.setText("");
-        warnLabelsearch.setVisible(false);
+        jSearchWarnLabel.setVisible(false);
     }//GEN-LAST:event_jClearSearchButtonActionPerformed
     
     private void jTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKeyReleased
@@ -552,30 +611,24 @@ public class TracerForm extends javax.swing.JFrame {
             searcher.clearHighlights();
             searcher.setWasSearching(false);
             jSearchTextField.setText("");
-            warnLabelsearch.setVisible(false);
+            jSearchWarnLabel.setVisible(false);
         } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             searcher.setWasSearching(true);
             startSearch(true);
         } else {
-              //jSearchTextField.setToolTipText("");
               ToolTipManager.sharedInstance().mouseMoved(
               new MouseEvent(jSearchTextField, 0, 0, 0,
                         (int) jSearchTextField.getCaret().getMagicCaretPosition().getX(), -jSearchTextField.getY(), // X-Y of the mouse for the tool tip
                         0, false));
-//            searcher.setWasSearching(false);
-//            searcher.setLastCaretPos(0);
-//            label1.setText("");
         }
         
     }//GEN-LAST:event_jTextFieldKeyReleased
     
     private void jWordWrapCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWordWrapCheckboxChecked
-        //saveSetting("wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
         setWordWrap(jWordWrapCheckbox.isSelected());
     }//GEN-LAST:event_jWordWrapCheckboxChecked
     
     private void jAutorefreshCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAutorefreshCheckboxChecked
-        //saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
         setAutoRefresh(jAutorefreshCheckBox.isSelected());
     }//GEN-LAST:event_jAutorefreshCheckboxChecked
     
@@ -611,23 +664,21 @@ public class TracerForm extends javax.swing.JFrame {
         }
 }//GEN-LAST:event_jTraceTextAreaKeyPressed
 
-    private void jTraceTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseReleased
-        //System.out.println("start");
-        if (jAutorefreshCheckBox.isSelected()) {
-            startTimer();
-        }
-}//GEN-LAST:event_jTraceTextAreaMouseReleased
-
-    private void jTraceTextAreaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMousePressed
-        //.out.println("stop");
-        if (jAutorefreshCheckBox.isSelected()) {
-            stopTimer();
-        }
-}//GEN-LAST:event_jTraceTextAreaMousePressed
-
     private void jSearchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSearchTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jSearchTextFieldActionPerformed
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        try {
+            try {
+                Desktop.getDesktop().browse(new URI("http://code.google.com/p/flash-tracer/downloads/list"));
+            } catch (IOException ex) {
+                Logger.getLogger(TracerForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(TracerForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jLabel1MouseClicked
     
     /**
      * @param args the command line arguments
@@ -647,20 +698,36 @@ public class TracerForm extends javax.swing.JFrame {
             }
         });
     }
+
+    public void onOutOfMemory() {
+        setMaxNumLinesEnabled(true);
+        setMaxNumLines("100000");
+
+        startTimer();
+
+        JOptionPane pane = new JOptionPane();
+        pane.showMessageDialog(this, "The log file is too big and our of memory error occured. Tracer has changed your settings to limit file " +
+                "to 100 KB. Please change this value if needed in Options panel.", "Error", 1);
+    }
     
-    public void onFileRead(StringBuffer inputFileBuff) {
-        traceContent = inputFileBuff.toString();
-        
+    public void onFileRead(String inputFileBuff) {
+        traceContent = inputFileBuff;
+         
         if (restoreOnUpdate && traceIsModified()) {
             setExtendedState(JFrame.NORMAL);
         }
         recentTraceContent = traceContent;
-        
+        /*
         boolean needToScrolldown = false;
-        if (((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum())) {
+        int sum = vbar.getValue() + vbar.getVisibleAmount();
+        int am = vbar.getMaximum();
+        if (sum >= am) {
             needToScrolldown = true;
+        } else {
+            //System.out.println("sum=" + sum + ", scroll=" + am + ", ex=" + vbar.getVisibleAmount());
         }
-        
+        */
+        //System.out.println("h= " + jTraceTextArea.getVisibleRect().getHeight());
         jTraceTextArea.setText(traceContent);
         
         traceLinesCount = jTraceTextArea.getLineCount();
@@ -668,9 +735,14 @@ public class TracerForm extends javax.swing.JFrame {
         if (searcher.isWasSearching()) {
             startSearch(searcher.getLastCaretPos() - 1, false);
         }
-        
+
+
         if (needToScrolldown) {
-            jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
+        
+              jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
+
+
+            
         }
         
     }
@@ -679,12 +751,18 @@ public class TracerForm extends javax.swing.JFrame {
         //jTraceTextArea.set = equals;
     }
 
-    private void setNumLinesEnabled(boolean equals) {
+    private void setMaxNumLinesEnabled(boolean equals) {
         jNumLinesEnabledCheckBox.setSelected(equals);
         maxNumLinesEnabled = equals;
     }
+
+    private void setUTF(boolean equals) {
+        isUTF = equals;
+        jUTFCheckBox.setSelected(equals);
+    }
     
     private void startTimer() {
+        stopTimer();
         t = new Timer();
         t.schedule(createLoadTimerTask(), 1000, new Long(1000));
     }
@@ -701,15 +779,13 @@ public class TracerForm extends javax.swing.JFrame {
             try {
                 jTraceTextArea.setText(searcher.filter(traceContent, word, traceLinesCount));
             } catch (Exception ex) {
-                //System.out.println("error");
-                //ex.printStackTrace();
             }
-            warnLabelsearch.setVisible(false);
+            jSearchWarnLabel.setVisible(false);
         } else {
             int offset = searcher.search(traceContent, word, lastCarPos);
             if (offset != -1) {
-                warnLabelsearch.setVisible(true);
-                warnLabelsearch.setText("Word         '" + word + "'         found.");
+                jSearchWarnLabel.setVisible(true);
+                jSearchWarnLabel.setText("<html>Result: <font color=\"blue\"><b>" + word + "</b></font> found!</html>");
                 if (forcedScroll) {
                     try {
                         jTraceTextArea.scrollRectToVisible(jTraceTextArea
@@ -721,8 +797,8 @@ public class TracerForm extends javax.swing.JFrame {
 
             } else {
                 searcher.setLastCaretPos(0);
-                warnLabelsearch.setVisible(true);
-                warnLabelsearch.setText("'" + word + "'        not found!");
+                jSearchWarnLabel.setVisible(true);
+                jSearchWarnLabel.setText("<html>Result: <font color=\"red\"><b>" + word + "</b></font> not found!</html>");
             }
         }
         
@@ -760,8 +836,9 @@ public class TracerForm extends javax.swing.JFrame {
 
         
         //setHTMLRender(props.getProperty("settings.html", "false").equals("true"));
-        setNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
-        setNumLines(props.getProperty("settings.maxNumLines", "1000"));
+        setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
+        setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
+        setMaxNumLines(props.getProperty("settings.maxNumLines", "1000"));
         setRestoreOnUpdate(props.getProperty("settings.restore", "false").equals("true"));
         setOnTop(props.getProperty("settings.alwaysontop", "false").equals("true"));
         setHighlightAll(props.getProperty("settings.highlight_all", "false").equals("true"));
@@ -776,6 +853,7 @@ public class TracerForm extends javax.swing.JFrame {
         jMainFrame = this;
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
+                saveSetting("isUTF", String.valueOf(isUTF));
                 saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
                 saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
                 saveSetting("highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
@@ -841,12 +919,12 @@ public class TracerForm extends javax.swing.JFrame {
 
     private void setAutoRefresh(boolean b) {
         jAutorefreshCheckBox.setSelected(b);
+        isAutoRefresh = b;
 
+        stopTimer();
         if (b) {
             startTimer();
-        } else {
-            stopTimer();
-        }
+        } 
 
     }
 
@@ -870,7 +948,7 @@ public class TracerForm extends javax.swing.JFrame {
         }
     }
     
-    private void setNumLines(String lines) {
+    private void setMaxNumLines(String lines) {
         maxNumLines = Long.valueOf(lines);
         jNumLinesTextField.setText(String.valueOf(maxNumLines));
     }
@@ -899,6 +977,7 @@ public class TracerForm extends javax.swing.JFrame {
     private javax.swing.JTextField jFontSizeTextField;
     private javax.swing.JCheckBox jHTMLCheckBox;
     private javax.swing.JCheckBox jHighlightAllCheckbox;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -908,6 +987,7 @@ public class TracerForm extends javax.swing.JFrame {
     private javax.swing.JLayeredPane jLayeredPane2;
     private javax.swing.JLayeredPane jLayeredPane3;
     private javax.swing.JLayeredPane jLayeredPane4;
+    private javax.swing.JLayeredPane jLayeredPane5;
     private javax.swing.JLabel jMultipleLabel;
     private javax.swing.JCheckBox jNumLinesEnabledCheckBox;
     private javax.swing.JTextField jNumLinesTextField;
@@ -921,10 +1001,11 @@ public class TracerForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jRestoreCheckBox;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jSearchTextField;
+    private javax.swing.JLabel jSearchWarnLabel;
     private javax.swing.JTextArea jTraceTextArea;
+    private javax.swing.JCheckBox jUTFCheckBox;
     private javax.swing.JLabel jWarnLabel;
     private javax.swing.JCheckBox jWordWrapCheckbox;
-    private java.awt.Label warnLabelsearch;
     // End of variables declaration//GEN-END:variables
     
     private Timer t;
@@ -942,6 +1023,8 @@ public class TracerForm extends javax.swing.JFrame {
     private JScrollBar vbar;
     
     private String traceContent;
+
+    private boolean isAutoRefresh = true;
 
     private Properties props;
 
