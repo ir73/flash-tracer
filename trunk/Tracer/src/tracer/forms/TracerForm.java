@@ -250,7 +250,7 @@ public class TracerForm extends javax.swing.JFrame {
                 jNumLinesEnabledCheckBoxActionPerformed(evt);
             }
         });
-        jNumLinesEnabledCheckBox.setBounds(10, 10, 360, 15);
+        jNumLinesEnabledCheckBox.setBounds(10, 10, 370, 15);
         jLayeredPane1.add(jNumLinesEnabledCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when your log file gets too big and Tracer crashes.</html>");
@@ -350,7 +350,7 @@ public class TracerForm extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Flash Debugger");
+        setTitle("Flash Tracer");
 
         jAutorefreshCheckBox.setSelected(true);
         jAutorefreshCheckBox.setText("Autorefresh");
@@ -430,7 +430,7 @@ public class TracerForm extends javax.swing.JFrame {
         jFilterCheckbox.setBounds(100, 20, 41, 15);
         jLayeredPane4.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 2, 11));
         jMultipleLabel.setText("Use , to filter multiple phrases");
         jMultipleLabel.setBounds(160, 20, 143, 14);
         jLayeredPane4.add(jMultipleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -454,7 +454,7 @@ public class TracerForm extends javax.swing.JFrame {
         jSearchTextField.setBounds(10, 40, 370, 20);
         jLayeredPane4.add(jSearchTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jClearSearchButton.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jClearSearchButton.setFont(new java.awt.Font("Tahoma", 0, 9));
         jClearSearchButton.setText("Clear Search");
         jClearSearchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
