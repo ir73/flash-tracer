@@ -1,0 +1,2 @@
+rb = some texxt
+doneb про

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package tracer.tasks;
+package vizzy.tasks;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
