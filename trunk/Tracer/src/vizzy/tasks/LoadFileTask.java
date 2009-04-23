@@ -6,17 +6,15 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tracer.tasks;
+package vizzy.tasks;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import tracer.forms.TracerForm;
+import vizzy.forms.VizzyForm;
 
 /**
  *
@@ -24,14 +22,14 @@ import tracer.forms.TracerForm;
  */
 public class LoadFileTask extends TimerTask {
 
-    private TracerForm tracerForm;
+    private VizzyForm tracerForm;
     private String fileName;
     private long maxNumLines;
     private boolean numMaxLinesEnabled;
     private boolean isUTF;
 
     /** Creates a new instance of LoadFileTask */
-    public LoadFileTask(String fileName, long maxNumLines, boolean numMaxLinesEnabled, boolean isUTF, TracerForm tracerForm) {
+    public LoadFileTask(String fileName, long maxNumLines, boolean numMaxLinesEnabled, boolean isUTF, VizzyForm tracerForm) {
         this.fileName = fileName;
         this.maxNumLines = maxNumLines;
         this.numMaxLinesEnabled = numMaxLinesEnabled;
@@ -71,7 +69,7 @@ public class LoadFileTask extends TimerTask {
 
         } catch (OutOfMemoryError ex) {
             tracerForm.onOutOfMemory();
-            Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             //Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
