@@ -16,9 +16,19 @@
         <copy todir="${dist.dir}" overwrite="true">
             <fileset dir="${src.dir}/etc/" />
         </copy>
-        <mkdir dir="${dist.dir}/zip" />
-        <zip basedir="${dist.dir}" destfile="${dist.dir}/zip/Vizzy_v1.12.zip">
-            <exclude name="zip" />
+
+        <delete dir="zip" />
+
+        <mkdir dir="zip" />
+        <mkdir dir="${dist.dir}/Vizzy" />
+
+        <move todir="${dist.dir}/Vizzy" overwrite="true">
+            <fileset dir="${dist.dir}">
+                <exclude name="Vizzy"/>
+            </fileset>
+        </move>
+
+        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v1.14.zip">
         </zip>
     </target>
     <!--

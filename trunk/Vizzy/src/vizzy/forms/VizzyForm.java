@@ -471,7 +471,7 @@ public class VizzyForm extends javax.swing.JFrame {
                 jNumLinesTextFieldActionPerformed(evt);
             }
         });
-        jNumLinesTextField.setBounds(190, 86, 140, 20);
+        jNumLinesTextField.setBounds(190, 86, 160, 20);
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load:");
@@ -572,7 +572,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jUpdatesLabel.setBounds(10, 40, 360, 14);
         jLayeredPane6.add(jUpdatesLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel5.setText("Current version is: 1.12");
+        jLabel5.setText("Current version is: 1.14");
         jLabel5.setBounds(10, 20, 360, 14);
         jLayeredPane6.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -654,7 +654,7 @@ public class VizzyForm extends javax.swing.JFrame {
                 jHighlightAllCheckboxChecked(evt);
             }
         });
-        jHighlightAllCheckbox.setBounds(10, 20, 120, 15);
+        jHighlightAllCheckbox.setBounds(10, 20, 130, 15);
         jLayeredPane1.add(jHighlightAllCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFilterCheckbox.setText("Filter");
@@ -665,12 +665,12 @@ public class VizzyForm extends javax.swing.JFrame {
                 jFilterCheckboxChecked(evt);
             }
         });
-        jFilterCheckbox.setBounds(140, 20, 110, 15);
+        jFilterCheckbox.setBounds(140, 20, 120, 15);
         jLayeredPane1.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jMultipleLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jMultipleLabel.setText("Use , to filter multiple phrases");
-        jMultipleLabel.setBounds(270, 20, 143, 14);
+        jMultipleLabel.setBounds(270, 20, 290, 14);
         jLayeredPane1.add(jMultipleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchTextField.setToolTipText("Hit enter to start searching");
@@ -693,13 +693,21 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane1.add(jClearSearchButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchWarnLabel.setText("<html></html>");
-        jSearchWarnLabel.setBounds(10, 62, 580, 16);
+        jSearchWarnLabel.setBounds(10, 62, 570, 16);
         jLayeredPane1.add(jSearchWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTraceTextArea.setColumns(20);
         jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
         jTraceTextArea.setLineWrap(true);
         jTraceTextArea.setRows(5);
+        jTraceTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTraceTextAreaMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTraceTextAreaMouseReleased(evt);
+            }
+        });
         jTraceTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jTraceTextAreaKeyPressed(evt);
@@ -952,6 +960,18 @@ public class VizzyForm extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_jOKButtonActionPerformed
+
+    private void jTraceTextAreaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMousePressed
+        if (isAutoRefresh) {
+            stopTimer();
+        }
+    }//GEN-LAST:event_jTraceTextAreaMousePressed
+
+    private void jTraceTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseReleased
+        if (isAutoRefresh) {
+            startTimer();
+        }
+    }//GEN-LAST:event_jTraceTextAreaMouseReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAutorefreshCheckBox;
