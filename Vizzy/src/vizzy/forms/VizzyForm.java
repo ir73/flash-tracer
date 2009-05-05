@@ -59,6 +59,7 @@ public class VizzyForm extends javax.swing.JFrame {
     public static String fileName = "flashlog.txt";
     private long maxNumLines = 20;
     private boolean maxNumLinesEnabled = false;
+    private long refreshFreq = 1000;
     private boolean isUTF = true;
     private JScrollBar vbar;
     private String traceContent;
@@ -202,6 +203,10 @@ public class VizzyForm extends javax.swing.JFrame {
         maxNumLinesEnabled = equals;
     }
 
+    private void setRefreshFreq(String property) {
+        refreshFreq = Long.parseLong(property);
+    }
+
     private void setUTF(boolean equals) {
         isUTF = equals;
         jUTFCheckBox.setSelected(equals);
@@ -210,7 +215,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private void startTimer() {
         stopTimer();
         t = new Timer();
-        t.schedule(createLoadTimerTask(), 1000, new Long(1000));
+        t.schedule(createLoadTimerTask(), 1000, refreshFreq);
     }
 
     private void stopTimer() {
@@ -282,6 +287,7 @@ public class VizzyForm extends javax.swing.JFrame {
 
 
         //setHTMLRender(props.getProperty("settings.html", "false").equals("true"));
+        setRefreshFreq(props.getProperty("settings.refreshFreq", "1000"));
         setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
         setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
         setMaxNumLines(props.getProperty("settings.maxNumLines", "1000"));
@@ -299,6 +305,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jMainFrame = this;
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
+                saveSetting("refreshFreq", String.valueOf(refreshFreq));
                 saveSetting("isUTF", String.valueOf(isUTF));
                 saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
                 saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
@@ -439,8 +446,9 @@ public class VizzyForm extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jFontSizeTextField = new javax.swing.JTextField();
         jLayeredPane5 = new javax.swing.JLayeredPane();
-        jHTMLCheckBox = new javax.swing.JCheckBox();
         jRestoreCheckBox = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        jFreqTextField = new javax.swing.JTextField();
         jLayeredPane6 = new javax.swing.JLayeredPane();
         jUpdatesLabel = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -521,7 +529,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jFontNameTextField.setBounds(10, 40, 260, 20);
         jLayeredPane2.add(jFontNameTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jWarnLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jWarnLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         jWarnLabel.setForeground(new java.awt.Color(255, 0, 0));
         jWarnLabel.setBounds(10, 63, 360, 14);
         jLayeredPane2.add(jWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -531,24 +539,12 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane2.add(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel2.setText("Font:");
-        jLabel2.setBounds(10, 20, 260, 14);
+        jLabel2.setBounds(10, 20, 270, 14);
         jLayeredPane2.add(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jFontSizeTextField.setBounds(283, 40, 90, 20);
         jLayeredPane2.add(jFontSizeTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("General"));
-
-        jHTMLCheckBox.setText("Render log text as html");
-        jHTMLCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jHTMLCheckBox.setEnabled(false);
-        jHTMLCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jHTMLCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jHTMLCheckBoxActionPerformed(evt);
-            }
-        });
-        jHTMLCheckBox.setBounds(10, 40, 360, 15);
-        jLayeredPane5.add(jHTMLCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jRestoreCheckBox.setText("Restore window on trace update if minimized");
         jRestoreCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -561,6 +557,14 @@ public class VizzyForm extends javax.swing.JFrame {
         jRestoreCheckBox.setBounds(10, 20, 360, 15);
         jLayeredPane5.add(jRestoreCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jLabel1.setText("Refresh update frequency (in milliseconds):");
+        jLabel1.setBounds(10, 43, 360, 14);
+        jLayeredPane5.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jFreqTextField.setText("1000");
+        jFreqTextField.setBounds(10, 60, 130, 20);
+        jLayeredPane5.add(jFreqTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         jLayeredPane6.setBorder(javax.swing.BorderFactory.createTitledBorder("Updates"));
 
         jUpdatesLabel.setText("<html><a href=\"http://google.com\">Check for updates...</a></html>");
@@ -572,7 +576,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jUpdatesLabel.setBounds(10, 40, 360, 14);
         jLayeredPane6.add(jUpdatesLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel5.setText("Current version is: 1.14");
+        jLabel5.setText("Current version is: 1.15");
         jLabel5.setBounds(10, 20, 360, 14);
         jLayeredPane6.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -587,23 +591,23 @@ public class VizzyForm extends javax.swing.JFrame {
         jOptionsDialog.getContentPane().setLayout(jOptionsDialogLayout);
         jOptionsDialogLayout.setHorizontalGroup(
             jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jOptionsDialogLayout.createSequentialGroup()
-                .add(jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jOptionsDialogLayout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jOptionsDialogLayout.createSequentialGroup()
+                .add(jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jOptionsDialogLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jOptionsDialogLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                             .add(jLayeredPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                             .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
-                    .add(jOptionsDialogLayout.createSequentialGroup()
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jOptionsDialogLayout.createSequentialGroup()
                         .add(176, 176, 176)
                         .add(jOKButton))
-                    .add(jOptionsDialogLayout.createSequentialGroup()
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jOptionsDialogLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
-                    .add(jOptionsDialogLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
+                        .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jOptionsDialogLayout.setVerticalGroup(
@@ -614,9 +618,9 @@ public class VizzyForm extends javax.swing.JFrame {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLayeredPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 115, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -682,7 +686,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jSearchTextField.setBounds(10, 40, 370, 20);
         jLayeredPane1.add(jSearchTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jClearSearchButton.setFont(new java.awt.Font("Tahoma", 0, 9));
+        jClearSearchButton.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jClearSearchButton.setText("Clear Search");
         jClearSearchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -697,7 +701,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane1.add(jSearchWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTraceTextArea.setColumns(20);
-        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
+        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12));
         jTraceTextArea.setLineWrap(true);
         jTraceTextArea.setRows(5);
         jTraceTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -866,6 +870,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private void jClearTraceButtondeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearTraceButtondeleteActionPerformed
         new DeleteFile(fileName);
         jTraceTextArea.setText("");
+        needToScrolldown = true;
 }//GEN-LAST:event_jClearTraceButtondeleteActionPerformed
 
     private void jOptionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOptionsButtonActionPerformed
@@ -879,6 +884,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jOptionsDialog.setVisible(true);
         jNumLinesEnabledCheckBox.setSelected(maxNumLinesEnabled);
         jNumLinesTextField.setText(String.valueOf(maxNumLines));
+        jFreqTextField.setText(String.valueOf(refreshFreq));
 }//GEN-LAST:event_jOptionsButtonActionPerformed
 
     private void jUTFCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUTFCheckBoxActionPerformed
@@ -905,10 +911,6 @@ public class VizzyForm extends javax.swing.JFrame {
     private void jRestoreCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRestoreCheckBoxActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_jRestoreCheckBoxActionPerformed
-
-    private void jHTMLCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jHTMLCheckBoxActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_jHTMLCheckBoxActionPerformed
 
     private void jUpdatesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jUpdatesLabelMouseClicked
         try {
@@ -949,6 +951,7 @@ public class VizzyForm extends javax.swing.JFrame {
             setMaxNumLinesEnabled(jNumLinesEnabledCheckBox.isSelected());
             setMaxNumLines(jNumLinesTextField.getText());
             setUTF(jUTFCheckBox.isSelected());
+            setRefreshFreq(jFreqTextField.getText());
 
             setAutoRefresh(jAutorefreshCheckBox.isSelected());
 
@@ -981,8 +984,9 @@ public class VizzyForm extends javax.swing.JFrame {
     private javax.swing.JTextField jFlashLogTextField;
     private javax.swing.JTextField jFontNameTextField;
     private javax.swing.JTextField jFontSizeTextField;
-    private javax.swing.JCheckBox jHTMLCheckBox;
+    private javax.swing.JTextField jFreqTextField;
     private javax.swing.JCheckBox jHighlightAllCheckbox;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
