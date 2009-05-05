@@ -557,7 +557,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jRestoreCheckBox.setBounds(10, 20, 360, 15);
         jLayeredPane5.add(jRestoreCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel1.setText("Refresh update frequency (in milliseconds):");
+        jLabel1.setText("Refresh frequency (in milliseconds):");
         jLabel1.setBounds(10, 43, 360, 14);
         jLayeredPane5.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
