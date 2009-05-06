@@ -17,6 +17,7 @@ import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -31,10 +32,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
@@ -267,6 +270,12 @@ public class VizzyForm extends javax.swing.JFrame {
         this.vbar = jScrollPane1.getVerticalScrollBar();
         this.searcher = new WordSearcher(jTraceTextArea);
 
+        try {
+            URL myIconUrl = this.getClass().getResource("/img/Vizzy.gif");
+            this.setIconImage(new ImageIcon(myIconUrl, "Vizzy Flash Tracer").getImage());
+        } catch (Exception e) {
+        }
+
         jOptionsDialog.setVisible(false);
         jOptionsDialog.setModal(true);
         jOptionsDialog.pack();
@@ -276,8 +285,8 @@ public class VizzyForm extends javax.swing.JFrame {
         Dimension screenSize = toolkit.getScreenSize();
 
         //Calculate the frame location
-        int x = (screenSize.width - getWidth()) / 2 + jOptionsDialog.getWidth()/2;
-        int y = (screenSize.height - getHeight()) / 2 + jOptionsDialog.getHeight()/2;
+        int x = screenSize.width / 2 - jOptionsDialog.getWidth()/2;
+        int y = screenSize.height / 2 - jOptionsDialog.getHeight()/2;
 
         //Set the new frame location
         jOptionsDialog.setLocation(x, y);
@@ -576,7 +585,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jUpdatesLabel.setBounds(10, 40, 360, 14);
         jLayeredPane6.add(jUpdatesLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel5.setText("Current version is: 1.16");
+        jLabel5.setText("Current version is: 1.17");
         jLabel5.setBounds(10, 20, 360, 14);
         jLayeredPane6.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
