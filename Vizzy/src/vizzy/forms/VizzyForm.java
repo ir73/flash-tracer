@@ -576,7 +576,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jUpdatesLabel.setBounds(10, 40, 360, 14);
         jLayeredPane6.add(jUpdatesLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel5.setText("Current version is: 1.15");
+        jLabel5.setText("Current version is: 1.16");
         jLabel5.setBounds(10, 20, 360, 14);
         jLayeredPane6.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -881,10 +881,11 @@ public class VizzyForm extends javax.swing.JFrame {
         jFontSizeTextField.setText(String.valueOf(jTraceTextArea.getFont().getSize()));
         jFlashLogTextField.setText(fileName);
         jRestoreCheckBox.setSelected(restoreOnUpdate);
-        jOptionsDialog.setVisible(true);
         jNumLinesEnabledCheckBox.setSelected(maxNumLinesEnabled);
         jNumLinesTextField.setText(String.valueOf(maxNumLines));
         jFreqTextField.setText(String.valueOf(refreshFreq));
+
+        jOptionsDialog.setVisible(true);
 }//GEN-LAST:event_jOptionsButtonActionPerformed
 
     private void jUTFCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUTFCheckBoxActionPerformed
@@ -943,25 +944,26 @@ public class VizzyForm extends javax.swing.JFrame {
                 jWarnLabel.setText("No such font! Please use e.g. \"" + someFont + "\" font.");
             }
 
-            if (!fileName.equals(jFlashLogTextField.getText())) {
-                setFlashLogFile(jFlashLogTextField.getText());
-                jTraceTextArea.setText("");
-            }
-
-            setMaxNumLinesEnabled(jNumLinesEnabledCheckBox.isSelected());
-            setMaxNumLines(jNumLinesTextField.getText());
-            setUTF(jUTFCheckBox.isSelected());
-            setRefreshFreq(jFreqTextField.getText());
-
-            setAutoRefresh(jAutorefreshCheckBox.isSelected());
-
-            setAlwaysOnTop(jOnTopCheckbox.isSelected());
-
-            setRestoreOnUpdate(jRestoreCheckBox.isSelected());
+            
 
         } catch (Exception ex) {
-
         }
+
+        if (!fileName.equals(jFlashLogTextField.getText())) {
+            setFlashLogFile(jFlashLogTextField.getText());
+            jTraceTextArea.setText("");
+        }
+
+        setMaxNumLinesEnabled(jNumLinesEnabledCheckBox.isSelected());
+        setMaxNumLines(jNumLinesTextField.getText());
+        setUTF(jUTFCheckBox.isSelected());
+        setRefreshFreq(jFreqTextField.getText());
+
+        setAutoRefresh(jAutorefreshCheckBox.isSelected());
+
+        setAlwaysOnTop(jOnTopCheckbox.isSelected());
+
+        setRestoreOnUpdate(jRestoreCheckBox.isSelected());
     }//GEN-LAST:event_jOKButtonActionPerformed
 
     private void jTraceTextAreaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMousePressed
