@@ -46,6 +46,7 @@ import javax.swing.JScrollBar;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
+import vizzy.tasks.CheckUpdates;
 import vizzy.tasks.DeleteFile;
 import vizzy.tasks.LoadFileTask;
 import vizzy.tasks.MMCFGInitializer;
@@ -64,7 +65,7 @@ public class VizzyForm extends javax.swing.JFrame {
     public static String fileName = "flashlog.txt";
     private long maxNumLines = 20;
     private boolean maxNumLinesEnabled = false;
-    private long refreshFreq = 1000;
+    private long refreshFreq = 500;
     private boolean isUTF = true;
     private JScrollBar vbar;
     private String traceContent;
@@ -109,6 +110,11 @@ public class VizzyForm extends javax.swing.JFrame {
         initComponents();
         initVars();
         initComplete();
+        checkUpdates();
+    }
+
+    private void checkUpdates() {
+        new CheckUpdates(this).start();
     }
 
     private void initFonts() {
@@ -191,10 +197,10 @@ public class VizzyForm extends javax.swing.JFrame {
 
 
         setFlashLogFile(props.getProperty("settings.filename", ""));
-        setRefreshFreq(props.getProperty("settings.refreshFreq", "1000"));
+        setRefreshFreq(props.getProperty("settings.refreshFreq", "500"));
         setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
         setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
-        setMaxNumLines(props.getProperty("settings.maxNumLines", "1000"));
+        setMaxNumLines(props.getProperty("settings.maxNumLines", "10000"));
         setRestoreOnUpdate(props.getProperty("settings.restore", "false").equals("true"));
         setOnTop(props.getProperty("settings.alwaysontop", "false").equals("true"));
         setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
@@ -454,6 +460,8 @@ public class VizzyForm extends javax.swing.JFrame {
         jUTFCheckBox = new javax.swing.JCheckBox();
         jLabel4 = new javax.swing.JLabel();
         jFlashLogTextField = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jFreqTextField = new javax.swing.JTextField();
         jLayeredPane2 = new javax.swing.JLayeredPane();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -461,8 +469,6 @@ public class VizzyForm extends javax.swing.JFrame {
         jFontComboBox = new javax.swing.JComboBox();
         jLayeredPane5 = new javax.swing.JLayeredPane();
         jRestoreCheckBox = new javax.swing.JCheckBox();
-        jLabel1 = new javax.swing.JLabel();
-        jFreqTextField = new javax.swing.JTextField();
         jLayeredPane6 = new javax.swing.JLayeredPane();
         jUpdatesLabel = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -493,11 +499,11 @@ public class VizzyForm extends javax.swing.JFrame {
                 jNumLinesTextFieldActionPerformed(evt);
             }
         });
-        jNumLinesTextField.setBounds(230, 86, 130, 20);
+        jNumLinesTextField.setBounds(10, 110, 130, 20);
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load:");
-        jLabel8.setBounds(10, 90, 210, 14);
+        jLabel8.setBounds(10, 90, 360, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when your log file gets too big and Tracer crashes.</html>");
@@ -539,6 +545,14 @@ public class VizzyForm extends javax.swing.JFrame {
         jFlashLogTextField.setBounds(10, 40, 360, 20);
         jLayeredPane3.add(jFlashLogTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jLabel1.setText("Log update frequency (in milliseconds):");
+        jLabel1.setBounds(10, 80, 360, 14);
+        jLayeredPane3.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jFreqTextField.setText("1000");
+        jFreqTextField.setBounds(10, 100, 140, 20);
+        jLayeredPane3.add(jFreqTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         jLayeredPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Font"));
 
         jLabel3.setText("Font size:");
@@ -568,14 +582,6 @@ public class VizzyForm extends javax.swing.JFrame {
         jRestoreCheckBox.setBounds(10, 20, 360, 15);
         jLayeredPane5.add(jRestoreCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel1.setText("Log update frequency (in milliseconds):");
-        jLabel1.setBounds(10, 43, 360, 14);
-        jLayeredPane5.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jFreqTextField.setText("1000");
-        jFreqTextField.setBounds(10, 60, 140, 20);
-        jLayeredPane5.add(jFreqTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         jLayeredPane6.setBorder(javax.swing.BorderFactory.createTitledBorder("Updates"));
 
         jUpdatesLabel.setText("<html><a href=\"http://google.com\">Check for updates...</a></html>");
@@ -587,7 +593,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jUpdatesLabel.setBounds(10, 40, 360, 14);
         jLayeredPane6.add(jUpdatesLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel5.setText("Current version is: 1.18");
+        jLabel5.setText("Current version is: 1.19");
         jLabel5.setBounds(10, 20, 360, 14);
         jLayeredPane6.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -602,23 +608,19 @@ public class VizzyForm extends javax.swing.JFrame {
         jOptionsDialog.getContentPane().setLayout(jOptionsDialogLayout);
         jOptionsDialogLayout.setHorizontalGroup(
             jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jOptionsDialogLayout.createSequentialGroup()
-                .add(jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jOptionsDialogLayout.createSequentialGroup()
+            .add(jOptionsDialogLayout.createSequentialGroup()
+                .add(jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jOptionsDialogLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jOptionsDialogLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                            .add(jLayeredPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                            .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jOptionsDialogLayout.createSequentialGroup()
-                        .add(176, 176, 176)
-                        .add(jOKButton))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jOptionsDialogLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
+                        .add(jOptionsDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
+                    .add(jOptionsDialogLayout.createSequentialGroup()
+                        .add(177, 177, 177)
+                        .add(jOKButton)))
                 .addContainerGap())
         );
         jOptionsDialogLayout.setVerticalGroup(
@@ -627,16 +629,16 @@ public class VizzyForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLayeredPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jLayeredPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 115, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 145, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 58, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jOKButton)
-                .addContainerGap())
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -926,9 +928,7 @@ public class VizzyForm extends javax.swing.JFrame {
         try {
             new BrowserLauncher().openURLinBrowser("http://code.google.com/p/flash-tracer/downloads/list");
         } catch (BrowserLaunchingInitializingException ex) {
-            Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnsupportedOperatingSystemException ex) {
-            Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
         }
 }//GEN-LAST:event_jUpdatesLabelMouseClicked
 
