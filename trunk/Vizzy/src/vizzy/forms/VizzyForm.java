@@ -17,7 +17,6 @@ import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -33,10 +32,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -73,6 +75,8 @@ public class VizzyForm extends javax.swing.JFrame {
     private VizzyForm jMainFrame;
     private long recentLastModified;
     private boolean restoreOnUpdate = false;
+    private DefaultComboBoxModel fontsModel;
+    private Font[] fonts;
 
     /**
      * @param args the command line arguments
@@ -88,6 +92,7 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         });
     }
+
     
     /** Creates new form VizzyForm */
     public VizzyForm() {
@@ -99,10 +104,24 @@ public class VizzyForm extends javax.swing.JFrame {
             Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
         } 
 
+        initFonts();
         loadProperties();
         initComponents();
         initVars();
         initComplete();
+    }
+
+    private void initFonts() {
+        try {
+            GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            fonts = env.getAllFonts();
+            List<String> l = new ArrayList<String>();
+            for (Font font : fonts) {
+                l.add(font.getName());
+            }
+            fontsModel = new DefaultComboBoxModel(l.toArray());
+        } catch (Exception ex) {
+        }
     }
 
     private void initComplete() {
@@ -436,11 +455,10 @@ public class VizzyForm extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jFlashLogTextField = new javax.swing.JTextField();
         jLayeredPane2 = new javax.swing.JLayeredPane();
-        jFontNameTextField = new javax.swing.JTextField();
-        jWarnLabel = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jFontSizeTextField = new javax.swing.JTextField();
+        jFontComboBox = new javax.swing.JComboBox();
         jLayeredPane5 = new javax.swing.JLayeredPane();
         jRestoreCheckBox = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
@@ -475,11 +493,11 @@ public class VizzyForm extends javax.swing.JFrame {
                 jNumLinesTextFieldActionPerformed(evt);
             }
         });
-        jNumLinesTextField.setBounds(190, 86, 160, 20);
+        jNumLinesTextField.setBounds(230, 86, 130, 20);
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load:");
-        jLabel8.setBounds(10, 90, 180, 14);
+        jLabel8.setBounds(10, 90, 210, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when your log file gets too big and Tracer crashes.</html>");
@@ -522,13 +540,6 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane3.add(jFlashLogTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Font"));
-        jFontNameTextField.setBounds(10, 40, 260, 20);
-        jLayeredPane2.add(jFontNameTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jWarnLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jWarnLabel.setForeground(new java.awt.Color(255, 0, 0));
-        jWarnLabel.setBounds(10, 63, 360, 14);
-        jLayeredPane2.add(jWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel3.setText("Font size:");
         jLabel3.setBounds(290, 20, 80, 14);
@@ -539,6 +550,10 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane2.add(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jFontSizeTextField.setBounds(283, 40, 90, 20);
         jLayeredPane2.add(jFontSizeTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jFontComboBox.setModel(fontsModel);
+        jFontComboBox.setBounds(10, 40, 260, 22);
+        jLayeredPane2.add(jFontComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("General"));
 
@@ -553,12 +568,12 @@ public class VizzyForm extends javax.swing.JFrame {
         jRestoreCheckBox.setBounds(10, 20, 360, 15);
         jLayeredPane5.add(jRestoreCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel1.setText("Refresh frequency (in milliseconds):");
+        jLabel1.setText("Log update frequency (in milliseconds):");
         jLabel1.setBounds(10, 43, 360, 14);
         jLayeredPane5.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFreqTextField.setText("1000");
-        jFreqTextField.setBounds(10, 60, 130, 20);
+        jFreqTextField.setBounds(10, 60, 140, 20);
         jLayeredPane5.add(jFreqTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane6.setBorder(javax.swing.BorderFactory.createTitledBorder("Updates"));
@@ -572,7 +587,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jUpdatesLabel.setBounds(10, 40, 360, 14);
         jLayeredPane6.add(jUpdatesLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel5.setText("Current version is: 1.17");
+        jLabel5.setText("Current version is: 1.18");
         jLabel5.setBounds(10, 20, 360, 14);
         jLayeredPane6.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -682,7 +697,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jSearchTextField.setBounds(10, 40, 370, 20);
         jLayeredPane1.add(jSearchTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jClearSearchButton.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jClearSearchButton.setFont(new java.awt.Font("Tahoma", 0, 9));
         jClearSearchButton.setText("Clear Search");
         jClearSearchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -693,11 +708,11 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane1.add(jClearSearchButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchWarnLabel.setText("<html></html>");
-        jSearchWarnLabel.setBounds(10, 62, 570, 16);
+        jSearchWarnLabel.setBounds(10, 62, 560, 16);
         jLayeredPane1.add(jSearchWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTraceTextArea.setColumns(20);
-        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12));
+        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
         jTraceTextArea.setLineWrap(true);
         jTraceTextArea.setRows(5);
         jTraceTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -871,7 +886,7 @@ public class VizzyForm extends javax.swing.JFrame {
         if (jOnTopCheckbox.isSelected()) {
             setAlwaysOnTop(false);
         }
-        jFontNameTextField.setText(jTraceTextArea.getFont().getName());
+        jFontComboBox.setSelectedItem(jTraceTextArea.getFont().getName());
         jFontSizeTextField.setText(String.valueOf(jTraceTextArea.getFont().getSize()));
         jFlashLogTextField.setText(fileName);
         jRestoreCheckBox.setSelected(restoreOnUpdate);
@@ -918,30 +933,8 @@ public class VizzyForm extends javax.swing.JFrame {
 }//GEN-LAST:event_jUpdatesLabelMouseClicked
 
     private void jOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOKButtonActionPerformed
-        boolean fontExists = false;
-        try {
-            GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            Font[] allfonts = env.getAllFonts();
-            String someFont = null;
-            for (Font font : allfonts) {
-                someFont = font.getName();
-                if (font.getName().equals(jFontNameTextField.getText())) {
-                    fontExists = true;
-                    break;
-                }
-            }
-            if (fontExists) {
-                setTraceFont(jFontNameTextField.getText(), jFontSizeTextField.getText());
-                jWarnLabel.setText("");
-                jOptionsDialog.setVisible(false);
-            } else {
-                jWarnLabel.setText("No such font! Please use e.g. \"" + someFont + "\" font.");
-            }
-
-            
-
-        } catch (Exception ex) {
-        }
+        setTraceFont((String)jFontComboBox.getSelectedItem(), jFontSizeTextField.getText());
+        jOptionsDialog.setVisible(false);
 
         if (!fileName.equals(jFlashLogTextField.getText())) {
             setFlashLogFile(jFlashLogTextField.getText());
@@ -978,7 +971,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private javax.swing.JButton jClearTraceButton;
     private javax.swing.JCheckBox jFilterCheckbox;
     private javax.swing.JTextField jFlashLogTextField;
-    private javax.swing.JTextField jFontNameTextField;
+    private javax.swing.JComboBox jFontComboBox;
     private javax.swing.JTextField jFontSizeTextField;
     private javax.swing.JTextField jFreqTextField;
     private javax.swing.JCheckBox jHighlightAllCheckbox;
@@ -1010,7 +1003,6 @@ public class VizzyForm extends javax.swing.JFrame {
     private javax.swing.JTextArea jTraceTextArea;
     private javax.swing.JCheckBox jUTFCheckBox;
     private javax.swing.JLabel jUpdatesLabel;
-    private javax.swing.JLabel jWarnLabel;
     private javax.swing.JCheckBox jWordWrapCheckbox;
     // End of variables declaration//GEN-END:variables
 
