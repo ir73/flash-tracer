@@ -20,12 +20,14 @@ import javax.swing.JOptionPane;
  */
 public class CheckUpdates extends Thread {
 
-    private static final String VERSION = "1.18";
+    public static final String VERSION = "1.19";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
     private Component cmp;
+    private boolean reportIfOk;
 
-    public CheckUpdates(Component cmp) {
+    public CheckUpdates(Component cmp, boolean reportIfOk) {
         this.cmp = cmp;
+        this.reportIfOk = reportIfOk;
     }
 
     @Override
@@ -71,6 +73,10 @@ public class CheckUpdates extends Thread {
                         } catch (BrowserLaunchingInitializingException ex) {
                         } catch (UnsupportedOperatingSystemException ex) {
                         }
+                    }
+                } else {
+                    if (reportIfOk) {
+                        JOptionPane.showMessageDialog(cmp, "Your version is up-to-date!", "Info", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
