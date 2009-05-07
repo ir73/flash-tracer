@@ -71,9 +71,24 @@ public class VizzyForm extends javax.swing.JFrame {
     private File settingsFile = new File("tracer.properties");
     private int traceLinesCount;
     private VizzyForm jMainFrame;
-    private String recentTraceContent;
+    private long recentLastModified;
     private boolean restoreOnUpdate = false;
 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    new VizzyForm().setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+    
     /** Creates new form VizzyForm */
     public VizzyForm() {
         super();
@@ -87,7 +102,10 @@ public class VizzyForm extends javax.swing.JFrame {
         loadProperties();
         initComponents();
         initVars();
-        
+        initComplete();
+    }
+
+    private void initComplete() {
         jTraceTextArea.addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 vbar.dispatchEvent(e);
@@ -116,23 +134,6 @@ public class VizzyForm extends javax.swing.JFrame {
                 }
             }
         });
-        
-    }
-
-    private void adjustScroller() {
-        int sum = vbar.getValue() + vbar.getVisibleAmount();
-        int am = vbar.getMaximum();
-        if (sum >= am) {
-            //System.out.println("max!");
-            needToScrolldown = true;
-        } else {
-            //System.out.println("no!");
-            needToScrolldown = false;
-        }
-    }
-
-    private LoadFileTask createLoadTimerTask() {
-        return new LoadFileTask(fileName, maxNumLines, maxNumLinesEnabled, isUTF, this);
     }
 
     private void initMMCFG() {
@@ -142,128 +143,6 @@ public class VizzyForm extends javax.swing.JFrame {
         if (i.getTraceFileLocation() != null) {
             fileName = i.getTraceFileLocation();
         }
-    }
-
-     /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new VizzyForm().setVisible(true);
-                } catch (Exception ex) {
-                    Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-    }
-
-    public void onOutOfMemory() {
-        setMaxNumLinesEnabled(true);
-        setMaxNumLines("100000");
-
-        startTimer();
-
-        JOptionPane.showMessageDialog(this, "The log file is too big and our of memory error occured. Tracer has changed your settings to limit file " +
-                "to 100 KB. Please change this value if needed in Options panel.", "Error", 1);
-    }
-
-
-    public void onFileRead(String inputFileBuff) {
-        traceContent = inputFileBuff;
-
-        if (restoreOnUpdate && traceIsModified()) {
-            setExtendedState(JFrame.NORMAL);
-        }
-        recentTraceContent = traceContent;
-
-        jTraceTextArea.setText(traceContent);
-
-        traceLinesCount = jTraceTextArea.getLineCount();
-
-        if (searcher.isWasSearching()) {
-            startSearch(searcher.getLastCaretPos() - 1, false);
-        }
-
-
-        if (needToScrolldown) {
-
-              jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
-
-
-
-        }
-
-    }
-
-    private void setHTMLRender(boolean equals) {
-        //jTraceTextArea.set = equals;
-    }
-
-    private void setMaxNumLinesEnabled(boolean equals) {
-        jNumLinesEnabledCheckBox.setSelected(equals);
-        maxNumLinesEnabled = equals;
-    }
-
-    private void setRefreshFreq(String property) {
-        refreshFreq = Long.parseLong(property);
-    }
-
-    private void setUTF(boolean equals) {
-        isUTF = equals;
-        jUTFCheckBox.setSelected(equals);
-    }
-
-    private void startTimer() {
-        stopTimer();
-        t = new Timer();
-        t.schedule(createLoadTimerTask(), 1000, refreshFreq);
-    }
-
-    private void stopTimer() {
-        if (t != null) {
-            t.cancel();
-        }
-    }
-
-    private void startSearch(int lastCarPos, boolean forcedScroll) {
-        String word = jSearchTextField.getText();
-        if (searcher.isFilter()) {
-            try {
-                jTraceTextArea.setText(searcher.filter(traceContent, word, traceLinesCount));
-            } catch (Exception ex) {
-            }
-            jSearchWarnLabel.setVisible(false);
-        } else {
-            int offset = searcher.search(traceContent, word, lastCarPos);
-            if (offset != -1) {
-                jSearchWarnLabel.setVisible(true);
-                jSearchWarnLabel.setText("<html>Result: <font color=\"blue\"><b>" + word + "</b></font> found!</html>");
-                if (forcedScroll) {
-                    try {
-                        jTraceTextArea.scrollRectToVisible(jTraceTextArea
-                                .modelToView(offset));
-                        searcher.setLastCaretPos(offset + 1);
-                    } catch (BadLocationException e) {
-                    }
-                }
-
-            } else {
-                searcher.setLastCaretPos(0);
-                jSearchWarnLabel.setVisible(true);
-                jSearchWarnLabel.setText("<html>Result: <font color=\"red\"><b>" + word + "</b></font> not found!</html>");
-            }
-        }
-
-    }
-
-    private void startSearch(boolean forcedScroll) {
-        startSearch(searcher.getLastCaretPos(), forcedScroll);
-    }
-
-    private void startSearch() {
-        startSearch(true);
     }
 
     private void initVars() {
@@ -293,9 +172,6 @@ public class VizzyForm extends javax.swing.JFrame {
 
 
         setFlashLogFile(props.getProperty("settings.filename", ""));
-
-
-        //setHTMLRender(props.getProperty("settings.html", "false").equals("true"));
         setRefreshFreq(props.getProperty("settings.refreshFreq", "1000"));
         setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
         setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
@@ -312,26 +188,26 @@ public class VizzyForm extends javax.swing.JFrame {
                 props.getProperty("settings.window.width", String.valueOf(this.getWidth())),
                 props.getProperty("settings.window.height", String.valueOf(this.getHeight())));
         jMainFrame = this;
+
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
-                saveSetting("refreshFreq", String.valueOf(refreshFreq));
-                saveSetting("isUTF", String.valueOf(isUTF));
-                saveSetting("autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
-                saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
-                saveSetting("highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
-                saveSetting("wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
-                saveSetting("filter", String.valueOf(jFilterCheckbox.isSelected()));
-                saveSetting("font.name", jTraceTextArea.getFont().getName());
-                saveSetting("font.size", String.valueOf(jTraceTextArea.getFont().getSize()));
-                saveSetting("filename", fileName);
-                saveSetting("window.x", String.valueOf(jMainFrame.getX()));
-                saveSetting("window.y", String.valueOf(jMainFrame.getY()));
-                saveSetting("window.width", String.valueOf(jMainFrame.getWidth()));
-                saveSetting("window.height", String.valueOf(jMainFrame.getHeight()));
-                saveSetting("restore", String.valueOf(restoreOnUpdate));
-                saveSetting("maxNumLines", String.valueOf(maxNumLines));
-                saveSetting("maxNumLinesEnabled", String.valueOf(maxNumLinesEnabled));
-                //saveSetting("html", String.valueOf(jTraceTextArea.));
+                saveSetting("settings.refreshFreq", String.valueOf(refreshFreq));
+                saveSetting("settings.isUTF", String.valueOf(isUTF));
+                saveSetting("settings.autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
+                saveSetting("settings.alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
+                saveSetting("settings.highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
+                saveSetting("settings.wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
+                saveSetting("settings.filter", String.valueOf(jFilterCheckbox.isSelected()));
+                saveSetting("settings.font.name", jTraceTextArea.getFont().getName());
+                saveSetting("settings.font.size", String.valueOf(jTraceTextArea.getFont().getSize()));
+                saveSetting("settings.filename", fileName);
+                saveSetting("settings.window.x", String.valueOf(jMainFrame.getX()));
+                saveSetting("settings.window.y", String.valueOf(jMainFrame.getY()));
+                saveSetting("settings.window.width", String.valueOf(jMainFrame.getWidth()));
+                saveSetting("settings.window.height", String.valueOf(jMainFrame.getHeight()));
+                saveSetting("settings.restore", String.valueOf(restoreOnUpdate));
+                saveSetting("settings.maxNumLines", String.valueOf(maxNumLines));
+                saveSetting("settings.maxNumLinesEnabled", String.valueOf(maxNumLinesEnabled));
                 try {
                     props.store(new FileOutputStream(settingsFile), "");
                 } catch (FileNotFoundException ex) {
@@ -345,12 +221,9 @@ public class VizzyForm extends javax.swing.JFrame {
         createLoadTimerTask().run();
     }
 
-
-
     private void loadProperties() {
         props = new Properties();
         try {
-            //throw new FileNotFoundException("dsfs");
             props.load(new FileInputStream(new File("tracer.properties")));
         } catch (FileNotFoundException ex) {
             initMMCFG();
@@ -360,10 +233,128 @@ public class VizzyForm extends javax.swing.JFrame {
     }
 
     private void saveSetting(String key, String val) {
-        props.setProperty("settings." + key, val);
+        props.setProperty(key, val);
     }
 
-    public void setOnTop (boolean b) {
+    private void adjustScroller() {
+        int sum = vbar.getValue() + vbar.getVisibleAmount();
+        int am = vbar.getMaximum();
+        if (sum >= am) {
+            needToScrolldown = true;
+        } else {
+            needToScrolldown = false;
+        }
+    }
+
+    private LoadFileTask createLoadTimerTask() {
+        return new LoadFileTask(fileName, maxNumLines, maxNumLinesEnabled, isUTF, this);
+    }
+
+    public void onOutOfMemory() {
+        setMaxNumLinesEnabled(true);
+        setMaxNumLines("50000");
+
+        startTimer();
+
+        JOptionPane.showMessageDialog(this, "The log file is too big and our of memory error occured. Tracer has changed your settings to limit file " +
+                "to 50 KB. Please change this value if needed in Options panel.", "Error", 1);
+    }
+
+
+    public void onFileRead(String inputFileBuff) {
+        traceContent = inputFileBuff;
+
+        File f = new File(fileName);
+        long lm = f.lastModified();
+        if (restoreOnUpdate && recentLastModified < lm) {
+            setExtendedState(JFrame.NORMAL);
+        }
+        recentLastModified = lm;
+
+        jTraceTextArea.setText(traceContent);
+
+        traceLinesCount = jTraceTextArea.getLineCount();
+
+        if (searcher.isWasSearching()) {
+            startSearch(searcher.getLastCaretPos() - 1, false);
+        }
+
+        if (needToScrolldown) {
+              jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
+        }
+    }
+
+    private void startSearch(boolean forcedScroll) {
+        startSearch(searcher.getLastCaretPos(), forcedScroll);
+    }
+
+    private void startSearch() {
+        startSearch(true);
+    }
+
+    private void startSearch(int lastCarPos, boolean forcedScroll) {
+        String word = jSearchTextField.getText();
+        if (searcher.isFilter()) {
+            try {
+                jTraceTextArea.setText(searcher.filter(traceContent, word, traceLinesCount));
+            } catch (Exception ex) {
+            }
+            jSearchWarnLabel.setVisible(false);
+        } else {
+            int offset = searcher.search(traceContent, word, lastCarPos);
+            if (offset != -1) {
+                jSearchWarnLabel.setVisible(true);
+                jSearchWarnLabel.setText("<html>Result: <font color=\"blue\"><b>" + word + "</b></font> found!</html>");
+                if (forcedScroll) {
+                    needToScrolldown = false;
+                    try {
+                        jTraceTextArea.scrollRectToVisible(jTraceTextArea
+                                .modelToView(offset));
+                        searcher.setLastCaretPos(offset + 1);
+                    } catch (BadLocationException e) {
+                    }
+                }
+
+            } else {
+                searcher.setLastCaretPos(0);
+                jSearchWarnLabel.setVisible(true);
+                jSearchWarnLabel.setText("<html>Result: <font color=\"red\"><b>" + word + "</b></font> not found!</html>");
+            }
+        }
+
+    }
+
+    private void startTimer() {
+        stopTimer();
+        t = new Timer();
+        t.schedule(createLoadTimerTask(), 1000, refreshFreq);
+    }
+
+    private void stopTimer() {
+        if (t != null) {
+            t.cancel();
+        }
+    }
+
+    private void setHTMLRender(boolean equals) {
+        //jTraceTextArea.set = equals;
+    }
+
+    private void setMaxNumLinesEnabled(boolean equals) {
+        jNumLinesEnabledCheckBox.setSelected(equals);
+        maxNumLinesEnabled = equals;
+    }
+
+    private void setRefreshFreq(String property) {
+        refreshFreq = Long.parseLong(property);
+    }
+
+    private void setUTF(boolean equals) {
+        isUTF = equals;
+        jUTFCheckBox.setSelected(equals);
+    }
+
+    private void setOnTop (boolean b) {
 
         jOnTopCheckbox.setSelected(b);
         setAlwaysOnTop(b);
@@ -418,10 +409,6 @@ public class VizzyForm extends javax.swing.JFrame {
     private void setDialogLocation(String x, String y, String w, String h) {
         this.setLocation(Integer.parseInt(x), Integer.parseInt(y));
         this.setSize(Integer.parseInt(w), Integer.parseInt(h));
-    }
-
-    private boolean traceIsModified() {
-        return !traceContent.equals(recentTraceContent);
     }
 
     private void setRestoreOnUpdate(boolean b) {
@@ -813,7 +800,6 @@ public class VizzyForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jHighlightAllCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jHighlightAllCheckboxChecked
-        //saveSetting("highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
         setHighlightAll(jHighlightAllCheckbox.isSelected());
         if (jSearchTextField.getText() != null && !jSearchTextField.getText().equals("")) {
             searcher.setWasSearching(true);
@@ -872,7 +858,6 @@ public class VizzyForm extends javax.swing.JFrame {
 }//GEN-LAST:event_jWordWrapCheckboxChecked
 
     private void jOnTopCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOnTopCheckboxChecked
-        //        saveSetting("alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
         setOnTop(jOnTopCheckbox.isSelected());
 }//GEN-LAST:event_jOnTopCheckboxChecked
 
