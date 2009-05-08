@@ -113,7 +113,7 @@ public class VizzyForm extends javax.swing.JFrame {
     }
 
     private void checkUpdates(boolean reportIfOk) {
-        new CheckUpdates(this, reportIfOk).start();
+        new CheckUpdates(jOptionsDialog, reportIfOk).start();
     }
 
     private void initFonts() {
