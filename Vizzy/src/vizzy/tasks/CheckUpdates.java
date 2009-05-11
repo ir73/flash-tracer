@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
  */
 public class CheckUpdates extends Thread {
 
-    public static final String VERSION = "1.19";
+    public static final String VERSION = "1.20";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
     private Component cmp;
     private boolean reportIfOk;
@@ -54,7 +54,9 @@ public class CheckUpdates extends Thread {
             int i2 = r.indexOf(";", i);
             if (i > -1) {
                 String newVer = r.substring(i + WEBSITE_UPDATE_PHRASE.length(), i2);
-                if (!newVer.equals(VERSION)) {
+                double newVerd = Double.parseDouble(newVer);
+                double verd = Double.parseDouble(VERSION);
+                if (newVerd > verd) {
                     Object[] options = {"Yes",
                         "No",};
 
@@ -71,7 +73,11 @@ public class CheckUpdates extends Thread {
                         try {
                             new BrowserLauncher().openURLinBrowser("http://code.google.com/p/flash-tracer/downloads/list");
                         } catch (BrowserLaunchingInitializingException ex) {
+                            JOptionPane.showMessageDialog(cmp, "Cannot open browser! Please go manually to " +
+                                    " http://code.google.com/p/flash-tracer/downloads/list", "Error", JOptionPane.ERROR_MESSAGE);
                         } catch (UnsupportedOperatingSystemException ex) {
+                            JOptionPane.showMessageDialog(cmp, "Cannot open browser! Please go manually to " +
+                                    " http://code.google.com/p/flash-tracer/downloads/list", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 } else {

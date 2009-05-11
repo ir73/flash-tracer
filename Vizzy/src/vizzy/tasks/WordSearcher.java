@@ -162,10 +162,8 @@ public class WordSearcher {
         this.isFilter = isFilter;
     }
 
-    public String filter(String content, String word, int traceLinesCount) throws Exception {
+    public String filter(String content, String word) throws Exception {
         word = word.toLowerCase();
-        
-        Highlighter highlighter = comp.getHighlighter();
         
         clearHighlights();
         
