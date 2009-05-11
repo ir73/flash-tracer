@@ -11,6 +11,7 @@
 
 package vizzy.forms;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -69,7 +70,6 @@ public class VizzyForm extends javax.swing.JFrame {
     private boolean isAutoRefresh = true;
     private Properties props;
     private File settingsFile = new File("tracer.properties");
-    private int traceLinesCount;
     private VizzyForm jMainFrame;
     private long recentLastModified;
     private boolean restoreOnUpdate = false;
@@ -108,12 +108,12 @@ public class VizzyForm extends javax.swing.JFrame {
         initVars();
         initComplete();
         if (isCheckUpdates) {
-            checkUpdates(false);
+            checkUpdates(this, false);
         }
     }
 
-    private void checkUpdates(boolean reportIfOk) {
-        new CheckUpdates(jOptionsDialog, reportIfOk).start();
+    private void checkUpdates(Component owner, boolean reportIfOk) {
+        new CheckUpdates(owner, reportIfOk).start();
     }
 
     private void initFonts() {
@@ -194,6 +194,8 @@ public class VizzyForm extends javax.swing.JFrame {
         //Set the new frame location
         jOptionsDialog.setLocation(x, y);
 
+        initMMCFG();
+
 
         setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
         setFlashLogFile(props.getProperty("settings.filename", ""));
@@ -252,7 +254,7 @@ public class VizzyForm extends javax.swing.JFrame {
         try {
             props.load(new FileInputStream(new File("tracer.properties")));
         } catch (FileNotFoundException ex) {
-            initMMCFG();
+//            initMMCFG();
         } catch (IOException ex) {
 
         }
@@ -297,32 +299,33 @@ public class VizzyForm extends javax.swing.JFrame {
         }
         recentLastModified = lm;
 
-        jTraceTextArea.setText(traceContent);
-
-        traceLinesCount = jTraceTextArea.getLineCount();
+        boolean isSetTxt = !(searcher.isWasSearching() && searcher.isFilter());
+        if (isSetTxt) {
+            jTraceTextArea.setText(traceContent);
+        }
 
         if (searcher.isWasSearching()) {
             startSearch(searcher.getLastCaretPos() - 1, false);
         }
 
         if (needToScrolldown) {
-              jTraceTextArea.setCaretPosition( jTraceTextArea.getDocument().getLength() );
+            jTraceTextArea.setCaretPosition(jTraceTextArea.getDocument().getLength());
         }
     }
 
-    private void startSearch(boolean forcedScroll) {
-        startSearch(searcher.getLastCaretPos(), forcedScroll);
+    private void startSearch(boolean scrollToSearchResult) {
+        startSearch(searcher.getLastCaretPos(), scrollToSearchResult);
     }
 
     private void startSearch() {
         startSearch(true);
     }
 
-    private void startSearch(int lastCarPos, boolean forcedScroll) {
+    private void startSearch(int lastCarPos, boolean scrollToSearchResult) {
         String word = jSearchTextField.getText();
         if (searcher.isFilter()) {
             try {
-                jTraceTextArea.setText(searcher.filter(traceContent, word, traceLinesCount));
+                jTraceTextArea.setText(searcher.filter(traceContent, word));
             } catch (Exception ex) {
             }
             jSearchWarnLabel.setVisible(false);
@@ -331,7 +334,7 @@ public class VizzyForm extends javax.swing.JFrame {
             if (offset != -1) {
                 jSearchWarnLabel.setVisible(true);
                 jSearchWarnLabel.setText("<html>Result: <font color=\"blue\"><b>" + word + "</b></font> found!</html>");
-                if (forcedScroll) {
+                if (scrollToSearchResult) {
                     needToScrolldown = false;
                     try {
                         jTraceTextArea.scrollRectToVisible(jTraceTextArea
@@ -969,7 +972,7 @@ public class VizzyForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTraceTextAreaMouseReleased
 
     private void jCheckNowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckNowButtonActionPerformed
-        checkUpdates(true);
+        checkUpdates(jOptionsDialog, true);
 }//GEN-LAST:event_jCheckNowButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
