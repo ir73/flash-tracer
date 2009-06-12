@@ -11,10 +11,12 @@ package vizzy.tasks;
 
 import java.awt.Color;
 
+import java.util.ArrayList;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
+import vizzy.comp.JScrollHighlightPanel;
 
 
 /**
@@ -39,6 +41,8 @@ public class WordSearcher {
     Highlighter.HighlightPainter painter = new MyHighlightPainter(Color.red);
     Highlighter.HighlightPainter yellowPainter = new MyHighlightPainter(Color.yellow);
     
+    private JScrollHighlightPanel panel;
+
     // A private subclass of the default highlight painter
     class MyHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
         public MyHighlightPainter(Color color) {
@@ -46,8 +50,9 @@ public class WordSearcher {
         }
     }
     
-    public WordSearcher(JTextArea comp) {
+    public WordSearcher(JTextArea comp, JScrollHighlightPanel panel) {
         this.comp = comp;
+        this.panel = panel;
     }
     
     // Search for a word and return the offset of the
@@ -103,16 +108,20 @@ public class WordSearcher {
         lastIndex = 0;
         
         if (highlightAll) {
-           while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
+            ArrayList<Integer> indexes = new ArrayList<Integer>();
+            while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
                 int endIndex = lastIndex + wordSize;
                 try {
                     highlighter.addHighlight(lastIndex, endIndex, yellowPainter);
+                    indexes.add(lastIndex);
                 } catch (BadLocationException e) {
                     break;
                 }
 
                 lastIndex = endIndex;
             }
+           panel.setIndexes(indexes);
+           panel.repaint();
         }
         return firstOffset;
     }
