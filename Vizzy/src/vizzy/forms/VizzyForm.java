@@ -939,6 +939,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private void jClearTraceButtondeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearTraceButtondeleteActionPerformed
         new DeleteFile(fileName);
         jTraceTextArea.setText("");
+        traceContent = "";
         needToScrolldown = true;
         ((JScrollHighlightPanel)jScrollHighlight).setIndexes(null);
 }//GEN-LAST:event_jClearTraceButtondeleteActionPerformed

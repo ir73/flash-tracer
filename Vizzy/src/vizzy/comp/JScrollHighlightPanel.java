@@ -42,7 +42,7 @@ public class JScrollHighlightPanel extends JPanel {
                     int lineHeight = (int) (getHeight() * ((double) line / (double) getTa().getLineCount()));
                     
                     int w = getWidth() - 5;
-                    int h = 4;
+                    int h = 3;
                     int x = 2;
                     int y = lineHeight;
                     
