@@ -608,8 +608,8 @@ public class VizzyForm extends javax.swing.JFrame {
                 jCheckNowButtonActionPerformed(evt);
             }
         });
-        jCheckNowButton.setBounds(10, 40, 91, 23);
-        jLayeredPane6.add(jCheckNowButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jCheckNowButton.setBounds(10, 40, 140, 23);
+        jLayeredPane6.add(jCheckNowButton, javax.swing.JLayeredPane.PALETTE_LAYER);
 
         jUpdatesCheckBox.setSelected(true);
         jUpdatesCheckBox.setText("Check for updates every startup");
@@ -738,7 +738,7 @@ public class VizzyForm extends javax.swing.JFrame {
                 jClearActionPerformed(evt);
             }
         });
-        jButton1.setBounds(390, 38, 59, 23);
+        jButton1.setBounds(390, 38, 80, 23);
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jOnTopCheckbox.setText("Always On Top");
