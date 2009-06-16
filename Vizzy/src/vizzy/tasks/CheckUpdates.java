@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
  */
 public class CheckUpdates extends Thread {
 
-    public static final String VERSION = "1.22";
+    public static final String VERSION = "1.23";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
     private Component cmp;
     private boolean reportIfOk;
