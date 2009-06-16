@@ -72,7 +72,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private Properties props;
     private File settingsFile = new File("tracer.properties");
     private VizzyForm jMainFrame;
-    private long recentLastModified;
+    private String recentHash;
     private boolean restoreOnUpdate = false;
     private DefaultComboBoxModel fontsModel;
     private Font[] fonts;
@@ -295,14 +295,15 @@ public class VizzyForm extends javax.swing.JFrame {
     }
 
     public void onFileRead(String log) {
-        File f = new File(fileName);
-        long lm = f.lastModified();
+        int len = log.length();
+        int max = len > 500 ? len - 500 : 0;
+        String currentHash = len + "" + log.substring(max, len);
 
-        if (recentLastModified >= lm) {
+        if (currentHash.equals(recentHash)) {
             return;
         }
 
-        recentLastModified = lm;
+        recentHash = currentHash;
         traceContent = log;
         
         if (restoreOnUpdate) {
@@ -976,7 +977,7 @@ public class VizzyForm extends javax.swing.JFrame {
 
         jOptionsDialog.setVisible(false);
 
-        recentLastModified = 0;
+        recentHash = null;
         createLoadTimerTask().run();
     }//GEN-LAST:event_jOKButtonActionPerformed
 
