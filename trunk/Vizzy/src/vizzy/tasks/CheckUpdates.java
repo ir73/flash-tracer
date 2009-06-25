@@ -68,8 +68,9 @@ public class CheckUpdates extends Thread {
                         "No",};
 
                     int reply = JOptionPane.showOptionDialog(cmp, "New version is availible (" + newVer + "). " +
-                            "Would you like to download it to your machine? \n\n " +
-                            "(You can turn off automatic updates in Options menu)",
+                            "Would you like to download it to your machine?\n" +
+                            "Note: if you do not want to receive update notifications anymore, you can turn " +
+                            "it off in Options menu.",
                             "Info",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
@@ -91,7 +92,7 @@ public class CheckUpdates extends Thread {
                     }
                 } else {
                     if (reportIfOk) {
-                        JOptionPane.showMessageDialog(cmp, "Your version is up-to-date!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(cmp, "You have the latest version installed!", "Info", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
@@ -161,7 +162,7 @@ public class CheckUpdates extends Thread {
             Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex);
 
             JOptionPane.showMessageDialog(cmp, "Failed to download update. Press OK to go to the web-site" +
-                    " and to download new version!",
+                    " and to download new version manually!",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
 
