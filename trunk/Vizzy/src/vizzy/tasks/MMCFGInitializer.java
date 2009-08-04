@@ -19,6 +19,7 @@ import java.util.logging.Logger;
  */
 public class MMCFGInitializer {
 
+    private boolean mmcfgCreated;
     private String traceFileLocation;
 
     public void init() {
@@ -100,8 +101,11 @@ public class MMCFGInitializer {
                     osr = new OutputStreamWriter(new FileOutputStream(mmcfg), "UTF-8");
 
                     osr.write("TraceOutputFileEnable=1" + ls);
-                    osr.write("ErrorReportingEnable=1");
+                    osr.write("ErrorReportingEnable=1" + ls);
+                    osr.write("PolicyFileLog=1" + ls);
+                    osr.write("PolicyFileLogAppend=1");
 
+                    mmcfgCreated = true;
                 } catch (IOException ex) {
                     Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
@@ -125,5 +129,19 @@ public class MMCFGInitializer {
      */
     public void setTraceFileLocation(String traceFileLocation) {
         this.traceFileLocation = traceFileLocation;
+    }
+
+    /**
+     * @return the mmcfgCreated
+     */
+    public boolean isMmcfgCreated() {
+        return mmcfgCreated;
+    }
+
+    /**
+     * @param mmcfgCreated the mmcfgCreated to set
+     */
+    public void setMmcfgCreated(boolean mmcfgCreated) {
+        this.mmcfgCreated = mmcfgCreated;
     }
 }

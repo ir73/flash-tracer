@@ -164,7 +164,12 @@ public class VizzyForm extends javax.swing.JFrame {
     private void initMMCFG() {
         MMCFGInitializer i = new MMCFGInitializer();
         i.init();
-
+        if (i.isMmcfgCreated()) {
+            JOptionPane.showMessageDialog(this, "Vizzy has created mm.cfg file for you. " +
+                    "Now, in order to see flash trace output, please do the following: \n" +
+                    "1. Make sure that you have debug player installed (and install if necessary).\n" +
+                    "2. Restart all you browsers.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
         if (i.getTraceFileLocation() != null) {
             fileName = i.getTraceFileLocation();
         }
