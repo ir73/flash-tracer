@@ -89,7 +89,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel11">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;This is usually required when your log file gets too big and Tracer crashes.&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;This is usually required when the log file gets too big and that might cause slower performance.&lt;/html&gt;"/>
                 <Property name="verticalAlignment" type="int" value="1"/>
               </Properties>
               <Constraints>
@@ -100,7 +100,7 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="jNumLinesEnabledCheckBox">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Load limited amount of bytes only"/>
+                <Property name="text" type="java.lang.String" value="Load limited amount of bytes from the end of file only"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                     <EmptyBorder bottom="0" left="0" right="0" top="0"/>
@@ -167,7 +167,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Log update frequency (in milliseconds):"/>
+                <Property name="text" type="java.lang.String" value="Log file read frequency (in milliseconds):"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
@@ -252,7 +252,7 @@
           <SubComponents>
             <Component class="javax.swing.JCheckBox" name="jRestoreCheckBox">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Restore window on trace update if minimized"/>
+                <Property name="text" type="java.lang.String" value="Restore window on trace update if window minimized"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                     <EmptyBorder bottom="0" left="0" right="0" top="0"/>
@@ -310,7 +310,7 @@
             <Component class="javax.swing.JCheckBox" name="jUpdatesCheckBox">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Check for updates every startup"/>
+                <Property name="text" type="java.lang.String" value="Check for updates on startup"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                     <EmptyBorder bottom="0" left="0" right="0" top="0"/>

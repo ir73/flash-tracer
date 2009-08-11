@@ -168,7 +168,7 @@ public class VizzyForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Vizzy has created mm.cfg file for you. " +
                     "Now, in order to see flash trace output, please do the following: \n" +
                     "1. Make sure that you have debug player installed (and install if necessary).\n" +
-                    "2. Restart all you browsers.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    "2. Restart all you browsers (IMPORTANT!)", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
         if (i.getTraceFileLocation() != null) {
             fileName = i.getTraceFileLocation();
@@ -295,8 +295,9 @@ public class VizzyForm extends javax.swing.JFrame {
 
         startTimer();
 
-        JOptionPane.showMessageDialog(this, "The log file is too big and our of memory error occured. Tracer has changed your settings to limit file " +
-                "to 50 KB. Please change this value if needed in Options panel.", "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "The log file is too big and Vizzy has run out of memory." +
+                " The limit for loading log has been set to " +
+                "50KB. Please change this value if needed in Options panel.", "Warning", JOptionPane.ERROR_MESSAGE);
     }
 
     public void onFileRead(String log) {
@@ -526,12 +527,12 @@ public class VizzyForm extends javax.swing.JFrame {
         jLabel8.setBounds(10, 90, 360, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel11.setText("<html>This is usually required when your log file gets too big and Tracer crashes.</html>");
+        jLabel11.setText("<html>This is usually required when the log file gets too big and that might cause slower performance.</html>");
         jLabel11.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel11.setBounds(10, 40, 360, 40);
         jLayeredPane4.add(jLabel11, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jNumLinesEnabledCheckBox.setText("Load limited amount of bytes only");
+        jNumLinesEnabledCheckBox.setText("Load limited amount of bytes from the end of file only");
         jNumLinesEnabledCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jNumLinesEnabledCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jNumLinesEnabledCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -565,7 +566,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jFlashLogTextField.setBounds(10, 40, 360, 20);
         jLayeredPane3.add(jFlashLogTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel1.setText("Log update frequency (in milliseconds):");
+        jLabel1.setText("Log file read frequency (in milliseconds):");
         jLabel1.setBounds(10, 80, 360, 14);
         jLayeredPane3.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -591,7 +592,7 @@ public class VizzyForm extends javax.swing.JFrame {
 
         jLayeredPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("General"));
 
-        jRestoreCheckBox.setText("Restore window on trace update if minimized");
+        jRestoreCheckBox.setText("Restore window on trace update if window minimized");
         jRestoreCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jRestoreCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jRestoreCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -618,7 +619,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane6.add(jCheckNowButton, javax.swing.JLayeredPane.PALETTE_LAYER);
 
         jUpdatesCheckBox.setSelected(true);
-        jUpdatesCheckBox.setText("Check for updates every startup");
+        jUpdatesCheckBox.setText("Check for updates on startup");
         jUpdatesCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jUpdatesCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jUpdatesCheckBox.setBounds(10, 70, 360, 15);
@@ -720,7 +721,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jFilterCheckbox.setBounds(140, 20, 130, 15);
         jLayeredPane1.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jMultipleLabel.setText("Hint: Use comma to filter multiple phrases");
         jMultipleLabel.setBounds(270, 20, 290, 14);
         jLayeredPane1.add(jMultipleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
