@@ -207,6 +207,13 @@ public class VizzyForm extends javax.swing.JFrame {
 
         initMMCFG();
 
+        String defaultFont = "Courier New";
+        for (Font font : fonts) {
+            if (font.getName().indexOf("Courier") > -1) {
+                defaultFont = font.getName();
+                break;
+            }
+        }
 
         setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
         setFlashLogFile(props.getProperty("settings.filename", ""));
@@ -220,7 +227,7 @@ public class VizzyForm extends javax.swing.JFrame {
         setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
         setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
         setFiltering(props.getProperty("settings.filter", "false").equals("true"));
-        setTraceFont(props.getProperty("settings.font.name", "Courier New"), props.getProperty("settings.font.size", "12"));
+        setTraceFont(props.getProperty("settings.font.name", defaultFont), props.getProperty("settings.font.size", "12"));
         setDialogLocation(props.getProperty("settings.window.x", String.valueOf(this.getX())),
                 props.getProperty("settings.window.y", String.valueOf(this.getY())),
                 props.getProperty("settings.window.width", String.valueOf(this.getWidth())),
