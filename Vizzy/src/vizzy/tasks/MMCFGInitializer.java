@@ -19,13 +19,12 @@ import java.util.logging.Logger;
  */
 public class MMCFGInitializer {
 
-    private boolean mmcfgCreated;
+    private boolean isMmcfgCreated;
     private String traceFileLocation;
 
     public void init() {
 
         String ls = System.getProperty("line.separator");
-        String logPath = "";
         String osName = System.getProperty("os.name");
         String home = System.getProperty("user.home", "");
 
@@ -33,33 +32,24 @@ public class MMCFGInitializer {
             return;
         }
 
-        if (osName.indexOf("Vista") > -1) {
-            logPath = home + File.separator + "AppData" + File.separator + "Roaming" + File.separator + "Macromedia" + File.separator + "Flash Player" + File.separator + "Logs" + File.separator + "flashlog.txt";
-        } else if (osName.indexOf("Windows") > -1) {
-            logPath = home + File.separator + "Application Data" + File.separator + "Macromedia" + File.separator + "Flash Player" + File.separator + "Logs" + File.separator + "flashlog.txt";
-        } else if (osName.indexOf("Mac") > -1) {
-            logPath = home + "/Library/Preferences/Macromedia/Flash Player/Logs/flashlog.txt";
-        } else if (osName.indexOf("Linux") > -1) {
-            logPath = home + "/.macromedia/Flash_Player/Logs/flashlog.txt";
-        }
-
-        if (!logPath.equals("")) {
-            setTraceFileLocation(logPath);
-        }
-
-        if (home.equals("")) {
-            return;
-        }
-
         try {
             String mmcfgPath = "";
             if (osName.indexOf("Vista") > -1) {
+                if (home.equals("")) {
+                    return;
+                }
                 mmcfgPath = home + File.separator + "mm.cfg";
             } else if (osName.indexOf("Windows") > -1) {
+                if (home.equals("")) {
+                    return;
+                }
                 mmcfgPath = home + File.separator + "mm.cfg";
             } else if (osName.indexOf("Mac") > -1) {
                 mmcfgPath = "/Library/Application Support/Macromedia/mm.cfg";
             } else if (osName.indexOf("Linux") > -1) {
+                if (home.equals("")) {
+                    return;
+                }
                 mmcfgPath = home + File.separator + "mm.cfg";
             }
 
@@ -105,7 +95,7 @@ public class MMCFGInitializer {
                     osr.write("PolicyFileLog=1" + ls);
                     osr.write("PolicyFileLogAppend=1");
 
-                    mmcfgCreated = true;
+                    isMmcfgCreated = true;
                 } catch (IOException ex) {
                     Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
@@ -135,13 +125,13 @@ public class MMCFGInitializer {
      * @return the mmcfgCreated
      */
     public boolean isMmcfgCreated() {
-        return mmcfgCreated;
+        return isMmcfgCreated;
     }
 
     /**
      * @param mmcfgCreated the mmcfgCreated to set
      */
     public void setMmcfgCreated(boolean mmcfgCreated) {
-        this.mmcfgCreated = mmcfgCreated;
+        this.isMmcfgCreated = mmcfgCreated;
     }
 }

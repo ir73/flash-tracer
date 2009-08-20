@@ -19,26 +19,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import vizzy.util.DialogUtils;
 import vizzy.util.FileUtil;
 
 /**
  *
  * @author sergeil
  */
-public class CheckUpdates extends Thread {
+public class CheckUpdates {
 
-    public static final String VERSION = "1.24";
+    public static final String VERSION = "1.25";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
-    private Component cmp;
     private boolean reportIfOk;
 
-    public CheckUpdates(Component cmp, boolean reportIfOk) {
-        this.cmp = cmp;
+    public CheckUpdates(boolean reportIfOk) {
         this.reportIfOk = reportIfOk;
     }
 
-    @Override
-    public void run() {
+    public void start() {
         try {
             URL u = new URL("http://code.google.com/p/flash-tracer/");
             URLConnection openConnection = u.openConnection();
@@ -67,11 +65,11 @@ public class CheckUpdates extends Thread {
                     Object[] options = {"Yes",
                         "No",};
 
-                    int reply = JOptionPane.showOptionDialog(cmp, "New version is availible (" + newVer + "). " +
+                    int reply = JOptionPane.showOptionDialog(null, "New version is availible (" + newVer + "). " +
                             "Would you like Vizzy to download it to your computer for you?\n" +
                             "Note: if you do not want to receive update notifications anymore, you can turn " +
                             "them off in Options menu.",
-                            "Info",
+                            "New Version",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
                             null,
@@ -79,42 +77,14 @@ public class CheckUpdates extends Thread {
                             options[0]);
                     if (reply == JOptionPane.YES_OPTION) {
                         downloadNewVersion(newVer);
-//                        try {
-//
-//                            new BrowserLauncher().openURLinBrowser("http://code.google.com/p/flash-tracer/downloads/list");
-//                        } catch (BrowserLaunchingInitializingException ex) {
-//                            JOptionPane.showMessageDialog(cmp, "Cannot open browser! Please go manually to " +
-//                                    " http://code.google.com/p/flash-tracer/downloads/list", "Error", JOptionPane.ERROR_MESSAGE);
-//                        } catch (UnsupportedOperatingSystemException ex) {
-//                            JOptionPane.showMessageDialog(cmp, "Cannot open browser! Please go manually to " +
-//                                    " http://code.google.com/p/flash-tracer/downloads/list", "Error", JOptionPane.ERROR_MESSAGE);
-//                        }
                     }
                 } else {
                     if (reportIfOk) {
-                        JOptionPane.showMessageDialog(cmp, "You have the latest version installed!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "You have the latest version installed!", "Info", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
         } catch (Exception ex) {
-//            Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void downloadNewVersion() {
-        try {
-            URL u = new URL("http://code.google.com/p/flash-tracer/downloads/list");
-            URLConnection openConnection = u.openConnection();
-            BufferedReader in = new BufferedReader(new InputStreamReader(openConnection.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine + "\n");
-            }
-            in.close();
-            String r = response.toString();
-        } catch (Exception ex) {
-            Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -123,6 +93,8 @@ public class CheckUpdates extends Thread {
         String fileUrl = "http://flash-tracer.googlecode.com/files/" + filename;
         System.out.println("f " + fileUrl);
         try {
+
+            DialogUtils.showDialog("Downloading " + filename + "...");
 
             byte[] bytes = new byte[1024];
             URL u = new URL(fileUrl);
@@ -142,8 +114,9 @@ public class CheckUpdates extends Thread {
             File saveFile = new File(filename);
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setSelectedFile(saveFile);
+            DialogUtils.setVisible(false);
             while (true) {
-                int choice = fileChooser.showSaveDialog(cmp);
+                int choice = fileChooser.showSaveDialog(null);
                 if (choice == JFileChooser.APPROVE_OPTION) {
                     File chosen = fileChooser.getSelectedFile();
                     saveFile = chosen;
@@ -155,13 +128,10 @@ public class CheckUpdates extends Thread {
 
             FileUtil.copyfile(tmpFile.getAbsolutePath(), saveFile.getAbsolutePath());
 
-//            JOptionPane.showMessageDialog(cmp, "Vizzy update has beed downloaded to this folder: " +
-//                    f.getAbsolutePath() + ".\nClose Vizzy, unpack it and replace current version!", "Error", JOptionPane.INFORMATION_MESSAGE);
-
         } catch (Exception ex) {
             Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex);
 
-            JOptionPane.showMessageDialog(cmp, "Failed to download update. Press OK to go to the web-site" +
+            JOptionPane.showMessageDialog(null, "Failed to download update. Press OK to go to the web-site" +
                     " and to download new version manually!",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -174,6 +144,8 @@ public class CheckUpdates extends Thread {
                 Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex1);
             }
 
+        } finally {
+            DialogUtils.closeDialog();
         }
 
     }
