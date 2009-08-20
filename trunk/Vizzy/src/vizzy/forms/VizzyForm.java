@@ -46,7 +46,9 @@ import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import vizzy.comp.JScrollHighlightPanel;
 import vizzy.tasks.CheckUpdates;
+import vizzy.tasks.DebugPlayerDetector;
 import vizzy.tasks.DeleteFile;
+import vizzy.tasks.FlashLogInitializer;
 import vizzy.tasks.LoadFileTask;
 import vizzy.tasks.MMCFGInitializer;
 import vizzy.tasks.WordSearcher;
@@ -57,6 +59,7 @@ import vizzy.tasks.WordSearcher;
  */
 public class VizzyForm extends javax.swing.JFrame {
 
+    private boolean detectPlayer;
     private boolean needToScrolldown = true;
     private boolean isCapturingScroll = false;
     private Timer t;
@@ -103,18 +106,27 @@ public class VizzyForm extends javax.swing.JFrame {
             Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
         } 
 
+        initFlashLog();
+        initMMCFG();
         initFonts();
         loadProperties();
         initComponents();
         initVars();
         initComplete();
-        if (isCheckUpdates) {
-            checkUpdates(this, false);
-        }
+        new Thread(new Runnable() {
+            public void run() {
+                checkDebugPlayers();
+                if (isCheckUpdates) {
+                    jMainFrame.checkUpdates(false);
+                }
+            }
+        }).start();
+        
     }
 
-    private void checkUpdates(Component owner, boolean reportIfOk) {
-        new CheckUpdates(owner, reportIfOk).start();
+    private void checkUpdates(boolean reportIfOk) {
+        CheckUpdates cu = new CheckUpdates(reportIfOk);
+        cu.start();
     }
 
     private void initFonts() {
@@ -161,17 +173,47 @@ public class VizzyForm extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * Get flashlog.txt file location depending on user's
+     * operation system
+     */
+    private void initFlashLog() {
+        FlashLogInitializer i = new FlashLogInitializer();
+        i.init();
+        if (i.getTraceFileLocation() != null) {
+            setFlashLogFile(i.getTraceFileLocation());
+        }
+    }
+
+    /**
+     * Checks that the user has debug flash player installed
+     * Check is only valid for Windows OS and for
+     * IE browser only
+     */
+    private void checkDebugPlayers() {
+        if (detectPlayer) {
+            DebugPlayerDetector d = new DebugPlayerDetector();
+            d.start();
+        }
+        detectPlayer = false;
+    }
+
+    /**
+     * Create mm.cfg file if necessary or
+     * get flashlog.txt file location if it's written
+     * in mm.cfg
+     */
     private void initMMCFG() {
         MMCFGInitializer i = new MMCFGInitializer();
         i.init();
         if (i.isMmcfgCreated()) {
-            JOptionPane.showMessageDialog(this, "Vizzy has created mm.cfg file for you. " +
+            JOptionPane.showMessageDialog(null, "Vizzy has created mm.cfg file for you. " +
                     "Now, in order to see flash trace output, please do the following: \n" +
-                    "1. Make sure that you have debug player installed (and install if necessary).\n" +
-                    "2. Restart all you browsers (IMPORTANT!)", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    "1. Restart all your currently open browsers.",
+                    "Info", JOptionPane.INFORMATION_MESSAGE);
         }
         if (i.getTraceFileLocation() != null) {
-            fileName = i.getTraceFileLocation();
+            setFlashLogFile(i.getTraceFileLocation());
         }
     }
 
@@ -205,8 +247,6 @@ public class VizzyForm extends javax.swing.JFrame {
         //Set the new frame location
         jOptionsDialog.setLocation(x, y);
 
-        initMMCFG();
-
         String defaultFont = "Courier New";
         for (Font font : fonts) {
             if (font.getName().indexOf("Courier") > -1) {
@@ -215,6 +255,7 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         }
 
+        setDetectPlayer(props.getProperty("settings.detectplayer", "true").equals("true"));
         setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
         setFlashLogFile(props.getProperty("settings.filename", ""));
         setRefreshFreq(props.getProperty("settings.refreshFreq", "500"));
@@ -236,6 +277,7 @@ public class VizzyForm extends javax.swing.JFrame {
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
+                saveSetting("settings.detectplayer", String.valueOf(detectPlayer));
                 saveSetting("settings.autoupdates", String.valueOf(isCheckUpdates));
                 saveSetting("settings.refreshFreq", String.valueOf(refreshFreq));
                 saveSetting("settings.isUTF", String.valueOf(isUTF));
@@ -272,9 +314,7 @@ public class VizzyForm extends javax.swing.JFrame {
         try {
             props.load(new FileInputStream(new File("tracer.properties")));
         } catch (FileNotFoundException ex) {
-//            initMMCFG();
         } catch (IOException ex) {
-
         }
     }
 
@@ -302,7 +342,7 @@ public class VizzyForm extends javax.swing.JFrame {
 
         startTimer();
 
-        JOptionPane.showMessageDialog(this, "The log file is too big and Vizzy has run out of memory." +
+        JOptionPane.showMessageDialog(null, "The log file is too big and Vizzy has run out of memory." +
                 " The limit for loading log has been set to " +
                 "50KB. Please change this value if needed in Options panel.", "Warning", JOptionPane.ERROR_MESSAGE);
     }
@@ -397,6 +437,10 @@ public class VizzyForm extends javax.swing.JFrame {
     private void setMaxNumLinesEnabled(boolean equals) {
         jNumLinesEnabledCheckBox.setSelected(equals);
         maxNumLinesEnabled = equals;
+    }
+
+    private void setDetectPlayer(boolean equals) {
+        detectPlayer = equals;
     }
 
     private void setRefreshFreq(String property) {
@@ -1008,7 +1052,7 @@ public class VizzyForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTraceTextAreaMouseReleased
 
     private void jCheckNowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckNowButtonActionPerformed
-        checkUpdates(jOptionsDialog, true);
+        checkUpdates(true);
 }//GEN-LAST:event_jCheckNowButtonActionPerformed
 
     private void jPanel1ComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel1ComponentResized
