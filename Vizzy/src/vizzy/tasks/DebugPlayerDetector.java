@@ -25,7 +25,7 @@ public class DebugPlayerDetector {
 
     public void start() {
         Object[] options = {"Yes",
-                        "No",};
+            "No",};
         int reply = JOptionPane.showOptionDialog(null, "Debug Flash Player detection has not been performed yet. " +
                 "Would you like to perform it now?",
                 "Debug Flash Player Detection",
@@ -38,7 +38,6 @@ public class DebugPlayerDetector {
             detect();
         }
     }
-
 
     /**
      * @return the isDebugOCX
@@ -55,15 +54,20 @@ public class DebugPlayerDetector {
     }
 
     private void detect() {
-         try {
-            File f = new File("fp-detect/fp-detect.html");
-            String p = f.getAbsolutePath();
-            p = p.replaceAll("\\\\", "/");
-            new BrowserLauncher().openURLinBrowser("file://" + p);
+        try {
+            String p = getHtmlFile();
+            new BrowserLauncher().openURLinBrowser(p);
         } catch (BrowserLaunchingInitializingException ex1) {
             Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex1);
         } catch (UnsupportedOperatingSystemException ex1) {
             Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex1);
         }
+    }
+
+    private String getHtmlFile() {
+        File f = new File("fp-detect/fp-detect.html");
+        String p = f.getAbsolutePath();
+        p = "file://" + p.replaceAll("\\\\", "/");
+        return p;
     }
 }
