@@ -115,10 +115,13 @@ public class VizzyForm extends javax.swing.JFrame {
         initComplete();
         new Thread(new Runnable() {
             public void run() {
+                boolean aut = jMainFrame.isAlwaysOnTop();
+                jMainFrame.setAlwaysOnTop(false);
                 checkDebugPlayers();
                 if (isCheckUpdates) {
                     jMainFrame.checkUpdates(false);
                 }
+                jMainFrame.setAlwaysOnTop(aut);
             }
         }).start();
         
