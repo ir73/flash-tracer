@@ -366,8 +366,6 @@ public class VizzyForm extends javax.swing.JFrame {
             setExtendedState(JFrame.NORMAL);
         }
 
-        int scrollValue = vbar.getValue();
-
         boolean isSetTxt = !(searcher.isWasSearching() && searcher.isFilter());
         if (isSetTxt) {
             jTraceTextArea.setText(traceContent);
@@ -379,9 +377,7 @@ public class VizzyForm extends javax.swing.JFrame {
 
         if (needToScrolldown) {
             jTraceTextArea.setCaretPosition(jTraceTextArea.getDocument().getLength());
-        } else if (!searcher.isWasSearching()) {
-            vbar.setValue(scrollValue);
-        }
+        } 
     }
 
     private void startSearch(boolean scrollToSearchResult) {
