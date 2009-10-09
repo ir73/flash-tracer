@@ -10,8 +10,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -19,8 +21,10 @@ import java.util.logging.Logger;
  */
 public class MMCFGInitializer {
 
+    private boolean isPolicyFileRecorded;
     private boolean isMmcfgCreated;
     private String traceFileLocation;
+    private File mmcfg;
 
     public void init() {
 
@@ -53,7 +57,7 @@ public class MMCFGInitializer {
                 mmcfgPath = home + File.separator + "mm.cfg";
             }
 
-            File mmcfg = new File(mmcfgPath);
+            mmcfg = new File(mmcfgPath);
             
             if (mmcfg.exists()) {
 
@@ -75,7 +79,8 @@ public class MMCFGInitializer {
                         String[] keys = line.split("=");
                         if (keys[0].equals("TraceOutputFileName")) {
                             setTraceFileLocation(keys[1]);
-                            break;
+                        } else if (keys[0].equals("PolicyFileLog") && keys[1].equals("1")) {
+                            setPolicyFileRecorded(true);
                         }
                     }
                 } catch (IOException ex) {
@@ -95,7 +100,8 @@ public class MMCFGInitializer {
                     osr.write("PolicyFileLog=1" + ls);
                     osr.write("PolicyFileLogAppend=1");
 
-                    isMmcfgCreated = true;
+                    setMmcfgCreated(true);
+                    setPolicyFileRecorded(true);
                 } catch (IOException ex) {
                     Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
@@ -112,6 +118,18 @@ public class MMCFGInitializer {
      */
     public String getTraceFileLocation() {
         return traceFileLocation;
+    }
+
+    public void recordPolicyFile() {
+        try {
+            List readLines = FileUtils.readLines(mmcfg);
+            readLines.add("PolicyFileLog=1");
+            readLines.add("PolicyFileLogAppend=1");
+            FileUtils.writeLines(mmcfg, readLines);
+            isPolicyFileRecorded = true;
+        } catch (IOException ex) {
+            Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -133,5 +151,19 @@ public class MMCFGInitializer {
      */
     public void setMmcfgCreated(boolean mmcfgCreated) {
         this.isMmcfgCreated = mmcfgCreated;
+    }
+
+    /**
+     * @return the isPolicyFileRecorded
+     */
+    public boolean isPolicyFileRecorded() {
+        return isPolicyFileRecorded;
+    }
+
+    /**
+     * @param isPolicyFileRecorded the isPolicyFileRecorded to set
+     */
+    public void setPolicyFileRecorded(boolean isPolicyFileRecorded) {
+        this.isPolicyFileRecorded = isPolicyFileRecorded;
     }
 }
