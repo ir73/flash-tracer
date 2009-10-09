@@ -11,7 +11,6 @@
 
 package vizzy.forms;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -48,7 +47,7 @@ import vizzy.comp.JScrollHighlightPanel;
 import vizzy.tasks.CheckUpdates;
 import vizzy.tasks.DebugPlayerDetector;
 import vizzy.tasks.DeleteFile;
-import vizzy.tasks.FlashLogInitializer;
+import vizzy.tasks.FlashAndPolicyLogInitializer;
 import vizzy.tasks.LoadFileTask;
 import vizzy.tasks.MMCFGInitializer;
 import vizzy.tasks.WordSearcher;
@@ -64,7 +63,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private boolean isCapturingScroll = false;
     private Timer t;
     private WordSearcher searcher;
-    public static String fileName = "flashlog.txt";
+    private String currentFileName;
     private long maxNumLines = 20;
     private boolean maxNumLinesEnabled = false;
     private long refreshFreq = 500;
@@ -80,6 +79,10 @@ public class VizzyForm extends javax.swing.JFrame {
     private DefaultComboBoxModel fontsModel;
     private Font[] fonts;
     private boolean isCheckUpdates = true;
+    private int logType = 0;
+    private MMCFGInitializer mmcfgInitializer;
+    private String flashLogFileName;
+    private String policyLogFileName;
 
     /**
      * @param args the command line arguments
@@ -95,6 +98,8 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         });
     }
+
+
     
     /** Creates new form VizzyForm */
     public VizzyForm() {
@@ -181,10 +186,13 @@ public class VizzyForm extends javax.swing.JFrame {
      * operation system
      */
     private void initFlashLog() {
-        FlashLogInitializer i = new FlashLogInitializer();
+        FlashAndPolicyLogInitializer i = new FlashAndPolicyLogInitializer();
         i.init();
         if (i.getTraceFileLocation() != null) {
             setFlashLogFile(i.getTraceFileLocation());
+        }
+        if (i.getPolicyFileLocation() != null) {
+            setPolicyLogFile(i.getPolicyFileLocation());
         }
     }
 
@@ -207,16 +215,16 @@ public class VizzyForm extends javax.swing.JFrame {
      * in mm.cfg
      */
     private void initMMCFG() {
-        MMCFGInitializer i = new MMCFGInitializer();
-        i.init();
-        if (i.isMmcfgCreated()) {
+        mmcfgInitializer = new MMCFGInitializer();
+        mmcfgInitializer.init();
+        if (mmcfgInitializer.isMmcfgCreated()) {
             JOptionPane.showMessageDialog(null, "Vizzy has created mm.cfg file for you. " +
                     "Now, in order to see flash trace output, please do the following: \n" +
                     "1. Restart all your currently open browsers.",
                     "Info", JOptionPane.INFORMATION_MESSAGE);
         }
-        if (i.getTraceFileLocation() != null) {
-            setFlashLogFile(i.getTraceFileLocation());
+        if (mmcfgInitializer.getTraceFileLocation() != null) {
+            setFlashLogFile(mmcfgInitializer.getTraceFileLocation());
         }
     }
 
@@ -260,7 +268,8 @@ public class VizzyForm extends javax.swing.JFrame {
 
         setDetectPlayer(props.getProperty("settings.detectplayer", "true").equals("true"));
         setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
-        setFlashLogFile(props.getProperty("settings.filename", ""));
+        setFlashLogFile(props.getProperty("settings.filename", flashLogFileName));
+        setLogType(props.getProperty("settings.logtype", "0"));
         setRefreshFreq(props.getProperty("settings.refreshFreq", "500"));
         setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
         setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
@@ -291,7 +300,7 @@ public class VizzyForm extends javax.swing.JFrame {
                 saveSetting("settings.filter", String.valueOf(jFilterCheckbox.isSelected()));
                 saveSetting("settings.font.name", jTraceTextArea.getFont().getName());
                 saveSetting("settings.font.size", String.valueOf(jTraceTextArea.getFont().getSize()));
-                saveSetting("settings.filename", fileName);
+                saveSetting("settings.filename", flashLogFileName);
                 saveSetting("settings.window.x", String.valueOf(jMainFrame.getX()));
                 saveSetting("settings.window.y", String.valueOf(jMainFrame.getY()));
                 saveSetting("settings.window.width", String.valueOf(jMainFrame.getWidth()));
@@ -299,6 +308,7 @@ public class VizzyForm extends javax.swing.JFrame {
                 saveSetting("settings.restore", String.valueOf(restoreOnUpdate));
                 saveSetting("settings.maxNumLines", String.valueOf(maxNumLines));
                 saveSetting("settings.maxNumLinesEnabled", String.valueOf(maxNumLinesEnabled));
+                saveSetting("settings.logtype", String.valueOf(logType));
                 try {
                     props.store(new FileOutputStream(settingsFile), "");
                 } catch (FileNotFoundException ex) {
@@ -310,6 +320,11 @@ public class VizzyForm extends javax.swing.JFrame {
         });
 
         createLoadTimerTask().run();
+        if (isAutoRefresh) {
+            startTimer();
+        } else {
+            stopTimer();
+        }
     }
 
     private void loadProperties() {
@@ -336,7 +351,7 @@ public class VizzyForm extends javax.swing.JFrame {
     }
 
     private LoadFileTask createLoadTimerTask() {
-        return new LoadFileTask(fileName, maxNumLines, maxNumLinesEnabled, isUTF, this);
+        return new LoadFileTask(currentFileName, maxNumLines, maxNumLinesEnabled, isUTF, this);
     }
 
     public void onOutOfMemory() {
@@ -460,6 +475,24 @@ public class VizzyForm extends javax.swing.JFrame {
         setAlwaysOnTop(b);
     }
 
+    private void setLogType(String property) {
+        logType = Integer.parseInt(property);
+        if (logType == 1) {
+            if (!mmcfgInitializer.isPolicyFileRecorded()) {
+                mmcfgInitializer.recordPolicyFile();
+                JOptionPane.showMessageDialog(null, "Vizzy has updated mm.cfg file to enable policy logging. " +
+                        "Please restart all your browsers for changed to take effect.",
+                    "Info", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+        logTypeCombo.setSelectedIndex(logType);
+        if (logType == 0) {
+            setCurrentLogFile(flashLogFileName);
+        } else {
+            setCurrentLogFile(policyLogFileName);
+        }
+    }
+
     private void setHighlightAll(boolean b) {
         jHighlightAllCheckbox.setSelected(b);
         searcher.setHighlightAll(b);
@@ -473,12 +506,6 @@ public class VizzyForm extends javax.swing.JFrame {
     private void setAutoRefresh(boolean b) {
         jAutorefreshCheckBox.setSelected(b);
         isAutoRefresh = b;
-
-        stopTimer();
-        if (b) {
-            startTimer();
-        }
-
     }
 
     private void setFiltering(boolean b) {
@@ -493,9 +520,15 @@ public class VizzyForm extends javax.swing.JFrame {
     }
 
     private void setFlashLogFile(String filen) {
-        if (!filen.equals("")) {
-            fileName = filen;
-        }
+        flashLogFileName = filen;
+    }
+
+    private void setPolicyLogFile(String filen) {
+        policyLogFileName = filen;
+    }
+
+    private void setCurrentLogFile(String filen) {
+        currentFileName = filen;
     }
 
     private void setMaxNumLines(String lines) {
@@ -563,6 +596,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jTraceTextArea = new javax.swing.JTextArea();
         jScrollHighlight = new vizzy.comp.JScrollHighlightPanel();
         jButton2 = new javax.swing.JButton();
+        logTypeCombo = new javax.swing.JComboBox();
 
         jOptionsDialog.setTitle("Options");
         jOptionsDialog.setResizable(false);
@@ -625,7 +659,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane3.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFreqTextField.setText("1000");
-        jFreqTextField.setBounds(10, 100, 150, 20);
+        jFreqTextField.setBounds(10, 100, 160, 20);
         jLayeredPane3.add(jFreqTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Font"));
@@ -635,9 +669,9 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane2.add(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel2.setText("Font:");
-        jLabel2.setBounds(10, 20, 270, 14);
+        jLabel2.setBounds(10, 20, 260, 14);
         jLayeredPane2.add(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jFontSizeTextField.setBounds(283, 40, 90, 20);
+        jFontSizeTextField.setBounds(290, 40, 80, 20);
         jLayeredPane2.add(jFontSizeTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFontComboBox.setModel(fontsModel);
@@ -669,7 +703,7 @@ public class VizzyForm extends javax.swing.JFrame {
                 jCheckNowButtonActionPerformed(evt);
             }
         });
-        jCheckNowButton.setBounds(10, 40, 140, 23);
+        jCheckNowButton.setBounds(10, 40, 150, 23);
         jLayeredPane6.add(jCheckNowButton, javax.swing.JLayeredPane.PALETTE_LAYER);
 
         jUpdatesCheckBox.setSelected(true);
@@ -822,7 +856,7 @@ public class VizzyForm extends javax.swing.JFrame {
         });
 
         jTraceTextArea.setColumns(20);
-        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12));
+        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
         jTraceTextArea.setLineWrap(true);
         jTraceTextArea.setRows(5);
         jTraceTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -859,7 +893,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
                 .add(0, 0, 0)
                 .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -876,6 +910,13 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         });
 
+        logTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Flash Log", "Policy File" }));
+        logTypeCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logTypeComboActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -885,20 +926,22 @@ public class VizzyForm extends javax.swing.JFrame {
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
-                        .add(jAutorefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 154, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jWordWrapCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 127, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jOnTopCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 148, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jAutorefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jWordWrapCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 113, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jOnTopCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(jClearTraceButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 94, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 135, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 70, Short.MAX_VALUE)
                         .add(jButton2)))
                 .addContainerGap())
             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
-                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
+                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel1Layout.setVerticalGroup(
@@ -908,11 +951,12 @@ public class VizzyForm extends javax.swing.JFrame {
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jWordWrapCheckbox)
                     .add(jAutorefreshCheckBox)
+                    .add(jButton2)
+                    .add(jWordWrapCheckbox)
                     .add(jOnTopCheckbox)
                     .add(jClearTraceButton)
-                    .add(jButton2))
+                    .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(jPanel1Layout.createSequentialGroup()
@@ -978,6 +1022,12 @@ public class VizzyForm extends javax.swing.JFrame {
 
     private void jAutorefreshCheckBoxjAutorefreshCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAutorefreshCheckBoxjAutorefreshCheckboxChecked
         setAutoRefresh(jAutorefreshCheckBox.isSelected());
+        if (isAutoRefresh) {
+            createLoadTimerTask().run();
+            startTimer();
+        } else {
+            stopTimer();
+        }
 }//GEN-LAST:event_jAutorefreshCheckBoxjAutorefreshCheckboxChecked
 
     private void jWordWrapCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWordWrapCheckboxChecked
@@ -989,7 +1039,7 @@ public class VizzyForm extends javax.swing.JFrame {
 }//GEN-LAST:event_jOnTopCheckboxChecked
 
     private void jClearTraceButtondeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearTraceButtondeleteActionPerformed
-        new DeleteFile(fileName);
+        new DeleteFile(currentFileName);
         jTraceTextArea.setText("");
         traceContent = "";
         recentHash = null;
@@ -1027,6 +1077,9 @@ public class VizzyForm extends javax.swing.JFrame {
 
         jTraceTextArea.setText("");
         setFlashLogFile(jFlashLogTextField.getText());
+        if (logType == 0) {
+            setCurrentLogFile(flashLogFileName);
+        }
         setCheckUpdates(jUpdatesCheckBox.isSelected());
         setMaxNumLinesEnabled(jNumLinesEnabledCheckBox.isSelected());
         setMaxNumLines(jNumLinesTextField.getText());
@@ -1040,6 +1093,11 @@ public class VizzyForm extends javax.swing.JFrame {
 
         recentHash = null;
         createLoadTimerTask().run();
+        if (isAutoRefresh) {
+            startTimer();
+        } else {
+            stopTimer();
+        }
     }//GEN-LAST:event_jOKButtonActionPerformed
 
     private void jTraceTextAreaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMousePressed
@@ -1063,6 +1121,7 @@ public class VizzyForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jPanel1ComponentResized
 
     private void jClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearActionPerformed
+        jTraceTextArea.setText(traceContent);
         searcher.clearHighlights();
         searcher.setWasSearching(false);
         jSearchTextField.setText("");
@@ -1076,7 +1135,7 @@ public class VizzyForm extends javax.swing.JFrame {
         }
         jFontComboBox.setSelectedItem(jTraceTextArea.getFont().getName());
         jFontSizeTextField.setText(String.valueOf(jTraceTextArea.getFont().getSize()));
-        jFlashLogTextField.setText(fileName);
+        jFlashLogTextField.setText(flashLogFileName);
         jRestoreCheckBox.setSelected(restoreOnUpdate);
         jNumLinesEnabledCheckBox.setSelected(maxNumLinesEnabled);
         jNumLinesTextField.setText(String.valueOf(maxNumLines));
@@ -1085,6 +1144,14 @@ public class VizzyForm extends javax.swing.JFrame {
 
         jOptionsDialog.setVisible(true);
     }//GEN-LAST:event_jOptionsActionPerformed
+
+    private void logTypeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logTypeComboActionPerformed
+        setLogType(String.valueOf(logTypeCombo.getSelectedIndex()));
+        createLoadTimerTask().run();
+        if (isAutoRefresh) {
+            startTimer();
+        }
+    }//GEN-LAST:event_logTypeComboActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAutorefreshCheckBox;
@@ -1128,6 +1195,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jUpdatesCheckBox;
     private javax.swing.JLabel jVersionLabel;
     private javax.swing.JCheckBox jWordWrapCheckbox;
+    private javax.swing.JComboBox logTypeCombo;
     // End of variables declaration//GEN-END:variables
 
 }
