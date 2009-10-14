@@ -34,7 +34,7 @@
                       <Component id="jTabbedPane1" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="135" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="143" max="-2" attributes="0"/>
                       <Component id="jOKButton" min="-2" pref="74" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jButton2" min="-2" pref="75" max="-2" attributes="0"/>
@@ -51,8 +51,8 @@
               <Component id="jTabbedPane1" pref="370" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jOKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jOKButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -194,7 +194,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jLayeredPane4" alignment="0" pref="385" max="32767" attributes="0"/>
+                          <Component id="jLayeredPane4" alignment="0" min="-2" pref="385" max="-2" attributes="0"/>
                           <Component id="jLayeredPane3" alignment="0" pref="385" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -207,8 +207,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLayeredPane3" min="-2" pref="123" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLayeredPane4" pref="194" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLayeredPane4" min="-2" pref="194" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="1"/>
                   </Group>
               </Group>
             </DimensionLayout>
