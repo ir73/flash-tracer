@@ -25,6 +25,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -77,8 +78,8 @@ public class VizzyForm extends javax.swing.JFrame {
     private Font[] fonts;
     private MMCFGInitializer mmcfgInitializer;
     private OptionsForm optionsForm;
-    private SnapshotForm snapshotForm;
     
+    public ArrayList<SnapshotForm> snapshotForms = new ArrayList<SnapshotForm>();
     public DefaultComboBoxModel fontsModel;
     public String flashLogFileName;
     public String policyLogFileName;
@@ -303,17 +304,6 @@ public class VizzyForm extends javax.swing.JFrame {
                 saveSetting("settings.maxNumLines", String.valueOf(maxNumLines));
                 saveSetting("settings.maxNumLinesEnabled", String.valueOf(maxNumLinesEnabled));
                 saveSetting("settings.logtype", String.valueOf(logType));
-                if (snapshotForm != null) {
-                    saveSetting("settings.snapshot.x", String.valueOf(snapshotForm.getX()));
-                    saveSetting("settings.snapshot.y", String.valueOf(snapshotForm.getY()));
-                    saveSetting("settings.snapshot.width", String.valueOf(snapshotForm.getWidth()));
-                    saveSetting("settings.snapshot.height", String.valueOf(snapshotForm.getHeight()));
-                } else {
-                    saveSetting("settings.snapshot.x", props.getProperty("settings.snapshot.x", "0"));
-                    saveSetting("settings.snapshot.y", props.getProperty("settings.snapshot.y", "0"));
-                    saveSetting("settings.snapshot.width", props.getProperty("settings.snapshot.width", "300"));
-                    saveSetting("settings.snapshot.height", props.getProperty("settings.snapshot.height", "400"));
-                }
                 try {
                     props.store(new FileOutputStream(settingsFile), "");
                 } catch (FileNotFoundException ex) {
@@ -382,10 +372,6 @@ public class VizzyForm extends javax.swing.JFrame {
         recentHash = currentHash;
         traceContent = log;
         
-        if (restoreOnUpdate) {
-            setExtendedState(JFrame.NORMAL);
-        }
-
         boolean isSetTxt = !(searcher.isWasSearching() && searcher.isFilter());
         if (isSetTxt) {
             jTraceTextArea.setText(traceContent);
@@ -397,7 +383,12 @@ public class VizzyForm extends javax.swing.JFrame {
 
         if (needToScrolldown) {
             jTraceTextArea.setCaretPosition(jTraceTextArea.getDocument().getLength());
-        } 
+        }
+
+        if (restoreOnUpdate) {
+            setExtendedState(JFrame.NORMAL);
+            repaint();
+        }
     }
 
     private void startSearch(boolean scrollToSearchResult) {
@@ -503,7 +494,8 @@ public class VizzyForm extends javax.swing.JFrame {
     public void setWordWrap(boolean b) {
         jWordWrapCheckbox.setSelected(b);
         this.jTraceTextArea.setLineWrap(b);
-        if (snapshotForm != null) {
+
+        for (SnapshotForm snapshotForm : snapshotForms) {
             snapshotForm.setWordWrap(b);
         }
     }
@@ -954,21 +946,12 @@ public class VizzyForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuOptionsClicked
 
     private void menuSnapshotClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSnapshotClicked
-        if (snapshotForm == null) {
-            snapshotForm = new SnapshotForm(this);
-
-            Toolkit toolkit = Toolkit.getDefaultToolkit();
-            Dimension screenSize = toolkit.getScreenSize();
-            int x = screenSize.width / 2 - snapshotForm.getWidth()/2;
-            int y = screenSize.height / 2 - snapshotForm.getHeight()/2;
-
-            snapshotForm.setLocation(Integer.parseInt(props.getProperty("settings.snapshot.x", String.valueOf(x))),
-                Integer.parseInt(props.getProperty("settings.snapshot.y", String.valueOf(y))));
-
-            snapshotForm.setSize(Integer.parseInt(props.getProperty("settings.snapshot.width", String.valueOf(snapshotForm.getWidth()))),
-                Integer.parseInt(props.getProperty("settings.snapshot.height", String.valueOf(snapshotForm.getHeight()))));
-        }
+        SnapshotForm snapshotForm = new SnapshotForm(this);
+        snapshotForm.setLocation(getLocation().x - snapshotForm.getWidth() - snapshotForms.size() * 20, getLocation().y  - snapshotForms.size() * 20);
+        snapshotForm.setSize(snapshotForm.getWidth(), getHeight());
         snapshotForm.setVisible(true);
+        
+        snapshotForms.add(snapshotForm);
     }//GEN-LAST:event_menuSnapshotClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
