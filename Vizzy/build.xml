@@ -28,7 +28,7 @@
             </fileset>
         </move>
 
-        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v1.26.zip">
+        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v1.5.zip">
         </zip>
 
         <mkdir dir="${dist.dir}/zip" />
