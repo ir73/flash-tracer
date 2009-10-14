@@ -15,8 +15,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
@@ -25,7 +23,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,6 +44,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import vizzy.comp.JScrollHighlightPanel;
+import vizzy.forms.panels.AboutPanel;
 import vizzy.forms.panels.OptionsForm;
 import vizzy.forms.panels.SnapshotForm;
 import vizzy.tasks.CheckUpdates;
@@ -112,7 +110,6 @@ public class VizzyForm extends javax.swing.JFrame {
     /** Creates new form VizzyForm */
     public VizzyForm() {
         super();
-        setVisible(false);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -121,7 +118,6 @@ public class VizzyForm extends javax.swing.JFrame {
 
         
         initComponents();
-        setVisible(true);
         initFlashLog();
         initMMCFG();
         initFonts();
@@ -130,6 +126,7 @@ public class VizzyForm extends javax.swing.JFrame {
         initComplete();
         new Thread(new Runnable() {
             public void run() {
+                
                 boolean aut = jMainFrame.isAlwaysOnTop();
                 jMainFrame.setAlwaysOnTop(false);
                 checkDebugPlayers();
@@ -140,6 +137,7 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         }).start();
         
+        setVisible(true);
     }
 
     public void checkUpdates(boolean reportIfOk) {
@@ -574,6 +572,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vizzy Flash Tracer");
@@ -625,8 +624,8 @@ public class VizzyForm extends javax.swing.JFrame {
         jFilterCheckbox.setBounds(140, 20, 120, 15);
         jLayeredPane1.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jMultipleLabel.setText("Hint: Use comma to filter multiple phrases");
+        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jMultipleLabel.setText("Hint: Use comma to separate multiple keywords");
         jMultipleLabel.setBounds(270, 20, 300, 14);
         jLayeredPane1.add(jMultipleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -773,7 +772,7 @@ public class VizzyForm extends javax.swing.JFrame {
 
         jMenu1.setText("Edit");
 
-        jMenuItem1.setText("Copy All");
+        jMenuItem1.setText("Copy All to Clipboard");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuCopyAllClicked(evt);
@@ -802,6 +801,14 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         });
         jMenu2.add(jMenuItem2);
+
+        jMenuItem4.setText("About");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutClicked(evt);
+            }
+        });
+        jMenu2.add(jMenuItem4);
 
         jMenuBar1.add(jMenu2);
 
@@ -954,6 +961,10 @@ public class VizzyForm extends javax.swing.JFrame {
         snapshotForms.add(snapshotForm);
     }//GEN-LAST:event_menuSnapshotClicked
 
+    private void aboutClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutClicked
+        new AboutPanel(this);
+    }//GEN-LAST:event_aboutClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JCheckBox jAutorefreshCheckBox;
     public javax.swing.JButton jButton1;
@@ -967,6 +978,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     public javax.swing.JLabel jMultipleLabel;
     public javax.swing.JCheckBox jOnTopCheckbox;
     private javax.swing.JPanel jPanel1;
