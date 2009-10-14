@@ -30,6 +30,7 @@ public class CheckUpdates {
 
     public static final String VERSION = "1.5";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
+    private static final String WEBSITE_FEATURES_PHRASE = "Current version features: ";
     private boolean reportIfOk;
 
     public CheckUpdates(boolean reportIfOk) {
@@ -49,7 +50,6 @@ public class CheckUpdates {
 
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine + "\n");
-//                System.out.println(inputLine);
             }
             in.close();
 
@@ -62,13 +62,21 @@ public class CheckUpdates {
                 double newVerd = Double.parseDouble(newVer);
                 double verd = Double.parseDouble(VERSION);
                 if (newVerd > verd) {
+
+                    i = r.indexOf(WEBSITE_FEATURES_PHRASE);
+                    i2 = r.indexOf(";", i);
+                    String newFeatures = r.substring(i + WEBSITE_FEATURES_PHRASE.length(), i2);
+                    newFeatures = newFeatures.replaceAll("\\|", "\n");
+
                     Object[] options = {"Yes",
                         "No",};
 
                     int reply = JOptionPane.showOptionDialog(null, "New version is availible (" + newVer + "). " +
                             "Would you like Vizzy to download it to your computer for you?\n" +
                             "Note: if you do not want to receive update notifications anymore, you can turn " +
-                            "them off in Options menu.",
+                            "them off in Options menu.\n\n" +
+                            "Here is a list of features that new version has:\n" +
+                            newFeatures,
                             "New Version",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE,

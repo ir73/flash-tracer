@@ -11,8 +11,11 @@
 
 package vizzy.forms.panels;
 
+import java.io.File;
+import javax.swing.JFileChooser;
 import vizzy.forms.VizzyForm;
 import vizzy.tasks.CheckUpdates;
+import vizzy.util.DialogUtils;
 
 /**
  *
@@ -42,7 +45,7 @@ public class OptionsForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        jOKButton = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         jLayeredPane2 = new javax.swing.JLayeredPane();
@@ -58,6 +61,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jFlashLogTextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jFreqTextField = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jLayeredPane4 = new javax.swing.JLayeredPane();
         jNumLinesTextField = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -67,7 +71,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jVersionLabel = new javax.swing.JLabel();
         jCheckNowButton = new javax.swing.JButton();
         jUpdatesCheckBox = new javax.swing.JCheckBox();
-        jOKButton = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Options");
@@ -75,6 +79,13 @@ public class OptionsForm extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
+            }
+        });
+
+        jOKButton.setText("OK");
+        jOKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jOKButtonActionPerformed(evt);
             }
         });
 
@@ -119,7 +130,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jRestoreCheckBox)
                 .add(18, 18, 18)
                 .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addContainerGap(188, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("General", jPanel2);
@@ -133,7 +144,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jLabel4.setText("flashlog.txt location:");
         jLabel4.setBounds(10, 20, 190, 14);
         jLayeredPane3.add(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jFlashLogTextField.setBounds(10, 40, 360, 20);
+        jFlashLogTextField.setBounds(10, 40, 250, 20);
         jLayeredPane3.add(jFlashLogTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel1.setText("Log file read frequency (in milliseconds):");
@@ -144,17 +155,26 @@ public class OptionsForm extends javax.swing.JFrame {
         jFreqTextField.setBounds(10, 90, 160, 20);
         jLayeredPane3.add(jFreqTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jButton1.setText("Browse...");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseButtonClicked(evt);
+            }
+        });
+        jButton1.setBounds(271, 38, 100, 23);
+        jLayeredPane3.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         jLayeredPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Limit"));
-        jNumLinesTextField.setBounds(10, 130, 160, 20);
+        jNumLinesTextField.setBounds(10, 150, 160, 20);
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load:");
-        jLabel8.setBounds(10, 110, 360, 14);
+        jLabel8.setBounds(10, 130, 360, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when the log file gets too big and that might cause slower performance. Setting this limit is not mandatory because Vizzy will set this automatically if runs out of memory.</html>");
         jLabel11.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jLabel11.setBounds(10, 40, 360, 40);
+        jLabel11.setBounds(10, 40, 360, 80);
         jLayeredPane4.add(jLabel11, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jNumLinesEnabledCheckBox.setText("Load limited amount of bytes from the end of file only");
@@ -175,8 +195,8 @@ public class OptionsForm extends javax.swing.JFrame {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -185,8 +205,8 @@ public class OptionsForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(jLayeredPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 123, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 164, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .add(jLayeredPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 184, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Log File", jPanel3);
@@ -226,64 +246,44 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jVersionLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jCheckNowButton)
-                .addContainerGap(221, Short.MAX_VALUE))
+                .addContainerGap(236, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Updates", jPanel4);
 
-        jOKButton.setText("OK");
-        jOKButton.addActionListener(new java.awt.event.ActionListener() {
+        jButton2.setText("Cancel");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jOKButtonActionPerformed(evt);
+                cancelClicked(evt);
             }
         });
-
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jTabbedPane1)
-                .addContainerGap())
-            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(jPanel1Layout.createSequentialGroup()
-                    .add(190, 190, 190)
-                    .add(jOKButton)
-                    .addContainerGap(191, Short.MAX_VALUE)))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 344, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(48, Short.MAX_VALUE))
-            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addContainerGap(369, Short.MAX_VALUE)
-                    .add(jOKButton)
-                    .addContainerGap()))
-        );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 430, Short.MAX_VALUE)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(layout.createSequentialGroup()
-                    .add(0, 0, Short.MAX_VALUE)
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(0, 0, Short.MAX_VALUE)))
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jTabbedPane1))
+                    .add(layout.createSequentialGroup()
+                        .add(138, 138, 138)
+                        .add(jOKButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 403, Short.MAX_VALUE)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(layout.createSequentialGroup()
-                    .add(0, 0, Short.MAX_VALUE)
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(0, 0, Short.MAX_VALUE)))
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 359, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jOKButton)
+                    .add(jButton2))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -308,10 +308,32 @@ public class OptionsForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jOKButtonActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        closeOptions();
+        dispose();
     }//GEN-LAST:event_formWindowClosing
 
+    private void browseButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonClicked
+        File openFile = new File(jFlashLogTextField.getText());
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setSelectedFile(openFile);
+        while (true) {
+            int choice = fileChooser.showOpenDialog(this);
+            if (choice == JFileChooser.APPROVE_OPTION) {
+                openFile = fileChooser.getSelectedFile();
+                jFlashLogTextField.setText(openFile.getAbsolutePath());
+                break;
+            } else {
+                break;
+            }
+        }
+    }//GEN-LAST:event_browseButtonClicked
+
+    private void cancelClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelClicked
+        dispose();
+    }//GEN-LAST:event_cancelClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jCheckNowButton;
     private javax.swing.JTextField jFlashLogTextField;
     private javax.swing.JComboBox jFontComboBox;
@@ -329,7 +351,6 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jNumLinesEnabledCheckBox;
     private javax.swing.JTextField jNumLinesTextField;
     private javax.swing.JButton jOKButton;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
