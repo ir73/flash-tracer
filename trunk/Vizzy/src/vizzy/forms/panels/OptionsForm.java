@@ -381,6 +381,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jFlashLogTextField.setText(vf.flashLogFileName);
         jFreqTextField.setText(String.valueOf(vf.refreshFreq));
         jVersionLabel.setText("Current version is: " + CheckUpdates.VERSION);
+        jNumLinesTextField.setEnabled(jNumLinesEnabledCheckBox.isSelected());
     }
 
     @Override
