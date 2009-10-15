@@ -91,7 +91,6 @@ public class SnapshotForm extends javax.swing.JFrame {
     private void onWindowClose(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onWindowClose
         vf.snapshotForms.remove(this);
         dispose();
-        System.out.print("cloooo");
     }//GEN-LAST:event_onWindowClose
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

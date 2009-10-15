@@ -10,6 +10,7 @@ package vizzy.tasks;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -69,9 +70,11 @@ public class LoadFileTask extends TimerTask {
 
         } catch (OutOfMemoryError ex) {
             tracerForm.onOutOfMemory();
-            //Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            tracerForm.onFileRead("");
         } catch (Exception ex) {
-            //Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 bo.close();

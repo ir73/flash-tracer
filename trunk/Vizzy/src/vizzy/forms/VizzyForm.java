@@ -11,10 +11,8 @@
 
 package vizzy.forms;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
@@ -941,12 +939,6 @@ public class VizzyForm extends javax.swing.JFrame {
 
         if (optionsForm == null) {
             optionsForm = new OptionsForm(this);
-
-            Toolkit toolkit = Toolkit.getDefaultToolkit();
-            Dimension screenSize = toolkit.getScreenSize();
-            int x = screenSize.width / 2 - optionsForm.getWidth()/2;
-            int y = screenSize.height / 2 - optionsForm.getHeight()/2;
-            optionsForm.setLocation(x, y);
         }
 
         optionsForm.setVisible(true);

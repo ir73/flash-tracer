@@ -7,7 +7,6 @@ package vizzy.tasks;
 import edu.stanford.ejalbert.BrowserLauncher;
 import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
 import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
-import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
