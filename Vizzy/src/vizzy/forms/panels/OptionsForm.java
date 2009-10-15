@@ -15,7 +15,6 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import vizzy.forms.VizzyForm;
 import vizzy.tasks.CheckUpdates;
-import vizzy.util.DialogUtils;
 
 /**
  *
@@ -34,6 +33,10 @@ public class OptionsForm extends javax.swing.JFrame {
             this.setIconImage(vf.getIconImage());
         } catch (Exception e) {
         }
+
+        int x = vf.getX() + vf.getWidth() / 2 - getWidth( )/ 2;
+        int y = vf.getY() + vf.getHeight() / 2 - getHeight()/ 2;
+        setLocation(x, y);
     }
 
     /** This method is called from within the constructor to
@@ -114,10 +117,10 @@ public class OptionsForm extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
+                        .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(27, 27, 27)
                         .add(jRestoreCheckBox)))
@@ -168,7 +171,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jNumLinesTextField.setBounds(10, 160, 160, 20);
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel8.setText("Max amount of bytes to load:");
+        jLabel8.setText("Max amount of bytes to load from end of file:");
         jLabel8.setBounds(10, 140, 360, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -194,9 +197,9 @@ public class OptionsForm extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
