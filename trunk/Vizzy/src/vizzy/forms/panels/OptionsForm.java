@@ -331,6 +331,7 @@ public class OptionsForm extends javax.swing.JFrame {
     }//GEN-LAST:event_browseButtonClicked
 
     private void cancelClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelClicked
+        vf.setAlwaysOnTop(vf.isAlwaysONTOP);
         dispose();
     }//GEN-LAST:event_cancelClicked
 
@@ -377,8 +378,7 @@ public class OptionsForm extends javax.swing.JFrame {
         vf.setMaxNumLines(jNumLinesTextField.getText());
         vf.setUTF(jUTFCheckBox.isSelected());
         vf.setRefreshFreq(jFreqTextField.getText());
-        vf.setAutoRefresh(vf.jAutorefreshCheckBox.isSelected());
-        vf.setAlwaysOnTop(vf.jOnTopCheckbox.isSelected());
+        vf.setAlwaysOnTop(vf.isAlwaysONTOP);
         vf.setRestoreOnUpdate(jRestoreCheckBox.isSelected());
 
 

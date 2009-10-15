@@ -88,6 +88,7 @@ public class VizzyForm extends javax.swing.JFrame {
     public long maxNumLines = 20;
     public boolean restoreOnUpdate = false;
     public long refreshFreq = 500;
+    public boolean isAlwaysONTOP;
 
     /**
      * @param args the command line arguments
@@ -103,7 +104,6 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         });
     }
-
     
     /** Creates new form VizzyForm */
     public VizzyForm() {
@@ -244,7 +244,7 @@ public class VizzyForm extends javax.swing.JFrame {
         scrollPanel.setSize(scrollPanel.getWidth(), jTraceTextArea.getHeight()/2);
 
         try {
-            URL myIconUrl = this.getClass().getResource("/img/Vizzy.gif");
+            URL myIconUrl = this.getClass().getResource("/img/vizzy.png");
             this.setIconImage(new ImageIcon(myIconUrl, "Vizzy Flash Tracer").getImage());
         } catch (Exception e) {
         }
@@ -460,8 +460,9 @@ public class VizzyForm extends javax.swing.JFrame {
     }
 
     private void setOnTop (boolean b) {
-        jOnTopCheckbox.setSelected(b);
-        setAlwaysOnTop(b);
+        isAlwaysONTOP = b;
+        jOnTopCheckbox.setSelected(isAlwaysONTOP);
+        setAlwaysOnTop(isAlwaysONTOP);
     }
 
     private void setLogType(String property) {
@@ -933,7 +934,7 @@ public class VizzyForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuCopyAllClicked
 
     private void menuOptionsClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOptionsClicked
-        if (jOnTopCheckbox.isSelected()) {
+        if (isAlwaysONTOP) {
             setAlwaysOnTop(false);
         }
 
