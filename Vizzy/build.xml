@@ -28,7 +28,11 @@
             </fileset>
         </move>
 
-        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v1.5.zip">
+        <exec executable="C:/Program Files/Launch4j/launch4jc">
+            <arg value="launch4j.xml"/>
+        </exec>
+
+        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v2.0.zip">
         </zip>
 
         <mkdir dir="${dist.dir}/zip" />
@@ -36,6 +40,7 @@
             <fileset dir="zip">
             </fileset>
         </move>
+
     </target>
     <!--
 
