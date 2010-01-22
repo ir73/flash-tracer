@@ -1,1 +1,1 @@
-javaw -jar Vizzy.jar
+java -jar Vizzy.jar
