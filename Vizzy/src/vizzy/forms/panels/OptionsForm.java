@@ -179,7 +179,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load from end of file:");
-        jLabel8.setBounds(10, 140, 350, 14);
+        jLabel8.setBounds(10, 140, 360, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when the log file gets too big and that might cause slower performance. Setting this limit is not mandatory because Vizzy will set this automatically if runs out of memory.</html>");
@@ -195,7 +195,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 jNumLinesEnabledCheckBoxActionPerformed(evt);
             }
         });
-        jNumLinesEnabledCheckBox.setBounds(10, 20, 360, 15);
+        jNumLinesEnabledCheckBox.setBounds(10, 20, 350, 15);
         jLayeredPane4.add(jNumLinesEnabledCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
@@ -242,10 +242,10 @@ public class OptionsForm extends javax.swing.JFrame {
             .add(jPanel4Layout.createSequentialGroup()
                 .add(21, 21, 21)
                 .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jUpdatesCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 362, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jCheckNowButton)
-                    .add(jVersionLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 207, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                    .add(jUpdatesCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 353, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jVersionLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jCheckNowButton))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -268,7 +268,7 @@ public class OptionsForm extends javax.swing.JFrame {
             }
         });
 
-        jCheckBoxTraceAll.setText("<html>Trace all executed methods. Warning: use with \"Buffer Trace Output\" only!</html>");
+        jCheckBoxTraceAll.setText("<html>Trace all executed methods. Warning: use with \"Buffer Trace Output\" only! (AS3 only)</html>");
         jCheckBoxTraceAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBoxTraceAllActionPerformed(evt);
@@ -278,14 +278,14 @@ public class OptionsForm extends javax.swing.JFrame {
         jLabel7.setText("<html>You will need to restart your browser after changing these settings</html>");
         jLabel7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-        jCheckBoxVerbose.setText("<html>Trace bytecode. Traces detailed information about SWF bytecode and runtime parsing.</html>");
+        jCheckBoxVerbose.setText("<html>Trace bytecode. Traces detailed information about SWF bytecode and runtime parsing. (AS3 only)</html>");
         jCheckBoxVerbose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBoxVerboseActionPerformed(evt);
             }
         });
 
-        jCheckBoxStatic.setText("<html>Outputs information about functions, bytecode, memory used, etc.</html>");
+        jCheckBoxStatic.setText("<html>Outputs information about functions, bytecode, memory used, etc. (AS3 only)</html>");
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -294,11 +294,11 @@ public class OptionsForm extends javax.swing.JFrame {
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxStatic)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxVerbose, 0, 0, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxBuffer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxTraceAll, 0, 0, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxStatic, 0, 0, Short.MAX_VALUE))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(

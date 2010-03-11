@@ -116,7 +116,9 @@ public class MMCFGInitializer {
             map = new HashMap<String, String>();
             for (Object object : readLines) {
                 String[] k = ((String)object).split("=");
-                if (k.length == 1) {
+                if (k[0].length() ==  0) {
+                    
+                } else if (k.length == 1) {
                     map.put(k[0], null);
                 } else {
                     map.put(k[0], k[1]);
