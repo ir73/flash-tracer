@@ -27,7 +27,7 @@ import vizzy.util.FileUtil;
  */
 public class CheckUpdates {
 
-    public static final String VERSION = "2.0";
+    public static final String VERSION = "2.1";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
     private static final String WEBSITE_FEATURES_PHRASE = "Current version features: ";
     private boolean reportIfOk;

@@ -72,9 +72,9 @@ public class VizzyForm extends javax.swing.JFrame {
     private File settingsFile = new File("tracer.properties");
     private VizzyForm jMainFrame;
     private Font[] fonts;
-    private MMCFGInitializer mmcfgInitializer;
     private OptionsForm optionsForm;
-    
+
+    public MMCFGInitializer mmcfgInitializer;
     public ArrayList<SnapshotForm> snapshotForms = new ArrayList<SnapshotForm>();
     public DefaultComboBoxModel fontsModel;
     public String flashLogFileName;
