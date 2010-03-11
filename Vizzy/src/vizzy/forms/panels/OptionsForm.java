@@ -12,6 +12,7 @@
 package vizzy.forms.panels;
 
 import java.io.File;
+import java.util.HashMap;
 import javax.swing.JFileChooser;
 import vizzy.forms.VizzyForm;
 import vizzy.tasks.CheckUpdates;
@@ -74,6 +75,12 @@ public class OptionsForm extends javax.swing.JFrame {
         jVersionLabel = new javax.swing.JLabel();
         jCheckNowButton = new javax.swing.JButton();
         jUpdatesCheckBox = new javax.swing.JCheckBox();
+        jPanel1 = new javax.swing.JPanel();
+        jCheckBoxBuffer = new javax.swing.JCheckBox();
+        jCheckBoxTraceAll = new javax.swing.JCheckBox();
+        jLabel7 = new javax.swing.JLabel();
+        jCheckBoxVerbose = new javax.swing.JCheckBox();
+        jCheckBoxStatic = new javax.swing.JCheckBox();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -108,7 +115,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jFontComboBox.setBounds(10, 40, 270, 22);
         jLayeredPane2.add(jFontComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jRestoreCheckBox.setText("Restore window on trace update if window minimized");
+        jRestoreCheckBox.setText("<html>Restore window on trace update if window minimized</html>");
         jRestoreCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jRestoreCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
@@ -117,21 +124,21 @@ public class OptionsForm extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(27, 27, 27)
-                        .add(jRestoreCheckBox)))
-                .addContainerGap())
+                        .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 356, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
-                .add(30, 30, 30)
-                .add(jRestoreCheckBox)
-                .add(18, 18, 18)
+                .addContainerGap()
+                .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(199, Short.MAX_VALUE))
         );
@@ -145,17 +152,17 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane3.add(jUTFCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel4.setText("flashlog.txt location:");
-        jLabel4.setBounds(10, 20, 190, 14);
+        jLabel4.setBounds(10, 20, 180, 14);
         jLayeredPane3.add(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jFlashLogTextField.setBounds(10, 40, 250, 20);
         jLayeredPane3.add(jFlashLogTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel1.setText("Log file read frequency (in milliseconds):");
-        jLabel1.setBounds(10, 70, 360, 14);
+        jLabel1.setBounds(10, 70, 350, 14);
         jLayeredPane3.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFreqTextField.setText("1000");
-        jFreqTextField.setBounds(10, 90, 160, 20);
+        jFreqTextField.setBounds(10, 90, 170, 20);
         jLayeredPane3.add(jFreqTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jButton1.setText("Browse...");
@@ -168,11 +175,11 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane3.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Limit"));
-        jNumLinesTextField.setBounds(10, 160, 160, 20);
+        jNumLinesTextField.setBounds(10, 160, 170, 20);
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load from end of file:");
-        jLabel8.setBounds(10, 140, 360, 14);
+        jLabel8.setBounds(10, 140, 350, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when the log file gets too big and that might cause slower performance. Setting this limit is not mandatory because Vizzy will set this automatically if runs out of memory.</html>");
@@ -254,6 +261,64 @@ public class OptionsForm extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Updates", jPanel4);
 
+        jCheckBoxBuffer.setText("<html>Buffer trace output. Use this if you trace really much which causes your CPU work with 100% load</html>");
+        jCheckBoxBuffer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxBufferActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxTraceAll.setText("<html>Trace all executed methods. Warning: use with \"Buffer Trace Output\" only!</html>");
+        jCheckBoxTraceAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxTraceAllActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("<html>You will need to restart your browser after changing these settings</html>");
+        jLabel7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        jCheckBoxVerbose.setText("<html>Trace bytecode. Traces detailed information about SWF bytecode and runtime parsing.</html>");
+        jCheckBoxVerbose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxVerboseActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxStatic.setText("<html>Outputs information about functions, bytecode, memory used, etc.</html>");
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxStatic)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxVerbose, 0, 0, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxBuffer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxTraceAll, 0, 0, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 30, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jCheckBoxBuffer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jCheckBoxTraceAll, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jCheckBoxVerbose, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jCheckBoxStatic, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(135, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Trace Output", jPanel1);
+
         jButton2.setText("Cancel");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -269,9 +334,9 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jTabbedPane1))
+                        .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
-                        .add(143, 143, 143)
+                        .add(134, 134, 134)
                         .add(jOKButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(jButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -282,7 +347,7 @@ public class OptionsForm extends javax.swing.JFrame {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
-                .add(11, 11, 11)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jButton2)
                     .add(jOKButton))
@@ -335,9 +400,27 @@ public class OptionsForm extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_cancelClicked
 
+    private void jCheckBoxBufferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxBufferActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_jCheckBoxBufferActionPerformed
+
+    private void jCheckBoxVerboseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxVerboseActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxVerboseActionPerformed
+
+    private void jCheckBoxTraceAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxTraceAllActionPerformed
+        if (jCheckBoxTraceAll.isSelected()) {
+            jCheckBoxBuffer.setSelected(true);
+        }
+    }//GEN-LAST:event_jCheckBoxTraceAllActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JCheckBox jCheckBoxBuffer;
+    private javax.swing.JCheckBox jCheckBoxStatic;
+    private javax.swing.JCheckBox jCheckBoxTraceAll;
+    private javax.swing.JCheckBox jCheckBoxVerbose;
     private javax.swing.JButton jCheckNowButton;
     private javax.swing.JTextField jFlashLogTextField;
     private javax.swing.JComboBox jFontComboBox;
@@ -348,6 +431,7 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLayeredPane jLayeredPane2;
     private javax.swing.JLayeredPane jLayeredPane3;
@@ -355,6 +439,7 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jNumLinesEnabledCheckBox;
     private javax.swing.JTextField jNumLinesTextField;
     private javax.swing.JButton jOKButton;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -381,6 +466,12 @@ public class OptionsForm extends javax.swing.JFrame {
         vf.setAlwaysOnTop(vf.isAlwaysONTOP);
         vf.setRestoreOnUpdate(jRestoreCheckBox.isSelected());
 
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put("TraceOutputBuffered", jCheckBoxBuffer.isSelected() ? "1" : "0");
+        m.put("AS3Trace", jCheckBoxTraceAll.isSelected() ? "1" : "0");
+        m.put("AS3StaticProfile", jCheckBoxStatic.isSelected() ? "1" : "0");
+        m.put("AS3Verbose", jCheckBoxVerbose.isSelected() ? "1" : "0");
+        vf.mmcfgInitializer.saveKeys(m);
 
         vf.recentHash = null;
         vf.createLoadTimerTask().run();
@@ -406,6 +497,10 @@ public class OptionsForm extends javax.swing.JFrame {
         jFreqTextField.setText(String.valueOf(vf.refreshFreq));
         jVersionLabel.setText("Current version is: " + CheckUpdates.VERSION);
         jNumLinesTextField.setEnabled(jNumLinesEnabledCheckBox.isSelected());
+        jCheckBoxBuffer.setSelected(vf.mmcfgInitializer.getKey("TraceOutputBuffered", "0").equals("1"));
+        jCheckBoxTraceAll.setSelected(vf.mmcfgInitializer.getKey("AS3Trace", "0").equals("1"));
+        jCheckBoxVerbose.setSelected(vf.mmcfgInitializer.getKey("AS3Verbose", "0").equals("1"));
+        jCheckBoxStatic.setSelected(vf.mmcfgInitializer.getKey("AS3StaticProfile", "0").equals("1"));
     }
 
     @Override

@@ -10,7 +10,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -21,149 +25,159 @@ import org.apache.commons.io.FileUtils;
  */
 public class MMCFGInitializer {
 
-    private boolean isPolicyFileRecorded;
-    private boolean isMmcfgCreated;
-    private String traceFileLocation;
     private File mmcfg;
+    private HashMap<String, String> map;
+
+    private boolean isMmcfgCreated;
+    private boolean isPolicyFileRecorded;
+    private String traceFileLocation;
+
+    public MMCFGInitializer() {
+        map = new HashMap<String, String>();
+    }
 
     public void init() {
 
-        String ls = System.getProperty("line.separator");
-        String osName = System.getProperty("os.name");
-        String home = System.getProperty("user.home", "");
-
-        if (osName == null) {
-            return;
-        }
-
         try {
-            String mmcfgPath = "";
-            if (osName.indexOf("Vista") > -1) {
-                if (home.equals("")) {
-                    return;
-                }
-                mmcfgPath = home + File.separator + "mm.cfg";
-            } else if (osName.indexOf("Windows") > -1) {
-                if (home.equals("")) {
-                    return;
-                }
-                mmcfgPath = home + File.separator + "mm.cfg";
-            } else if (osName.indexOf("Mac") > -1) {
-                mmcfgPath = "/Library/Application Support/Macromedia/mm.cfg";
-            } else if (osName.indexOf("Linux") > -1) {
-                if (home.equals("")) {
-                    return;
-                }
-                mmcfgPath = home + File.separator + "mm.cfg";
+            String mmcfgPath = evaluateMMCFGPath();
+            if (mmcfgPath == null) {
+                return;
             }
 
             mmcfg = new File(mmcfgPath);
             
             if (mmcfg.exists()) {
 
-                FileInputStream fis = null;
-                ByteArrayOutputStream bo = null;
-                try {
-                    fis = new FileInputStream(mmcfg);
+                readMMCFG();
 
-                    bo = new ByteArrayOutputStream();
-                    byte[] b = new byte[1024];
-                    int count = 0;
-                    while ((count = fis.read(b)) != -1) {
-                        bo.write(b, 0, count);
-                    }
-                    String s = new String(bo.toByteArray(), "UTF-8");
-
-                    String[] lines = s.split(ls);
-                    for (String line : lines) {
-                        String[] keys = line.split("=");
-                        if (keys[0].equals("TraceOutputFileName")) {
-                            setTraceFileLocation(keys[1]);
-                        } else if (keys[0].equals("PolicyFileLog") && keys[1].equals("1")) {
-                            setPolicyFileRecorded(true);
-                        }
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-                    fis.close();
-                    bo.close();
+                if (map.containsKey("TraceOutputFileName")) {
+                    setTraceFileLocation(map.get("TraceOutputFileName"));
+                }
+                if (map.containsKey("PolicyFileLog")) {
+                    setPolicyFileRecorded(true);
                 }
 
             } else {
-                OutputStreamWriter osr = null;
-                try {
-                    osr = new OutputStreamWriter(new FileOutputStream(mmcfg), "UTF-8");
-
-                    osr.write("TraceOutputFileEnable=1" + ls);
-                    osr.write("ErrorReportingEnable=1" + ls);
-                    osr.write("PolicyFileLog=1" + ls);
-                    osr.write("PolicyFileLogAppend=1");
-
-                    setMmcfgCreated(true);
-                    setPolicyFileRecorded(true);
-                } catch (IOException ex) {
-                    Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-                    osr.close();
-                }
+                HashMap<String, String> m = new HashMap<String, String>();
+                m.put("TraceOutputFileEnable", "1");
+                m.put("ErrorReportingEnable", "1");
+                m.put("PolicyFileLog", "1");
+                m.put("PolicyFileLogAppend", "1");
+                saveKeys(m);
+                setMmcfgCreated(true);
             }
         } catch (Exception ex) {
             Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     * @return the traceFileLocation
-     */
-    public String getTraceFileLocation() {
-        return traceFileLocation;
+    public void recordPolicyFile() {
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put("PolicyFileLog", "1");
+        m.put("PolicyFileLogAppend", "1");
+        saveKeys(map);
+        isPolicyFileRecorded = true;
     }
 
-    public void recordPolicyFile() {
+    public String getKey(String keyname, String def) {
+        if (map.containsKey(keyname)) {
+            return map.get(keyname);
+        } else {
+            return def;
+        }
+    }
+
+    public void saveKeys(Map<String, String> m) {
+        map.putAll(m);
+        writeMMCFG();
+    }
+
+    private void writeMMCFG() {
         try {
-            List readLines = FileUtils.readLines(mmcfg);
-            readLines.add("PolicyFileLog=1");
-            readLines.add("PolicyFileLogAppend=1");
-            FileUtils.writeLines(mmcfg, readLines);
-            isPolicyFileRecorded = true;
+            ArrayList<String> lines = new ArrayList<String>();
+            Set<String> keys = map.keySet();
+            for (String key : keys) {
+                String v = map.get(key);
+                if (v == null) {
+                    lines.add(key);
+                } else {
+                    lines.add(key + "=" + v);
+                }
+            }
+            FileUtils.writeLines(mmcfg, "UTF-8", lines, System.getProperty("line.separator"));
+        } catch (Exception ex) {
+            Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void readMMCFG() {
+        try {
+            List readLines = FileUtils.readLines(mmcfg, "UTF-8");
+            map = new HashMap<String, String>();
+            for (Object object : readLines) {
+                String[] k = ((String)object).split("=");
+                if (k.length == 1) {
+                    map.put(k[0], null);
+                } else {
+                    map.put(k[0], k[1]);
+                }
+            }
         } catch (IOException ex) {
             Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     * @param traceFileLocation the traceFileLocation to set
-     */
-    public void setTraceFileLocation(String traceFileLocation) {
-        this.traceFileLocation = traceFileLocation;
+    private String evaluateMMCFGPath() {
+        String osName = System.getProperty("os.name", null);
+        if (osName == null) {
+            return null;
+        }
+        String homeDir = System.getProperty("user.home", null);
+        String mmcfgPath = null;
+        if (osName.indexOf("Vista") > -1) {
+            if (homeDir == null) {
+                return null;
+            }
+            mmcfgPath = homeDir + File.separator + "mm.cfg";
+        } else if (osName.indexOf("Windows") > -1) {
+            if (homeDir == null) {
+                return null;
+            }
+            mmcfgPath = homeDir + File.separator + "mm.cfg";
+        } else if (osName.indexOf("Mac") > -1) {
+            mmcfgPath = "/Library/Application Support/Macromedia/mm.cfg";
+        } else if (osName.indexOf("Linux") > -1) {
+            if (homeDir == null) {
+                return null;
+            }
+            mmcfgPath = homeDir + File.separator + "mm.cfg";
+        }
+        return mmcfgPath;
     }
 
-    /**
-     * @return the mmcfgCreated
-     */
-    public boolean isMmcfgCreated() {
-        return isMmcfgCreated;
-    }
 
-    /**
-     * @param mmcfgCreated the mmcfgCreated to set
-     */
-    public void setMmcfgCreated(boolean mmcfgCreated) {
-        this.isMmcfgCreated = mmcfgCreated;
-    }
 
-    /**
-     * @return the isPolicyFileRecorded
-     */
+
+    public String getTraceFileLocation() {
+        return traceFileLocation;
+    }
     public boolean isPolicyFileRecorded() {
         return isPolicyFileRecorded;
     }
 
-    /**
-     * @param isPolicyFileRecorded the isPolicyFileRecorded to set
-     */
     public void setPolicyFileRecorded(boolean isPolicyFileRecorded) {
         this.isPolicyFileRecorded = isPolicyFileRecorded;
+    }
+
+    private void setTraceFileLocation(String traceFileLocation) {
+        this.traceFileLocation = traceFileLocation;
+    }
+
+    public boolean isMmcfgCreated() {
+        return isMmcfgCreated;
+    }
+
+    public void setMmcfgCreated(boolean mmcfgCreated) {
+        this.isMmcfgCreated = mmcfgCreated;
     }
 }

@@ -32,7 +32,7 @@
             <arg value="launch4j.xml"/>
         </exec>
 
-        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v2.0.zip">
+        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v2.1.zip">
         </zip>
 
         <mkdir dir="${dist.dir}/zip" />
