@@ -65,7 +65,13 @@ public class DebugPlayerDetector {
     }
 
     private String getHtmlFile() {
-        File f = new File("fp-detect/fp-detect.html");
+        String cp = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        if (cp.lastIndexOf('/') != -1) {
+            cp = cp.substring(0, cp.lastIndexOf('/') + 1);
+        } else {
+            cp = "";
+        }
+        File f = new File(cp + "fp-detect/fp-detect.html");
         String p = f.getAbsolutePath();
         p = "file://" + p.replaceAll("\\\\", "/");
         return p;
