@@ -231,7 +231,7 @@ public class OptionsForm extends javax.swing.JFrame {
         });
 
         jUpdatesCheckBox.setSelected(true);
-        jUpdatesCheckBox.setText("Check for updates at startup");
+        jUpdatesCheckBox.setText("Check for updates weekly at startup");
         jUpdatesCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jUpdatesCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 

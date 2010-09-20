@@ -16,6 +16,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -28,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
@@ -38,7 +40,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
-import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import vizzy.comp.JScrollHighlightPanel;
@@ -46,6 +47,7 @@ import vizzy.forms.panels.AboutPanel;
 import vizzy.forms.panels.OptionsForm;
 import vizzy.forms.panels.SnapshotForm;
 import vizzy.tasks.CheckUpdates;
+import vizzy.tasks.CheckUpdatesAndDebugThread;
 import vizzy.tasks.DebugPlayerDetector;
 import vizzy.tasks.DeleteFile;
 import vizzy.tasks.FlashAndPolicyLogInitializer;
@@ -77,6 +79,7 @@ public class VizzyForm extends javax.swing.JFrame {
     public MMCFGInitializer mmcfgInitializer;
     public ArrayList<SnapshotForm> snapshotForms = new ArrayList<SnapshotForm>();
     public DefaultComboBoxModel fontsModel;
+    public DefaultComboBoxModel searchKeywordsModel;
     public String flashLogFileName;
     public String policyLogFileName;
     public int logType = 0;
@@ -89,6 +92,7 @@ public class VizzyForm extends javax.swing.JFrame {
     public boolean restoreOnUpdate = false;
     public long refreshFreq = 500;
     public boolean isAlwaysONTOP;
+    public Date lastUpdateDate = new Date(0L);
 
     /**
      * @param args the command line arguments
@@ -122,23 +126,15 @@ public class VizzyForm extends javax.swing.JFrame {
         loadProperties();
         initVars();
         initComplete();
-        new Thread(new Runnable() {
-            public void run() {
-                
-                boolean aut = jMainFrame.isAlwaysOnTop();
-                jMainFrame.setAlwaysOnTop(false);
-                checkDebugPlayers();
-                if (isCheckUpdates) {
-                    jMainFrame.checkUpdates(false);
-                }
-                jMainFrame.setAlwaysOnTop(aut);
-            }
-        }).start();
+
+        CheckUpdatesAndDebugThread cut = new CheckUpdatesAndDebugThread(this);
+        cut.start();
         
         setVisible(true);
     }
 
     public void checkUpdates(boolean reportIfOk) {
+        lastUpdateDate = new Date();
         CheckUpdates cu = new CheckUpdates(reportIfOk);
         cu.start();
     }
@@ -185,6 +181,34 @@ public class VizzyForm extends javax.swing.JFrame {
                 }
             }
         });
+
+        jSearchComboBox.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent evt) {
+            }
+            public void keyPressed(KeyEvent evt) {
+            }
+            public void keyReleased(KeyEvent evt) {
+                if (jSearchComboBox.getSelectedItem() == null) {
+                    return;
+                }
+                if (jSearchComboBox.getSelectedItem().equals("")) {
+                    jClearActionPerformed(null);
+                } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    addSearchKeyword((String) jSearchComboBox.getSelectedItem());
+                    searcher.setWasSearching(true);
+                    startSearch(true);
+                } 
+            }
+
+            private void addSearchKeyword(String selectedItem) {
+                if (searchKeywordsModel.getIndexOf(selectedItem) == -1) {
+                    searchKeywordsModel.insertElementAt(selectedItem, 0);
+                    if (searchKeywordsModel.getSize() > 7) {
+                        searchKeywordsModel.removeElementAt(7);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -207,7 +231,7 @@ public class VizzyForm extends javax.swing.JFrame {
      * Check is only valid for Windows OS and for
      * IE browser only
      */
-    private void checkDebugPlayers() {
+    public void checkDebugPlayers() {
         if (detectPlayer) {
             DebugPlayerDetector d = new DebugPlayerDetector();
             d.start();
@@ -235,6 +259,8 @@ public class VizzyForm extends javax.swing.JFrame {
     }
 
     private void initVars() {
+        jMainFrame = this;
+        
         JScrollHighlightPanel scrollPanel = (JScrollHighlightPanel)jScrollHighlight;
         this.vbar = jScrollPane1.getVerticalScrollBar();
         this.searcher = new WordSearcher(jTraceTextArea, scrollPanel);
@@ -257,6 +283,7 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         }
 
+        setLastUpdateDate(props.getProperty("update.last"));
         setDetectPlayer(props.getProperty("settings.detectplayer", "true").equals("true"));
         setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
         setFlashLogFile(props.getProperty("settings.filename", flashLogFileName));
@@ -270,13 +297,13 @@ public class VizzyForm extends javax.swing.JFrame {
         setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
         setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
         setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
-        setFiltering(props.getProperty("settings.filter", "false").equals("true"));
         setTraceFont(props.getProperty("settings.font.name", defaultFont), props.getProperty("settings.font.size", "12"));
+        setSearchKeywords(props.getProperty("search.keywords", "").split("\\|\\|\\|"));
         setDialogLocation(props.getProperty("settings.window.x", String.valueOf(this.getX())),
                 props.getProperty("settings.window.y", String.valueOf(this.getY())),
                 props.getProperty("settings.window.width", String.valueOf(this.getWidth())),
                 props.getProperty("settings.window.height", String.valueOf(this.getHeight())));
-        jMainFrame = this;
+        setFiltering(false);
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
@@ -288,7 +315,6 @@ public class VizzyForm extends javax.swing.JFrame {
                 saveSetting("settings.alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
                 saveSetting("settings.highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
                 saveSetting("settings.wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
-                saveSetting("settings.filter", String.valueOf(jFilterCheckbox.isSelected()));
                 saveSetting("settings.font.name", jTraceTextArea.getFont().getName());
                 saveSetting("settings.font.size", String.valueOf(jTraceTextArea.getFont().getSize()));
                 saveSetting("settings.filename", flashLogFileName);
@@ -300,6 +326,20 @@ public class VizzyForm extends javax.swing.JFrame {
                 saveSetting("settings.maxNumLines", String.valueOf(maxNumLines));
                 saveSetting("settings.maxNumLinesEnabled", String.valueOf(maxNumLinesEnabled));
                 saveSetting("settings.logtype", String.valueOf(logType));
+                saveSetting("update.last", String.valueOf(lastUpdateDate.getTime()));
+
+                StringBuilder keywords = new StringBuilder();
+                for (int i = 0; i < searchKeywordsModel.getSize(); i++) {
+                    String keyword = (String) searchKeywordsModel.getElementAt(i);
+                    if (i != 0) {
+                        keywords.append("|||");
+                    }
+                    if (!"".equals(keyword)) {
+                        keywords.append(keyword);
+                    }
+                }
+                saveSetting("search.keywords", keywords.toString());
+                
                 try {
                     props.store(new FileOutputStream(settingsFile), "");
                 } catch (FileNotFoundException ex) {
@@ -396,7 +436,10 @@ public class VizzyForm extends javax.swing.JFrame {
 //    }
 
     private void startSearch(int lastCarPos, boolean scrollToSearchResult) {
-        String word = jSearchTextField.getText();
+        if (jSearchComboBox.getSelectedItem() == null) {
+            return;
+        }
+        String word = (String) jSearchComboBox.getSelectedItem();
         if (searcher.isFilter()) {
             try {
                 jTraceTextArea.setText(searcher.filter(traceContent, word));
@@ -509,6 +552,18 @@ public class VizzyForm extends javax.swing.JFrame {
         jHighlightAllCheckbox.setEnabled(!b);
     }
 
+    public void setSearchKeywords(String[] keywords) {
+        List<String> list = new ArrayList<String>();
+        list.add("");
+        for (String word : keywords) {
+            if (word != null && !"".equals(word)) {
+                list.add(word);
+            }
+        }
+        searchKeywordsModel = new DefaultComboBoxModel(list.toArray());
+        jSearchComboBox.setModel(searchKeywordsModel);
+    }
+
     public void setTraceFont(String name, String size) {
         jTraceTextArea.setFont(new Font(name, 0, Integer.parseInt(size)));
     }
@@ -538,6 +593,15 @@ public class VizzyForm extends javax.swing.JFrame {
         restoreOnUpdate = b;
     }
 
+    public void setLastUpdateDate(String last) {
+        if (last != null) {
+            Date newDate = new Date(Long.valueOf(last));
+            if (lastUpdateDate == null || lastUpdateDate.before(newDate)) {
+                lastUpdateDate = newDate;
+            }
+        } 
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -554,9 +618,9 @@ public class VizzyForm extends javax.swing.JFrame {
         jHighlightAllCheckbox = new javax.swing.JCheckBox();
         jFilterCheckbox = new javax.swing.JCheckBox();
         jMultipleLabel = new javax.swing.JLabel();
-        jSearchTextField = new javax.swing.JTextField();
         jSearchWarnLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jSearchComboBox = new javax.swing.JComboBox();
         jOnTopCheckbox = new javax.swing.JCheckBox();
         jWordWrapCheckbox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
@@ -623,19 +687,10 @@ public class VizzyForm extends javax.swing.JFrame {
         jFilterCheckbox.setBounds(140, 20, 120, 15);
         jLayeredPane1.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jMultipleLabel.setText("Hint: Use comma to separate multiple keywords");
+        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jMultipleLabel.setText("Hint: Use comma to separate keywords");
         jMultipleLabel.setBounds(270, 20, 300, 14);
         jLayeredPane1.add(jMultipleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jSearchTextField.setToolTipText("Hit enter to start searching");
-        jSearchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jSearchTextFieldjTextFieldKeyReleased(evt);
-            }
-        });
-        jSearchTextField.setBounds(10, 40, 370, 20);
-        jLayeredPane1.add(jSearchTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchWarnLabel.setText("<html></html>");
         jSearchWarnLabel.setBounds(10, 62, 490, 16);
@@ -649,6 +704,10 @@ public class VizzyForm extends javax.swing.JFrame {
         });
         jButton1.setBounds(390, 38, 80, 23);
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jSearchComboBox.setEditable(true);
+        jSearchComboBox.setBounds(9, 39, 370, 20);
+        jLayeredPane1.add(jSearchComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jOnTopCheckbox.setText("Always On Top");
         jOnTopCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -829,7 +888,7 @@ public class VizzyForm extends javax.swing.JFrame {
 
     private void jHighlightAllCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jHighlightAllCheckboxChecked
         setHighlightAll(jHighlightAllCheckbox.isSelected());
-        if (jSearchTextField.getText() != null && !jSearchTextField.getText().equals("")) {
+        if (jSearchComboBox.getSelectedItem() != null && !jSearchComboBox.getSelectedItem().equals("")) {
             searcher.setWasSearching(true);
             startSearch(true);
         }
@@ -838,30 +897,16 @@ public class VizzyForm extends javax.swing.JFrame {
     private void jFilterCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFilterCheckboxChecked
         jTraceTextArea.setText(traceContent);
         setFiltering(jFilterCheckbox.isSelected());
-        if (jSearchTextField.getText() != null && !jSearchTextField.getText().equals("")) {
+        if (jSearchComboBox.getSelectedItem() != null && !jSearchComboBox.getSelectedItem().equals("")) {
             searcher.setWasSearching(true);
             startSearch(false);
         }
 }//GEN-LAST:event_jFilterCheckboxChecked
 
-    private void jSearchTextFieldjTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jSearchTextFieldjTextFieldKeyReleased
-        if (jSearchTextField.getText().equals("")) {
-            jClearActionPerformed(null);
-        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            searcher.setWasSearching(true);
-            startSearch(true);
-        } else {
-            ToolTipManager.sharedInstance().mouseMoved(
-                    new MouseEvent(jSearchTextField, 0, 0, 0,
-                    (int) jSearchTextField.getCaret().getMagicCaretPosition().getX(), -jSearchTextField.getY(), // X-Y of the mouse for the tool tip
-                    0, false));
-        }
-    }//GEN-LAST:event_jSearchTextFieldjTextFieldKeyReleased
-
     private void jTraceTextAreaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTraceTextAreaKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_F3) {
             if (jTraceTextArea.getSelectedText() != null && jTraceTextArea.getSelectedText().length() > 0) {
-                jSearchTextField.setText(jTraceTextArea.getSelectedText());
+                jSearchComboBox.setSelectedItem(jTraceTextArea.getSelectedText());
             }
             searcher.setWasSearching(true);
             startSearch(true);
@@ -915,7 +960,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jTraceTextArea.setText(traceContent);
         searcher.clearHighlights();
         searcher.setWasSearching(false);
-        jSearchTextField.setText("");
+        jSearchComboBox.setSelectedItem("");
         jSearchWarnLabel.setVisible(false);
         ((JScrollHighlightPanel)jScrollHighlight).setIndexes(null);
 }//GEN-LAST:event_jClearActionPerformed
@@ -978,7 +1023,7 @@ public class VizzyForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jScrollHighlight;
     private javax.swing.JScrollPane jScrollPane1;
-    public javax.swing.JTextField jSearchTextField;
+    private javax.swing.JComboBox jSearchComboBox;
     private javax.swing.JLabel jSearchWarnLabel;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.JTextArea jTraceTextArea;
