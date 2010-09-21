@@ -2,4 +2,4 @@
 
 = Details =
 
-If you experience any issues setting up debug flash player or installing or launching Vizzy, please refer to the Troubleshooting chapter in the product page http://code.google.com/p/flash-tracer/
+If you experience any issues setting up debug flash player or installing or launching Vizzy, please refer to the Troubleshooting chapter in the product page http://code.google.com/p/flash-tracer/#Troubleshooting
