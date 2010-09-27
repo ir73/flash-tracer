@@ -1,0 +1,94 @@
+#summary features of Vizzy flash tracer
+#labels Featured
+
+===mm.cgf File Creation and Detection===
+Vizzy detects automatically path to your flashlog.txt file and creates all the necessary configuration files (mm.cfg) on the background. This is valid for Windows, Mac OSX and Linus operation systems
+<br/><br/><br/>
+
+
+
+===Auto-refresh, Word-wrapping, Always On Top Modes===
+You can turn auto-refresh on or off at anytime if you want to explore current trace. Turn always on top mode to avoid Vizzy appearing under other windows
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/bottom_menu.jpg
+<br/><br/><br/>
+
+
+
+===Errors Highlighting===
+ActionScript 3 Errors are highlighted (can be turned off)
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg
+<br/><br/><br/>
+
+
+
+===Stack-Trace Source Files are Click-able===
+You can click on a source file in stack-trace and Vizzy will open this file in default editor or custom that you specified in options. If you are using FlashDevelop as your ActinScript editor, then it will also scroll to a proper line.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
+
+<br/><br/><br/>
+
+
+===Filter Search Results===
+It is possible to filter lines that contain search keywords. It's possible to filter multiple keywords with comma
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/filter.jpg
+<br/><br/>
+
+
+
+===HTTP Links are Click-able===
+You can click on a link in trace output and Vizzy will open it in default browser
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg
+<br/><br/><br/>
+
+
+
+===Log Snapshots===
+You can make a snapshot of your current trace with a log snapshot feature (Alt+S). This will make a small window appear with the trace content that won't be changed. You can use this to compare your trace in current and previous debug sessions.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/log_snapshot.jpg
+<br/><br/><br/>
+
+
+
+===Customize with Options Menu===
+You can customize Vizzy's features, turn them on or off in Options menu.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/options.jpg
+<br/><br/><br/>
+
+
+
+===Policy File===
+Use drop down list to quickly switch to a policy file and back to flash log.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/policy_file.jpg
+
+<br/><br/><br/>
+
+
+===Save Search Results in Drop Down List===
+Save your previous searches. Saving is done automatically.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/search_combobox.jpg
+<br/><br/><br/>
+
+
+
+===Highlight All===
+Highlight your search results to get a better picture of where they are located. Also, not the right vertical where all search results are marked
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/search_highlightall.jpg
+<br/><br/><br/>
+
+
+
+===Trace Output===
+Have a better control over trace output
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/trace_output.jpg
+ 
