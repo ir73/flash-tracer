@@ -11,8 +11,9 @@
 
 package vizzy.forms.panels;
 
-import edu.stanford.ejalbert.BrowserLauncher;
 import java.awt.Cursor;
+import java.awt.Desktop;
+import java.net.URI;
 import vizzy.forms.VizzyForm;
 
 /**
@@ -63,7 +64,7 @@ public class AboutPanel extends javax.swing.JFrame {
         });
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("<html>Vizzy Flash Tracer<br>2007 - 2009  ©<br>Developed by Sergei Ledvanov</html>");
+        jLabel1.setText("<html>Vizzy Flash Tracer<br>2007 - 2010  ©<br>Developed by Sergei Ledvanov</html>");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jLabel2.setForeground(new java.awt.Color(0, 51, 204));
@@ -151,7 +152,8 @@ public class AboutPanel extends javax.swing.JFrame {
 
     private void websiteClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_websiteClicked
         try {
-            new BrowserLauncher().openURLinBrowser("http://code.google.com/p/flash-tracer");
+            if (Desktop.isDesktopSupported())
+                Desktop.getDesktop().browse(new URI("http://code.google.com/p/flash-tracer"));
         } catch (Exception ex1) {
 
         }
@@ -159,7 +161,8 @@ public class AboutPanel extends javax.swing.JFrame {
 
     private void emailClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_emailClicked
         try {
-            new BrowserLauncher().openURLinBrowser("mailto:sergei.ledvanov@gmail.com");
+            if (Desktop.isDesktopSupported())
+                Desktop.getDesktop().mail(new URI("mailto:sergei.ledvanov@gmail.com"));
         } catch (Exception ex1) {
 
         }
@@ -176,7 +179,8 @@ public class AboutPanel extends javax.swing.JFrame {
 
     private void donateClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_donateClicked
         try {
-            new BrowserLauncher().openURLinBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JPVRL8G9JYAVL&lc=EE&item_name=Vizzy%20Flash%20Tracer&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
+            if (Desktop.isDesktopSupported())
+                Desktop.getDesktop().browse(new URI("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JPVRL8G9JYAVL&lc=EE&item_name=Vizzy%20Flash%20Tracer&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"));
         } catch (Exception ex1) {
 
         }

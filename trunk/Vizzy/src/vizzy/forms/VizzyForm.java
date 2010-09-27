@@ -51,6 +51,8 @@ import vizzy.tasks.CheckUpdatesAndDebugThread;
 import vizzy.tasks.DebugPlayerDetector;
 import vizzy.tasks.DeleteFile;
 import vizzy.tasks.FlashAndPolicyLogInitializer;
+import vizzy.tasks.HandleWordAtPosition;
+import vizzy.tasks.KeywordsHighlighter;
 import vizzy.tasks.LoadFileTask;
 import vizzy.tasks.MMCFGInitializer;
 import vizzy.tasks.WordSearcher;
@@ -65,7 +67,9 @@ public class VizzyForm extends javax.swing.JFrame {
     private boolean detectPlayer;
     private boolean needToScrolldown = true;
     private boolean isCapturingScroll = false;
-    private Timer t;
+    private Timer readFileTimer;
+    private KeywordsHighlighter keywordsHighlighter;
+    private HandleWordAtPosition handleWordAtPosition;
     private WordSearcher searcher;
     private String currentFileName;
     private JScrollBar vbar;
@@ -84,8 +88,12 @@ public class VizzyForm extends javax.swing.JFrame {
     public String policyLogFileName;
     public int logType = 0;
     public String recentHash;
+    public String customASEditor = "\"C:\\Program Files\\FlashDevelop\\FlashDevelop.exe\" %file% -line %line%";
+    public boolean isDefaultASEditor = true;
+    public boolean highlightKeywords = true;
     public boolean isAutoRefresh = true;
     public boolean isUTF = true;
+    public boolean isSmartTraceEnabled = true;
     public boolean isCheckUpdates = true;
     public boolean maxNumLinesEnabled = false;
     public long maxNumLines = 20;
@@ -108,11 +116,14 @@ public class VizzyForm extends javax.swing.JFrame {
             }
         });
     }
+
     
     /** Creates new form VizzyForm */
     public VizzyForm() {
         super();
         try {
+//            UIManager.put("TextArea.selectionBackground", new ColorUIResource(0, 255, 0));
+//            UIManager.put("TextArea.selectionForeground", new ColorUIResource(255, 0, 0));
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
             Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
@@ -127,9 +138,6 @@ public class VizzyForm extends javax.swing.JFrame {
         initVars();
         initComplete();
 
-        CheckUpdatesAndDebugThread cut = new CheckUpdatesAndDebugThread(this);
-        cut.start();
-        
         setVisible(true);
     }
 
@@ -197,6 +205,7 @@ public class VizzyForm extends javax.swing.JFrame {
                     addSearchKeyword((String) jSearchComboBox.getSelectedItem());
                     searcher.setWasSearching(true);
                     startSearch(true);
+                    highlightKeywords();
                 } 
             }
 
@@ -209,6 +218,9 @@ public class VizzyForm extends javax.swing.JFrame {
                 }
             }
         });
+
+        CheckUpdatesAndDebugThread cut = new CheckUpdatesAndDebugThread(this);
+        cut.start();
     }
 
     /**
@@ -264,7 +276,9 @@ public class VizzyForm extends javax.swing.JFrame {
         JScrollHighlightPanel scrollPanel = (JScrollHighlightPanel)jScrollHighlight;
         this.vbar = jScrollPane1.getVerticalScrollBar();
         this.searcher = new WordSearcher(jTraceTextArea, scrollPanel);
-
+        this.keywordsHighlighter = new KeywordsHighlighter(jTraceTextArea);
+        this.handleWordAtPosition = new HandleWordAtPosition(jTraceTextArea);
+        
         scrollPanel.setTa(jTraceTextArea);
         scrollPanel.setLocation(jTraceTextArea.getX(), jTraceTextArea.getY());
         scrollPanel.setSize(scrollPanel.getWidth(), jTraceTextArea.getHeight()/2);
@@ -287,7 +301,6 @@ public class VizzyForm extends javax.swing.JFrame {
         setDetectPlayer(props.getProperty("settings.detectplayer", "true").equals("true"));
         setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
         setFlashLogFile(props.getProperty("settings.filename", flashLogFileName));
-        setLogType(props.getProperty("settings.logtype", "0"));
         setRefreshFreq(props.getProperty("settings.refreshFreq", "500"));
         setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
         setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
@@ -297,6 +310,10 @@ public class VizzyForm extends javax.swing.JFrame {
         setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
         setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
         setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
+        setEnableSmartTrace(props.getProperty("settings.enabelSmartTrace", "true").equals("true"));
+        setHighlightKeywords(props.getProperty("settings.highlightKeywords", "true").equals("true"));
+        setCustomASEditor(props.getProperty("settings.customASEditor", null));
+        setDefaultEditorUsed(props.getProperty("settings.isDefaultUsed", "true").equals("true"));
         setTraceFont(props.getProperty("settings.font.name", defaultFont), props.getProperty("settings.font.size", "12"));
         setSearchKeywords(props.getProperty("search.keywords", "").split("\\|\\|\\|"));
         setDialogLocation(props.getProperty("settings.window.x", String.valueOf(this.getX())),
@@ -304,6 +321,7 @@ public class VizzyForm extends javax.swing.JFrame {
                 props.getProperty("settings.window.width", String.valueOf(this.getWidth())),
                 props.getProperty("settings.window.height", String.valueOf(this.getHeight())));
         setFiltering(false);
+        setLogType(props.getProperty("settings.logtype", "0"));
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
@@ -326,6 +344,10 @@ public class VizzyForm extends javax.swing.JFrame {
                 saveSetting("settings.maxNumLines", String.valueOf(maxNumLines));
                 saveSetting("settings.maxNumLinesEnabled", String.valueOf(maxNumLinesEnabled));
                 saveSetting("settings.logtype", String.valueOf(logType));
+                saveSetting("settings.highlightKeywords", String.valueOf(highlightKeywords));
+                saveSetting("settings.enabelSmartTrace", String.valueOf(isSmartTraceEnabled));
+                saveSetting("settings.customASEditor", String.valueOf(customASEditor));
+                saveSetting("settings.isDefaultUsed", String.valueOf(isDefaultASEditor));
                 saveSetting("update.last", String.valueOf(lastUpdateDate.getTime()));
 
                 StringBuilder keywords = new StringBuilder();
@@ -421,9 +443,23 @@ public class VizzyForm extends javax.swing.JFrame {
             jTraceTextArea.setCaretPosition(jTraceTextArea.getDocument().getLength());
         }
 
+        highlightKeywords();
+
         if (restoreOnUpdate) {
             setExtendedState(JFrame.NORMAL);
             repaint();
+        }
+    }
+
+    private void highlightKeywords() {
+        if (isSmartTraceEnabled && highlightKeywords) {
+            keywordsHighlighter.highlight();
+        }
+    }
+
+    private void openCurrentWordIfURL() {
+        if (isSmartTraceEnabled) {
+            handleWordAtPosition.handle();
         }
     }
 
@@ -472,14 +508,30 @@ public class VizzyForm extends javax.swing.JFrame {
 
     public void startTimer() {
         stopTimer();
-        t = new Timer();
-        t.schedule(createLoadTimerTask(), 1000, refreshFreq);
+        readFileTimer = new Timer();
+        readFileTimer.schedule(createLoadTimerTask(), 1000, refreshFreq);
     }
 
     public void stopTimer() {
-        if (t != null) {
-            t.cancel();
+        if (readFileTimer != null) {
+            readFileTimer.cancel();
         }
+    }
+
+    public void setEnableSmartTrace(boolean equals) {
+        isSmartTraceEnabled = equals;
+    }
+
+    public void setCustomASEditor(String property) {
+        if (property != null) {
+            customASEditor = property;
+        }
+        handleWordAtPosition.setCustomASEditor(customASEditor);
+    }
+
+    public void setDefaultEditorUsed(boolean equals) {
+        isDefaultASEditor = equals;
+        handleWordAtPosition.setDefaultEditorUsed(isDefaultASEditor);
     }
 
     public void setCheckUpdates(boolean equals) {
@@ -592,6 +644,10 @@ public class VizzyForm extends javax.swing.JFrame {
     public void setRestoreOnUpdate(boolean b) {
         restoreOnUpdate = b;
     }
+    
+    public void setHighlightKeywords(boolean b) {
+        highlightKeywords = b;
+    }
 
     public void setLastUpdateDate(String last) {
         if (last != null) {
@@ -639,12 +695,6 @@ public class VizzyForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vizzy Flash Tracer");
-
-        jPanel1.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                jPanel1ComponentResized(evt);
-            }
-        });
 
         jAutorefreshCheckBox.setSelected(true);
         jAutorefreshCheckBox.setText("Autorefresh");
@@ -891,6 +941,7 @@ public class VizzyForm extends javax.swing.JFrame {
         if (jSearchComboBox.getSelectedItem() != null && !jSearchComboBox.getSelectedItem().equals("")) {
             searcher.setWasSearching(true);
             startSearch(true);
+            highlightKeywords();
         }
 }//GEN-LAST:event_jHighlightAllCheckboxChecked
 
@@ -900,6 +951,7 @@ public class VizzyForm extends javax.swing.JFrame {
         if (jSearchComboBox.getSelectedItem() != null && !jSearchComboBox.getSelectedItem().equals("")) {
             searcher.setWasSearching(true);
             startSearch(false);
+            highlightKeywords();
         }
 }//GEN-LAST:event_jFilterCheckboxChecked
 
@@ -910,6 +962,7 @@ public class VizzyForm extends javax.swing.JFrame {
             }
             searcher.setWasSearching(true);
             startSearch(true);
+            highlightKeywords();
         }
 }//GEN-LAST:event_jTraceTextAreaKeyPressed
 
@@ -947,14 +1000,14 @@ public class VizzyForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTraceTextAreaMousePressed
 
     private void jTraceTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseReleased
+        String selection = jTraceTextArea.getSelectedText();
+        if (selection == null || "".equals(selection)) {
+            openCurrentWordIfURL();
+        }
         if (isAutoRefresh) {
             startTimer();
         }
     }//GEN-LAST:event_jTraceTextAreaMouseReleased
-
-    private void jPanel1ComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel1ComponentResized
-    
-    }//GEN-LAST:event_jPanel1ComponentResized
 
     private void jClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearActionPerformed
         jTraceTextArea.setText(traceContent);
@@ -963,6 +1016,7 @@ public class VizzyForm extends javax.swing.JFrame {
         jSearchComboBox.setSelectedItem("");
         jSearchWarnLabel.setVisible(false);
         ((JScrollHighlightPanel)jScrollHighlight).setIndexes(null);
+        highlightKeywords();
 }//GEN-LAST:event_jClearActionPerformed
 
     private void logTypeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logTypeComboActionPerformed
