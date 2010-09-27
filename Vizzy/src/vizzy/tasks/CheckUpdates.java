@@ -4,14 +4,13 @@
  */
 package vizzy.tasks;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
-import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
@@ -27,7 +26,7 @@ import vizzy.util.FileUtil;
  */
 public class CheckUpdates {
 
-    public static final String VERSION = "2.2";
+    public static final String VERSION = "2.3";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
     private static final String WEBSITE_FEATURES_PHRASE = "Current version features: ";
     private boolean reportIfOk;
@@ -144,11 +143,9 @@ public class CheckUpdates {
                     JOptionPane.ERROR_MESSAGE);
 
             try {
-                new BrowserLauncher().openURLinBrowser("http://code.google.com/p/flash-tracer/downloads/list");
-            } catch (BrowserLaunchingInitializingException ex1) {
-                Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex1);
-            } catch (UnsupportedOperatingSystemException ex1) {
-                Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex1);
+                if (Desktop.isDesktopSupported())
+                    Desktop.getDesktop().browse(new URI("http://code.google.com/p/flash-tracer/downloads/list"));
+            } catch (Exception ex1) {
             }
 
         } finally {

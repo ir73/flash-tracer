@@ -49,6 +49,7 @@ public class OptionsForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        ASEditorButtonGroup = new javax.swing.ButtonGroup();
         jOKButton = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
@@ -58,6 +59,13 @@ public class OptionsForm extends javax.swing.JFrame {
         jFontSizeTextField = new javax.swing.JTextField();
         jFontComboBox = new javax.swing.JComboBox();
         jRestoreCheckBox = new javax.swing.JCheckBox();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
+        jEnableSmartTraceCheckBox = new javax.swing.JCheckBox();
+        jHighlightKeywordsCheckBox = new javax.swing.JCheckBox();
+        jDefaultRadioButton = new javax.swing.JRadioButton();
+        jLabel5 = new javax.swing.JLabel();
+        jCustomEditorRadioButton = new javax.swing.JRadioButton();
+        jCustomASEditorTextFiled = new java.awt.TextField();
         jPanel3 = new javax.swing.JPanel();
         jLayeredPane3 = new javax.swing.JLayeredPane();
         jUTFCheckBox = new javax.swing.JCheckBox();
@@ -119,28 +127,66 @@ public class OptionsForm extends javax.swing.JFrame {
         jRestoreCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jRestoreCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
+        jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Smart Trace Output"));
+
+        jEnableSmartTraceCheckBox.setText("Enable Smart Trace Output");
+        jEnableSmartTraceCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jEnableSmartTraceCheckBoxActionPerformed(evt);
+            }
+        });
+        jEnableSmartTraceCheckBox.setBounds(10, 20, 360, 23);
+        jLayeredPane1.add(jEnableSmartTraceCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jHighlightKeywordsCheckBox.setText("Highlight errors in stack traces");
+        jHighlightKeywordsCheckBox.setBounds(30, 50, 340, 23);
+        jLayeredPane1.add(jHighlightKeywordsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        ASEditorButtonGroup.add(jDefaultRadioButton);
+        jDefaultRadioButton.setText("Default application");
+        jDefaultRadioButton.setBounds(30, 120, 340, 23);
+        jLayeredPane1.add(jDefaultRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabel5.setText("<html>Open source files from stack traces with that application:</html>");
+        jLabel5.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jLabel5.setBounds(34, 90, 340, 40);
+        jLayeredPane1.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        ASEditorButtonGroup.add(jCustomEditorRadioButton);
+        jCustomEditorRadioButton.setBounds(30, 145, 21, 21);
+        jLayeredPane1.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jCustomASEditorTextFiled.setText("C:\\svn-projects-repos\\fd\\flashdevelop_sergei\\flashdevelop\\FD3\\FlashDevelop\\Bin\\Debug\\FlashDevelop.exe %file% -line %line");
+        jCustomASEditorTextFiled.setBounds(50, 145, 320, 20);
+        jLayeredPane1.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel2Layout.createSequentialGroup()
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanel2Layout.createSequentialGroup()
+                        .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
                         .add(27, 27, 27)
-                        .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 356, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 356, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(199, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("General", jPanel2);
@@ -414,7 +460,12 @@ public class OptionsForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jCheckBoxTraceAllActionPerformed
 
+    private void jEnableSmartTraceCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jEnableSmartTraceCheckBoxActionPerformed
+        enableSmartTraceControls();
+    }//GEN-LAST:event_jEnableSmartTraceCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup ASEditorButtonGroup;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBoxBuffer;
@@ -422,17 +473,24 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBoxTraceAll;
     private javax.swing.JCheckBox jCheckBoxVerbose;
     private javax.swing.JButton jCheckNowButton;
+    private java.awt.TextField jCustomASEditorTextFiled;
+    private javax.swing.JRadioButton jCustomEditorRadioButton;
+    private javax.swing.JRadioButton jDefaultRadioButton;
+    private javax.swing.JCheckBox jEnableSmartTraceCheckBox;
     private javax.swing.JTextField jFlashLogTextField;
     private javax.swing.JComboBox jFontComboBox;
     private javax.swing.JTextField jFontSizeTextField;
     private javax.swing.JTextField jFreqTextField;
+    private javax.swing.JCheckBox jHighlightKeywordsCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;
     private javax.swing.JLayeredPane jLayeredPane3;
     private javax.swing.JLayeredPane jLayeredPane4;
@@ -465,7 +523,11 @@ public class OptionsForm extends javax.swing.JFrame {
         vf.setRefreshFreq(jFreqTextField.getText());
         vf.setAlwaysOnTop(vf.isAlwaysONTOP);
         vf.setRestoreOnUpdate(jRestoreCheckBox.isSelected());
-
+        vf.setHighlightKeywords(jHighlightKeywordsCheckBox.isSelected());
+        vf.setCustomASEditor(jCustomASEditorTextFiled.getText());
+        vf.setDefaultEditorUsed(jDefaultRadioButton.isSelected());
+        vf.setEnableSmartTrace(jEnableSmartTraceCheckBox.isSelected());
+        
         HashMap<String, String> m = new HashMap<String, String>();
         m.put("TraceOutputBuffered", jCheckBoxBuffer.isSelected() ? "1" : "0");
         m.put("AS3Trace", jCheckBoxTraceAll.isSelected() ? "1" : "0");
@@ -501,6 +563,15 @@ public class OptionsForm extends javax.swing.JFrame {
         jCheckBoxTraceAll.setSelected(vf.mmcfgInitializer.getKey("AS3Trace", "0").equals("1"));
         jCheckBoxVerbose.setSelected(vf.mmcfgInitializer.getKey("AS3Verbose", "0").equals("1"));
         jCheckBoxStatic.setSelected(vf.mmcfgInitializer.getKey("AS3StaticProfile", "0").equals("1"));
+        jEnableSmartTraceCheckBox.setSelected(vf.isSmartTraceEnabled);
+        jHighlightKeywordsCheckBox.setSelected(vf.highlightKeywords);
+        jCustomASEditorTextFiled.setText(vf.customASEditor);
+        if (vf.isDefaultASEditor) {
+            jDefaultRadioButton.setSelected(true);
+        } else {
+            jCustomEditorRadioButton.setSelected(true);
+        }
+        enableSmartTraceControls();
     }
 
     @Override
@@ -509,6 +580,13 @@ public class OptionsForm extends javax.swing.JFrame {
             initVars();
         }
         super.setVisible(val);
+    }
+
+    private void enableSmartTraceControls() {
+        jHighlightKeywordsCheckBox.setEnabled(jEnableSmartTraceCheckBox.isSelected());
+        jDefaultRadioButton.setEnabled(jEnableSmartTraceCheckBox.isSelected());
+        jCustomEditorRadioButton.setEnabled(jEnableSmartTraceCheckBox.isSelected());
+        jCustomASEditorTextFiled.setEnabled(jEnableSmartTraceCheckBox.isSelected());
     }
 
 }

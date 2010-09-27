@@ -12,6 +12,7 @@ package vizzy.tasks;
 import java.awt.Color;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
@@ -36,14 +37,14 @@ public class WordSearcher {
     private boolean isFilter = false;
     
     private boolean forcedScreenScroll = true;
-    
-    // An instance of the private subclass of the default highlight painter
-    Highlighter.HighlightPainter painter = new MyHighlightPainter(Color.red);
-    Highlighter.HighlightPainter yellowPainter = new MyHighlightPainter(Color.yellow);
-    
+
     private JScrollHighlightPanel panel;
 
-    // A private subclass of the default highlight painter
+    private List<Object> highlightObjects = new ArrayList<Object>();
+    
+    Highlighter.HighlightPainter highlightedSearchResultPainter = new MyHighlightPainter(new Color(0, 150, 0));
+    Highlighter.HighlightPainter searchResultPainter = new MyHighlightPainter(new Color(200, 255, 200));
+
     class MyHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
         public MyHighlightPainter(Color color) {
             super(color);
@@ -82,7 +83,7 @@ public class WordSearcher {
             int endIndex = lastIndex + wordSize;
             
             try {
-                highlighter.addHighlight(lastIndex, endIndex, painter);
+                highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, highlightedSearchResultPainter));
             } catch (Exception e) {
                 // Nothing to do
             }
@@ -95,7 +96,7 @@ public class WordSearcher {
                 int endIndex = lastIndex + wordSize;
 
                 try {
-                    highlighter.addHighlight(lastIndex, endIndex, painter);
+                    highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, highlightedSearchResultPainter));
                 } catch (Exception e) {
                     // Nothing to do
                 }
@@ -112,7 +113,7 @@ public class WordSearcher {
             while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
                 int endIndex = lastIndex + wordSize;
                 try {
-                    highlighter.addHighlight(lastIndex, endIndex, yellowPainter);
+                    highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, searchResultPainter));
                     indexes.add(lastIndex);
                 } catch (BadLocationException e) {
                     break;
@@ -152,7 +153,9 @@ public class WordSearcher {
 
     public void clearHighlights() {
         Highlighter highlighter = comp.getHighlighter();
-        highlighter.removeAllHighlights();
+        for (Object object : highlightObjects) {
+            highlighter.removeHighlight(object);
+        }
     }
 
     public boolean isForcedScreenScroll() {
