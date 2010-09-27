@@ -1,14 +1,14 @@
-#summary features of Vizzy flash tracer
+#summary Features of Vizzy Flash Tracer
 #labels Featured
 
-===Errors Highlighting===
+===Errors Highlighting (since 2.3)===
 ActionScript 3 Errors are highlighted (can be turned off)
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg
 <br/><br/><br/>
 
 
-===Stack-Trace Source Files are Click-able===
+===Stack-Trace Source Files are Click-able (since 2.3)===
 You can click on a source file in stack-trace and Vizzy will open this file in default editor or custom that you specified in options. If you are using FlashDevelop as your ActinScript editor, then it will also scroll to a proper line.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
@@ -17,7 +17,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
 
 
 
-===HTTP Links are Click-able===
+===HTTP Links are Click-able (since 2.3)===
 You can click on a link in trace output and Vizzy will open it in default browser
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg
