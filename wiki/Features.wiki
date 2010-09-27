@@ -1,6 +1,30 @@
 #summary features of Vizzy flash tracer
 #labels Featured
 
+===Errors Highlighting===
+ActionScript 3 Errors are highlighted (can be turned off)
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg
+<br/><br/><br/>
+
+
+===Stack-Trace Source Files are Click-able===
+You can click on a source file in stack-trace and Vizzy will open this file in default editor or custom that you specified in options. If you are using FlashDevelop as your ActinScript editor, then it will also scroll to a proper line.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
+
+<br/><br/><br/>
+
+
+
+===HTTP Links are Click-able===
+You can click on a link in trace output and Vizzy will open it in default browser
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg
+<br/><br/><br/>
+
+
+
 ===mm.cgf File Creation and Detection===
 Vizzy detects automatically path to your flashlog.txt file and creates all the necessary configuration files (mm.cfg) on the background. This is valid for Windows, Mac OSX and Linus operation systems
 <br/><br/><br/>
@@ -15,35 +39,11 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/bottom_menu.jpg
 
 
 
-===Errors Highlighting===
-ActionScript 3 Errors are highlighted (can be turned off)
-<br/><br/>
-http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg
-<br/><br/><br/>
-
-
-
-===Stack-Trace Source Files are Click-able===
-You can click on a source file in stack-trace and Vizzy will open this file in default editor or custom that you specified in options. If you are using FlashDevelop as your ActinScript editor, then it will also scroll to a proper line.
-<br/><br/>
-http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
-
-<br/><br/><br/>
-
-
 ===Filter Search Results===
 It is possible to filter lines that contain search keywords. It's possible to filter multiple keywords with comma
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/filter.jpg
 <br/><br/>
-
-
-
-===HTTP Links are Click-able===
-You can click on a link in trace output and Vizzy will open it in default browser
-<br/><br/>
-http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg
-<br/><br/><br/>
 
 
 
