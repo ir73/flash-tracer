@@ -351,6 +351,9 @@
               <Properties>
                 <Property name="editable" type="boolean" value="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jSearchComboBoxKeyReleased"/>
+              </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
                   <JLayeredPaneConstraints x="9" y="39" width="370" height="-1" layer="0" position="-1"/>
@@ -396,6 +399,7 @@
                     <Property name="rows" type="int" value="5"/>
                   </Properties>
                   <Events>
+                    <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="jTraceTextAreaMouseWheelMoved"/>
                     <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTraceTextAreaMouseExited"/>
                     <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTraceTextAreaMousePressed"/>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTraceTextAreaMouseReleased"/>
