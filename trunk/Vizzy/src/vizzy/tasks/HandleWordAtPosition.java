@@ -9,6 +9,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
 import javax.swing.JTextArea;
+import vizzy.model.SourceAndLine;
 
 /**
  *
@@ -16,26 +17,28 @@ import javax.swing.JTextArea;
  */
 public class HandleWordAtPosition {
     
-    public static final String HTTP_TEMPLATE = "http://";
-    public static final String FILE_TEMPLATE = "file:///";
-    private String customASEditor;
-    private boolean defaultASEditor;
-
     class MinPositionParam {
         public String separator;
         public boolean substract;
-
         public MinPositionParam(String keyword, boolean substract) {
             this.separator = keyword;
             this.substract = substract;
         }
     }
 
-
+    public static final String HTTP_TEMPLATE = "http://";
+    public static final String FILE_TEMPLATE = "file:///";
+    private String customASEditor;
+    private boolean defaultASEditor;
     private final JTextArea jTraceTextArea;
 
     public HandleWordAtPosition(JTextArea jTraceTextArea) {
         this.jTraceTextArea = jTraceTextArea;
+    }
+
+    public SourceAndLine tryPositionForSourceFile(int offset) {
+        SourceAndLine source = extractSourceFile(offset, jTraceTextArea.getText());
+        return source;
     }
 
     public void handle() {
@@ -94,15 +97,31 @@ public class HandleWordAtPosition {
     }
 
     private void checkSourceFile() throws Exception {
+        SourceAndLine source = extractSourceFile(jTraceTextArea.getCaretPosition(), jTraceTextArea.getText());
+        if (source == null) {
+            return;
+        }
+        
+        if (defaultASEditor) {
+            File file = new File(source.filePath);
+            if (file.exists()) {
+                Desktop.getDesktop().open(file);
+            }
+        } else if (customASEditor != null) {
+            String command = customASEditor
+                    .replace("%file%", "\"" + source.filePath + "\"")
+                    .replace("%line%", String.valueOf(source.lineNum));
+            Process p = Runtime.getRuntime().exec(command);
+        }
+        jTraceTextArea.setSelectionStart(source.startPos);
+        jTraceTextArea.setSelectionEnd(source.startPos + source.filePath.length());
+    }
 
+    private SourceAndLine extractSourceFile(int currentIndex, String text) {
         int startIndex;
         int endIndex;
         String currentWord;
 
-        int currentIndex = jTraceTextArea.getCaretPosition();
-        String text = jTraceTextArea.getText();
-        
-        // CHECK FOR STACK TRACE FILE
         startIndex = getMinPosition(text, currentIndex,
                 new MinPositionParam[]{
                     new MinPositionParam("\n", true),
@@ -114,34 +133,24 @@ public class HandleWordAtPosition {
                     new MinPositionParam("\r", true)},
                 false);
 
-        if (endIndex != -1 && startIndex != -1) {
+        if (endIndex != -1 && startIndex != -1
+                && startIndex < endIndex) {
             currentWord = text.substring(startIndex, endIndex); // whole line
             if (currentWord != null
                     && currentWord.startsWith("\tat ")
                     && currentWord.endsWith("]")) {
                 int sIndex = currentWord.indexOf("[");
                 int eIndex = currentWord.lastIndexOf(":");
-                if (sIndex != -1 && eIndex != -1) {
+                if (sIndex != -1 && eIndex != -1
+                        && sIndex < eIndex) {
                     sIndex = sIndex + 1;
                     String filePath = currentWord.substring(sIndex, eIndex);
-                    if (defaultASEditor) {
-                        File file = new File(filePath);
-                        if (file.exists()) {
-                            Desktop.getDesktop().open(file);
-                        }
-                    } else if (customASEditor != null) {
-                        String lineNum = currentWord.substring(eIndex + 1, currentWord.length() - 1);
-                        String command = customASEditor
-                                .replace("%file%", "\"" + filePath + "\"")
-                                .replace("%line%", lineNum);
-                        Process p = Runtime.getRuntime().exec(command);
-                    }
-                    jTraceTextArea.setSelectionStart(startIndex + sIndex);
-                    jTraceTextArea.setSelectionEnd(startIndex + sIndex + filePath.length());
-                    return;
+                    int lineNum = Integer.parseInt(currentWord.substring(eIndex + 1, currentWord.length() - 1));
+                    return new SourceAndLine(filePath, lineNum, startIndex + sIndex);
                 }
             }
         }
+        return null;
     }
 
     private int getMinPosition(String text, int currentIndex, MinPositionParam[] minPositionParam, boolean left) {

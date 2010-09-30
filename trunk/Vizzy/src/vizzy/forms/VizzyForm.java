@@ -13,6 +13,8 @@ package vizzy.forms;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
@@ -21,7 +23,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,22 +41,31 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import vizzy.comp.JScrollHighlightPanel;
 import vizzy.forms.panels.AboutPanel;
 import vizzy.forms.panels.OptionsForm;
 import vizzy.forms.panels.SnapshotForm;
+import vizzy.listeners.ICodePopupListener;
+import vizzy.model.SettingsModel;
 import vizzy.tasks.CheckUpdates;
 import vizzy.tasks.CheckUpdatesAndDebugThread;
 import vizzy.tasks.DebugPlayerDetector;
 import vizzy.tasks.DeleteFile;
-import vizzy.tasks.FlashAndPolicyLogInitializer;
+import vizzy.tasks.FlashPlayerFilesLocator;
 import vizzy.tasks.HandleWordAtPosition;
+import vizzy.tasks.HideCodePopupTimerTask;
 import vizzy.tasks.KeywordsHighlighter;
 import vizzy.tasks.LoadFileTask;
 import vizzy.tasks.MMCFGInitializer;
+import vizzy.tasks.ShowCodePopupTask;
+import vizzy.tasks.ShowCodePopupTimerTask;
 import vizzy.tasks.WordSearcher;
+import vizzy.model.FlashPlayerFiles;
+import vizzy.util.OSXAdapter;
+import vizzy.model.SourceAndLine;
 import vizzy.util.TextTransfer;
 
 /**
@@ -64,21 +74,25 @@ import vizzy.util.TextTransfer;
  */
 public class VizzyForm extends javax.swing.JFrame {
 
+    private String defaultFont;
     private boolean detectPlayer;
     private boolean needToScrolldown = true;
     private boolean isCapturingScroll = false;
+    private Timer showCodePopupTimer;
     private Timer readFileTimer;
+    private Timer hideCodePopupTimer;
     private KeywordsHighlighter keywordsHighlighter;
     private HandleWordAtPosition handleWordAtPosition;
+    private ShowCodePopupTask showCodePopup;
     private WordSearcher searcher;
     private String currentFileName;
     private JScrollBar vbar;
     private String traceContent;
     private Properties props;
     private File settingsFile = new File("tracer.properties");
-    private VizzyForm jMainFrame;
     private Font[] fonts;
     private OptionsForm optionsForm;
+    private SettingsModel settingsModel;
 
     public MMCFGInitializer mmcfgInitializer;
     public ArrayList<SnapshotForm> snapshotForms = new ArrayList<SnapshotForm>();
@@ -102,41 +116,44 @@ public class VizzyForm extends javax.swing.JFrame {
     public boolean isAlwaysONTOP;
     public Date lastUpdateDate = new Date(0L);
 
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new VizzyForm();
+                    VizzyForm vizzyForm = new VizzyForm();
                 } catch (Exception ex) {
                     Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
     }
-
     
     /** Creates new form VizzyForm */
     public VizzyForm() {
         super();
         try {
-//            UIManager.put("TextArea.selectionBackground", new ColorUIResource(0, 255, 0));
-//            UIManager.put("TextArea.selectionForeground", new ColorUIResource(255, 0, 0));
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
             Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
         } 
-
-        
         initComponents();
+        init();
+    }
+
+    private void init() {
+        preInit();
+        initSystemFonts();
         initFlashLog();
         initMMCFG();
-        initFonts();
         loadProperties();
         initVars();
-        initComplete();
+        initSettings();
+        initListeners();
+        initThreads();
 
         setVisible(true);
     }
@@ -147,7 +164,18 @@ public class VizzyForm extends javax.swing.JFrame {
         cu.start();
     }
 
-    private void initFonts() {
+    private void preInit() {
+        settingsModel = new SettingsModel();
+        if (SettingsModel.OS_MAC_OS_X.equals(SettingsModel.OSName)) {
+                try {
+                OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("onClose", (Class[]) null));
+            } catch (Exception ex) {
+                Logger.getLogger(VizzyForm.class.getName()).log(Level.WARNING, null, ex);
+            }
+        }
+    }
+
+    private void initSystemFonts() {
         try {
             GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
             fonts = env.getAllFonts();
@@ -160,7 +188,7 @@ public class VizzyForm extends javax.swing.JFrame {
         }
     }
 
-    private void initComplete() {
+    private void initListeners() {
         jTraceTextArea.addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 vbar.dispatchEvent(e);
@@ -218,9 +246,46 @@ public class VizzyForm extends javax.swing.JFrame {
                 }
             }
         });
+    }
 
+    private void initThreads() {
         CheckUpdatesAndDebugThread cut = new CheckUpdatesAndDebugThread(this);
         cut.start();
+    }
+
+    private void initSettings() {
+        setLastUpdateDate(props.getProperty("update.last"));
+        setDetectPlayer(props.getProperty("settings.detectplayer", "true").equals("true"));
+        setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
+        setFlashLogFile(props.getProperty("settings.filename", flashLogFileName));
+        setRefreshFreq(props.getProperty("settings.refreshFreq", "500"));
+        setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
+        setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
+        setMaxNumLines(props.getProperty("settings.maxNumLines", "50000"));
+        setRestoreOnUpdate(props.getProperty("settings.restore", "false").equals("true"));
+        setOnTop(props.getProperty("settings.alwaysontop", "false").equals("true"));
+        setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
+        setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
+        setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
+        setEnableSmartTrace(props.getProperty("settings.enabelSmartTrace", "true").equals("true"));
+        setHighlightKeywords(props.getProperty("settings.highlightKeywords", "true").equals("true"));
+        setCustomASEditor(props.getProperty("settings.customASEditor", null));
+        setDefaultEditorUsed(props.getProperty("settings.isDefaultUsed", "true").equals("true"));
+        setTraceFont(props.getProperty("settings.font.name", defaultFont), props.getProperty("settings.font.size", "12"));
+        setSearchKeywords(props.getProperty("search.keywords", "").split("\\|\\|\\|"));
+        setFiltering(false);
+        setLogType(props.getProperty("settings.logtype", "0"));
+        setDialogLocation(props.getProperty("settings.window.x", String.valueOf(this.getX())),
+                props.getProperty("settings.window.y", String.valueOf(this.getY())),
+                props.getProperty("settings.window.width", String.valueOf(this.getWidth())),
+                props.getProperty("settings.window.height", String.valueOf(this.getHeight())));
+
+        createLoadTimerTask().run();
+        if (isAutoRefresh) {
+            startReadLogFileTimer();
+        } else {
+            stopReadLogFileTimer();
+        }
     }
 
     /**
@@ -228,13 +293,12 @@ public class VizzyForm extends javax.swing.JFrame {
      * operation system
      */
     private void initFlashLog() {
-        FlashAndPolicyLogInitializer i = new FlashAndPolicyLogInitializer();
-        i.init();
-        if (i.getTraceFileLocation() != null) {
-            setFlashLogFile(i.getTraceFileLocation());
+        FlashPlayerFiles fpf = FlashPlayerFilesLocator.evalFilesPaths();
+        if (fpf.getLogPath() != null) {
+            setFlashLogFile(fpf.getLogPath());
         }
-        if (i.getPolicyFileLocation() != null) {
-            setPolicyLogFile(i.getPolicyFileLocation());
+        if (fpf.getPolicyPath() != null) {
+            setPolicyLogFile(fpf.getPolicyPath());
         }
     }
 
@@ -271,112 +335,83 @@ public class VizzyForm extends javax.swing.JFrame {
     }
 
     private void initVars() {
-        jMainFrame = this;
-        
-        JScrollHighlightPanel scrollPanel = (JScrollHighlightPanel)jScrollHighlight;
-        this.vbar = jScrollPane1.getVerticalScrollBar();
-        this.searcher = new WordSearcher(jTraceTextArea, scrollPanel);
-        this.keywordsHighlighter = new KeywordsHighlighter(jTraceTextArea);
-        this.handleWordAtPosition = new HandleWordAtPosition(jTraceTextArea);
-        
-        scrollPanel.setTa(jTraceTextArea);
-        scrollPanel.setLocation(jTraceTextArea.getX(), jTraceTextArea.getY());
-        scrollPanel.setSize(scrollPanel.getWidth(), jTraceTextArea.getHeight()/2);
-
         try {
             URL myIconUrl = this.getClass().getResource("/img/vizzy.png");
             this.setIconImage(new ImageIcon(myIconUrl, "Vizzy Flash Tracer").getImage());
         } catch (Exception e) {
         }
 
-        String defaultFont = "Courier New";
+        JScrollHighlightPanel scrollPanel = (JScrollHighlightPanel)jScrollHighlight;
+        this.vbar = jScrollPane1.getVerticalScrollBar();
+        this.searcher = new WordSearcher(jTraceTextArea, scrollPanel);
+        this.keywordsHighlighter = new KeywordsHighlighter(jTraceTextArea);
+        this.handleWordAtPosition = new HandleWordAtPosition(jTraceTextArea);
+        this.showCodePopup = new ShowCodePopupTask(jTraceTextArea, new ICodePopupListener() {
+            public void mouseExited(MouseEvent e) {
+//                startHideCodeTimer();
+            }
+            public void mouseEntered(MouseEvent e) {
+//                stopHideCodeTimer();
+            }
+        });
+
+        scrollPanel.setTa(jTraceTextArea);
+        scrollPanel.setLocation(jTraceTextArea.getX(), jTraceTextArea.getY());
+        scrollPanel.setSize(scrollPanel.getWidth(), jTraceTextArea.getHeight()/2);
+
+        defaultFont = "Courier New";
         for (Font font : fonts) {
             if (font.getName().indexOf("Courier") > -1) {
                 defaultFont = font.getName();
                 break;
             }
         }
+    }
 
-        setLastUpdateDate(props.getProperty("update.last"));
-        setDetectPlayer(props.getProperty("settings.detectplayer", "true").equals("true"));
-        setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
-        setFlashLogFile(props.getProperty("settings.filename", flashLogFileName));
-        setRefreshFreq(props.getProperty("settings.refreshFreq", "500"));
-        setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
-        setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
-        setMaxNumLines(props.getProperty("settings.maxNumLines", "50000"));
-        setRestoreOnUpdate(props.getProperty("settings.restore", "false").equals("true"));
-        setOnTop(props.getProperty("settings.alwaysontop", "false").equals("true"));
-        setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
-        setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
-        setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
-        setEnableSmartTrace(props.getProperty("settings.enabelSmartTrace", "true").equals("true"));
-        setHighlightKeywords(props.getProperty("settings.highlightKeywords", "true").equals("true"));
-        setCustomASEditor(props.getProperty("settings.customASEditor", null));
-        setDefaultEditorUsed(props.getProperty("settings.isDefaultUsed", "true").equals("true"));
-        setTraceFont(props.getProperty("settings.font.name", defaultFont), props.getProperty("settings.font.size", "12"));
-        setSearchKeywords(props.getProperty("search.keywords", "").split("\\|\\|\\|"));
-        setDialogLocation(props.getProperty("settings.window.x", String.valueOf(this.getX())),
-                props.getProperty("settings.window.y", String.valueOf(this.getY())),
-                props.getProperty("settings.window.width", String.valueOf(this.getWidth())),
-                props.getProperty("settings.window.height", String.valueOf(this.getHeight())));
-        setFiltering(false);
-        setLogType(props.getProperty("settings.logtype", "0"));
+    public void onClose() {
+        saveSetting("settings.detectplayer", String.valueOf(detectPlayer));
+        saveSetting("settings.autoupdates", String.valueOf(isCheckUpdates));
+        saveSetting("settings.refreshFreq", String.valueOf(refreshFreq));
+        saveSetting("settings.isUTF", String.valueOf(isUTF));
+        saveSetting("settings.autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
+        saveSetting("settings.alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
+        saveSetting("settings.highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
+        saveSetting("settings.wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
+        saveSetting("settings.font.name", jTraceTextArea.getFont().getName());
+        saveSetting("settings.font.size", String.valueOf(jTraceTextArea.getFont().getSize()));
+        saveSetting("settings.filename", flashLogFileName);
+        saveSetting("settings.window.x", String.valueOf(getX()));
+        saveSetting("settings.window.y", String.valueOf(getY()));
+        saveSetting("settings.window.width", String.valueOf(getWidth()));
+        saveSetting("settings.window.height", String.valueOf(getHeight()));
+        saveSetting("settings.restore", String.valueOf(restoreOnUpdate));
+        saveSetting("settings.maxNumLines", String.valueOf(maxNumLines));
+        saveSetting("settings.maxNumLinesEnabled", String.valueOf(maxNumLinesEnabled));
+        saveSetting("settings.logtype", String.valueOf(logType));
+        saveSetting("settings.highlightKeywords", String.valueOf(highlightKeywords));
+        saveSetting("settings.enabelSmartTrace", String.valueOf(isSmartTraceEnabled));
+        saveSetting("settings.customASEditor", String.valueOf(customASEditor));
+        saveSetting("settings.isDefaultUsed", String.valueOf(isDefaultASEditor));
+        saveSetting("update.last", String.valueOf(lastUpdateDate.getTime()));
 
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(WindowEvent winEvt) {
-                saveSetting("settings.detectplayer", String.valueOf(detectPlayer));
-                saveSetting("settings.autoupdates", String.valueOf(isCheckUpdates));
-                saveSetting("settings.refreshFreq", String.valueOf(refreshFreq));
-                saveSetting("settings.isUTF", String.valueOf(isUTF));
-                saveSetting("settings.autorefresh", String.valueOf(jAutorefreshCheckBox.isSelected()));
-                saveSetting("settings.alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
-                saveSetting("settings.highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
-                saveSetting("settings.wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
-                saveSetting("settings.font.name", jTraceTextArea.getFont().getName());
-                saveSetting("settings.font.size", String.valueOf(jTraceTextArea.getFont().getSize()));
-                saveSetting("settings.filename", flashLogFileName);
-                saveSetting("settings.window.x", String.valueOf(jMainFrame.getX()));
-                saveSetting("settings.window.y", String.valueOf(jMainFrame.getY()));
-                saveSetting("settings.window.width", String.valueOf(jMainFrame.getWidth()));
-                saveSetting("settings.window.height", String.valueOf(jMainFrame.getHeight()));
-                saveSetting("settings.restore", String.valueOf(restoreOnUpdate));
-                saveSetting("settings.maxNumLines", String.valueOf(maxNumLines));
-                saveSetting("settings.maxNumLinesEnabled", String.valueOf(maxNumLinesEnabled));
-                saveSetting("settings.logtype", String.valueOf(logType));
-                saveSetting("settings.highlightKeywords", String.valueOf(highlightKeywords));
-                saveSetting("settings.enabelSmartTrace", String.valueOf(isSmartTraceEnabled));
-                saveSetting("settings.customASEditor", String.valueOf(customASEditor));
-                saveSetting("settings.isDefaultUsed", String.valueOf(isDefaultASEditor));
-                saveSetting("update.last", String.valueOf(lastUpdateDate.getTime()));
-
-                StringBuilder keywords = new StringBuilder();
-                for (int i = 0; i < searchKeywordsModel.getSize(); i++) {
-                    String keyword = (String) searchKeywordsModel.getElementAt(i);
-                    if (i != 0) {
-                        keywords.append("|||");
-                    }
-                    if (!"".equals(keyword)) {
-                        keywords.append(keyword);
-                    }
-                }
-                saveSetting("search.keywords", keywords.toString());
-                
-                try {
-                    props.store(new FileOutputStream(settingsFile), "");
-                } catch (FileNotFoundException ex) {
-                    System.err.println("error saving setting 1.");
-                } catch (IOException ex) {
-                    System.err.println("error saving setting 2.");
-                }
+        StringBuilder keywords = new StringBuilder();
+        for (int i = 0; i < searchKeywordsModel.getSize(); i++) {
+            String keyword = (String) searchKeywordsModel.getElementAt(i);
+            if (i != 0) {
+                keywords.append("|||");
             }
-        });
+            if (!"".equals(keyword)) {
+                keywords.append(keyword);
+            }
+        }
+        saveSetting("search.keywords", keywords.toString());
 
-        createLoadTimerTask().run();
-        if (isAutoRefresh) {
-            startTimer();
-        } else {
-            stopTimer();
+        try {
+            props.store(new FileOutputStream(settingsFile), "");
+        } catch (FileNotFoundException ex) {
+            System.err.println("error saving setting 1.");
+        } catch (IOException ex) {
+            System.err.println("error saving setting 2.");
         }
     }
 
@@ -411,7 +446,7 @@ public class VizzyForm extends javax.swing.JFrame {
         setMaxNumLinesEnabled(true);
         setMaxNumLines("50000");
 
-        startTimer();
+        startReadLogFileTimer();
 
         JOptionPane.showMessageDialog(null, "The log file is too big and Vizzy has run out of memory." +
                 " The limit for loading log has been set to " +
@@ -457,7 +492,7 @@ public class VizzyForm extends javax.swing.JFrame {
         }
     }
 
-    private void openCurrentWordIfURL() {
+    private void handleWordAtPosition() {
         if (isSmartTraceEnabled) {
             handleWordAtPosition.handle();
         }
@@ -506,15 +541,64 @@ public class VizzyForm extends javax.swing.JFrame {
 
     }
 
-    public void startTimer() {
-        stopTimer();
+    public void stopShowCodeTimer() {
+        if (showCodePopupTimer != null) {
+            showCodePopupTimer.cancel();
+            showCodePopupTimer = null;
+        }
+    }
+    public void startShowCodeTimer(MouseEvent me) {
+        stopShowCodeTimer();
+        showCodePopupTimer = new Timer();
+        showCodePopupTimer.schedule(new ShowCodePopupTimerTask(this, me), 500, 500);
+    }
+    public void startHideCodeTimer() {
+        stopHideCodeTimer();
+        hideCodePopupTimer = new Timer();
+        hideCodePopupTimer.schedule(new HideCodePopupTimerTask(this), 500, 500);
+    }
+    public void stopHideCodeTimer() {
+        if (hideCodePopupTimer != null) {
+            hideCodePopupTimer.cancel();
+            hideCodePopupTimer = null;
+        }
+    }
+    public void hideCodePopup() {
+        if (!showCodePopup.isVisible()) {
+            return;
+        }
+        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+        if (!showCodePopup.isMouseAtCodePopup(mouseLocation)) {
+            showCodePopup.hide();
+        }
+    }
+    public void onHideCodePopup() {
+        stopHideCodeTimer();
+        hideCodePopup();
+    }
+    public void onShowCodePopup(MouseEvent me) {
+        stopShowCodeTimer();
+        hideCodePopup();
+
+        Point pt = new Point(me.getX(), me.getY());
+        int offset = jTraceTextArea.viewToModel(pt);
+        SourceAndLine source = handleWordAtPosition.tryPositionForSourceFile(offset);
+        if (source == null) {
+            return;
+        }
+        showCodePopup.show(pt, source);
+    }
+
+    public void startReadLogFileTimer() {
+        stopReadLogFileTimer();
         readFileTimer = new Timer();
         readFileTimer.schedule(createLoadTimerTask(), 1000, refreshFreq);
     }
 
-    public void stopTimer() {
+    public void stopReadLogFileTimer() {
         if (readFileTimer != null) {
             readFileTimer.cancel();
+            readFileTimer = null;
         }
     }
 
@@ -670,6 +754,9 @@ public class VizzyForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jAutorefreshCheckBox = new javax.swing.JCheckBox();
         jClearTraceButton = new javax.swing.JButton();
+        jOnTopCheckbox = new javax.swing.JCheckBox();
+        jWordWrapCheckbox = new javax.swing.JCheckBox();
+        logTypeCombo = new javax.swing.JComboBox();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jHighlightAllCheckbox = new javax.swing.JCheckBox();
         jFilterCheckbox = new javax.swing.JCheckBox();
@@ -677,13 +764,10 @@ public class VizzyForm extends javax.swing.JFrame {
         jSearchWarnLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jSearchComboBox = new javax.swing.JComboBox();
-        jOnTopCheckbox = new javax.swing.JCheckBox();
-        jWordWrapCheckbox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTraceTextArea = new javax.swing.JTextArea();
         jScrollHighlight = new vizzy.comp.JScrollHighlightPanel();
-        logTypeCombo = new javax.swing.JComboBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -695,6 +779,14 @@ public class VizzyForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vizzy Flash Tracer");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+            public void windowDeactivated(java.awt.event.WindowEvent evt) {
+                formWindowDeactivated(evt);
+            }
+        });
 
         jAutorefreshCheckBox.setSelected(true);
         jAutorefreshCheckBox.setText("Autorefresh");
@@ -710,6 +802,32 @@ public class VizzyForm extends javax.swing.JFrame {
         jClearTraceButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jClearTraceButtondeleteActionPerformed(evt);
+            }
+        });
+
+        jOnTopCheckbox.setText("Always On Top");
+        jOnTopCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jOnTopCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jOnTopCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jOnTopCheckboxChecked(evt);
+            }
+        });
+
+        jWordWrapCheckbox.setSelected(true);
+        jWordWrapCheckbox.setText("Word Wrap");
+        jWordWrapCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jWordWrapCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jWordWrapCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jWordWrapCheckboxChecked(evt);
+            }
+        });
+
+        logTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Flash Log", "Policy File" }));
+        logTypeCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logTypeComboActionPerformed(evt);
             }
         });
 
@@ -752,42 +870,31 @@ public class VizzyForm extends javax.swing.JFrame {
                 jClearActionPerformed(evt);
             }
         });
-        jButton1.setBounds(390, 38, 80, 23);
+        jButton1.setBounds(390, 38, 90, 23);
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchComboBox.setEditable(true);
         jSearchComboBox.setBounds(9, 39, 370, 20);
         jLayeredPane1.add(jSearchComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jOnTopCheckbox.setText("Always On Top");
-        jOnTopCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jOnTopCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jOnTopCheckbox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jOnTopCheckboxChecked(evt);
-            }
-        });
-
-        jWordWrapCheckbox.setSelected(true);
-        jWordWrapCheckbox.setText("Word Wrap");
-        jWordWrapCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jWordWrapCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jWordWrapCheckbox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jWordWrapCheckboxChecked(evt);
-            }
-        });
-
         jTraceTextArea.setColumns(20);
-        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12));
+        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
         jTraceTextArea.setLineWrap(true);
         jTraceTextArea.setRows(5);
         jTraceTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jTraceTextAreaMouseExited(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jTraceTextAreaMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jTraceTextAreaMouseReleased(evt);
+            }
+        });
+        jTraceTextArea.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                jTraceTextAreaMouseMoved(evt);
             }
         });
         jTraceTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -808,7 +915,7 @@ public class VizzyForm extends javax.swing.JFrame {
         );
         jScrollHighlightLayout.setVerticalGroup(
             jScrollHighlightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 316, Short.MAX_VALUE)
+            .add(0, 309, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
@@ -822,60 +929,58 @@ public class VizzyForm extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
         );
-
-        logTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Flash Log", "Policy File" }));
-        logTypeCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logTypeComboActionPerformed(evt);
-            }
-        });
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+            .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
-                        .add(jAutorefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jWordWrapCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 113, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jOnTopCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 163, Short.MAX_VALUE)
-                        .add(jClearTraceButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 135, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .add(jAutorefreshCheckBox)
+                .add(77, 77, 77)
+                .add(jWordWrapCheckbox)
+                .add(103, 103, 103)
+                .add(jOnTopCheckbox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 120, Short.MAX_VALUE)
+                .add(jClearTraceButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 119, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(11, 11, 11))
             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .add(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
                     .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
+                    .addContainerGap()))
+            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                .add(102, 102, 102)
-                .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jAutorefreshCheckBox)
-                    .add(jWordWrapCheckbox)
-                    .add(jOnTopCheckbox)
-                    .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jClearTraceButton))
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(428, Short.MAX_VALUE)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jClearTraceButton)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jOnTopCheckbox)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jWordWrapCheckbox)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jAutorefreshCheckBox))
                 .addContainerGap())
             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(jPanel1Layout.createSequentialGroup()
-                    .add(10, 10, 10)
-                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(364, Short.MAX_VALUE)))
+                    .addContainerGap()
+                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(360, Short.MAX_VALUE)))
+            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                    .add(108, 108, 108)
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(41, 41, 41)))
         );
 
         jMenu1.setText("Edit");
@@ -970,9 +1075,9 @@ public class VizzyForm extends javax.swing.JFrame {
         setAutoRefresh(jAutorefreshCheckBox.isSelected());
         if (isAutoRefresh) {
             createLoadTimerTask().run();
-            startTimer();
+            startReadLogFileTimer();
         } else {
-            stopTimer();
+            stopReadLogFileTimer();
         }
 }//GEN-LAST:event_jAutorefreshCheckBoxjAutorefreshCheckboxChecked
 
@@ -995,17 +1100,17 @@ public class VizzyForm extends javax.swing.JFrame {
 
     private void jTraceTextAreaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMousePressed
         if (isAutoRefresh) {
-            stopTimer();
+            stopReadLogFileTimer();
         }
     }//GEN-LAST:event_jTraceTextAreaMousePressed
 
     private void jTraceTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseReleased
         String selection = jTraceTextArea.getSelectedText();
         if (selection == null || "".equals(selection)) {
-            openCurrentWordIfURL();
+            handleWordAtPosition();
         }
         if (isAutoRefresh) {
-            startTimer();
+            startReadLogFileTimer();
         }
     }//GEN-LAST:event_jTraceTextAreaMouseReleased
 
@@ -1023,7 +1128,7 @@ public class VizzyForm extends javax.swing.JFrame {
         setLogType(String.valueOf(logTypeCombo.getSelectedIndex()));
         createLoadTimerTask().run();
         if (isAutoRefresh) {
-            startTimer();
+            startReadLogFileTimer();
         }
     }//GEN-LAST:event_logTypeComboActionPerformed
 
@@ -1056,6 +1161,27 @@ public class VizzyForm extends javax.swing.JFrame {
     private void aboutClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutClicked
         new AboutPanel(this);
     }//GEN-LAST:event_aboutClicked
+
+    private void jTraceTextAreaMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseMoved
+        if (!showCodePopup.isVisible()) {
+            startShowCodeTimer(evt);
+        } else if (hideCodePopupTimer == null) {
+            startHideCodeTimer();
+        }
+    }//GEN-LAST:event_jTraceTextAreaMouseMoved
+
+    private void jTraceTextAreaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseExited
+        stopShowCodeTimer();
+    }//GEN-LAST:event_jTraceTextAreaMouseExited
+
+    private void formWindowDeactivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowDeactivated
+        stopShowCodeTimer();
+        hideCodePopup();
+    }//GEN-LAST:event_formWindowDeactivated
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        onClose();
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JCheckBox jAutorefreshCheckBox;

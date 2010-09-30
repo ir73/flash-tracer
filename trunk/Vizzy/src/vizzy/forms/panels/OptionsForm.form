@@ -38,10 +38,10 @@
                       <Component id="jTabbedPane1" pref="410" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="134" max="-2" attributes="0"/>
-                      <Component id="jOKButton" min="-2" pref="74" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="114" max="-2" attributes="0"/>
+                      <Component id="jOKButton" min="-2" pref="94" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jButton2" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="jButton2" min="-2" pref="101" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -558,17 +558,11 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Buffer trace output. Use this if you trace really much which causes your CPU work with 100% load&lt;/html&gt;"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxBufferActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBoxTraceAll">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Trace all executed methods. Warning: use with &quot;Buffer Trace Output&quot; only! (AS3 only)&lt;/html&gt;"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxTraceAllActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
@@ -580,9 +574,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Trace bytecode. Traces detailed information about SWF bytecode and runtime parsing. (AS3 only)&lt;/html&gt;"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxVerboseActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBoxStatic">
               <Properties>
