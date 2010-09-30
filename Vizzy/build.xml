@@ -10,6 +10,7 @@
 <project name="Vizzy" default="build-vizzy" basedir=".">
     <description>Builds, tests, and runs the project Vizzy.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="nbproject/profiler-build-impl.xml"/>
 
     <target name="build-vizzy" depends="clean, jar">
 
@@ -28,7 +29,7 @@
             </fileset>
         </move>
 
-        <exec executable="C:/Program Files/Launch4j/launch4jc">
+        <exec executable="C:/tools/launch4j/launch4jc">
             <arg value="launch4j.xml"/>
         </exec>
 

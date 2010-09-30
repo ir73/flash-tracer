@@ -23,21 +23,14 @@ import vizzy.tasks.CheckUpdates;
  */
 public class OptionsForm extends javax.swing.JFrame {
 
-    private final VizzyForm vf;
+    private VizzyForm vf;
 
     /** Creates new form OptionsForm */
     public OptionsForm(VizzyForm vf) {
         this.vf = vf;
         initComponents();
 
-        try {
-            this.setIconImage(vf.getIconImage());
-        } catch (Exception e) {
-        }
-
-        int x = vf.getX() + vf.getWidth() / 2 - getWidth( )/ 2;
-        int y = vf.getY() + vf.getHeight() / 2 - getHeight()/ 2;
-        setLocation(x, y);
+        init();
     }
 
     /** This method is called from within the constructor to
@@ -308,28 +301,13 @@ public class OptionsForm extends javax.swing.JFrame {
         jTabbedPane1.addTab("Updates", jPanel4);
 
         jCheckBoxBuffer.setText("<html>Buffer trace output. Use this if you trace really much which causes your CPU work with 100% load</html>");
-        jCheckBoxBuffer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxBufferActionPerformed(evt);
-            }
-        });
 
         jCheckBoxTraceAll.setText("<html>Trace all executed methods. Warning: use with \"Buffer Trace Output\" only! (AS3 only)</html>");
-        jCheckBoxTraceAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxTraceAllActionPerformed(evt);
-            }
-        });
 
         jLabel7.setText("<html>You will need to restart your browser after changing these settings</html>");
         jLabel7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jCheckBoxVerbose.setText("<html>Trace bytecode. Traces detailed information about SWF bytecode and runtime parsing. (AS3 only)</html>");
-        jCheckBoxVerbose.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxVerboseActionPerformed(evt);
-            }
-        });
 
         jCheckBoxStatic.setText("<html>Outputs information about functions, bytecode, memory used, etc. (AS3 only)</html>");
 
@@ -382,10 +360,10 @@ public class OptionsForm extends javax.swing.JFrame {
                         .addContainerGap()
                         .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
-                        .add(134, 134, 134)
-                        .add(jOKButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(114, 114, 114)
+                        .add(jOKButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 94, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(jButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -446,20 +424,11 @@ public class OptionsForm extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_cancelClicked
 
-    private void jCheckBoxBufferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxBufferActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_jCheckBoxBufferActionPerformed
-
-    private void jCheckBoxVerboseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxVerboseActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxVerboseActionPerformed
-
     private void jCheckBoxTraceAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxTraceAllActionPerformed
         if (jCheckBoxTraceAll.isSelected()) {
             jCheckBoxBuffer.setSelected(true);
         }
     }//GEN-LAST:event_jCheckBoxTraceAllActionPerformed
-
     private void jEnableSmartTraceCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jEnableSmartTraceCheckBoxActionPerformed
         enableSmartTraceControls();
     }//GEN-LAST:event_jEnableSmartTraceCheckBoxActionPerformed
@@ -538,9 +507,9 @@ public class OptionsForm extends javax.swing.JFrame {
         vf.recentHash = null;
         vf.createLoadTimerTask().run();
         if (vf.isAutoRefresh) {
-            vf.startTimer();
+            vf.startReadLogFileTimer();
         } else {
-            vf.stopTimer();
+            vf.stopReadLogFileTimer();
         }
 
         dispose();
@@ -587,6 +556,17 @@ public class OptionsForm extends javax.swing.JFrame {
         jDefaultRadioButton.setEnabled(jEnableSmartTraceCheckBox.isSelected());
         jCustomEditorRadioButton.setEnabled(jEnableSmartTraceCheckBox.isSelected());
         jCustomASEditorTextFiled.setEnabled(jEnableSmartTraceCheckBox.isSelected());
+    }
+
+    private void init() {
+        try {
+            this.setIconImage(vf.getIconImage());
+        } catch (Exception e) {
+        }
+
+        int x = vf.getX() + vf.getWidth() / 2 - getWidth( )/ 2;
+        int y = vf.getY() + vf.getHeight() / 2 - getHeight()/ 2;
+        setLocation(x, y);
     }
 
 }

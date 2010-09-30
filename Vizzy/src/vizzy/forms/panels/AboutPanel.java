@@ -22,21 +22,13 @@ import vizzy.forms.VizzyForm;
  */
 public class AboutPanel extends javax.swing.JFrame {
 
-    private final VizzyForm vf;
+    private VizzyForm vf;
 
     /** Creates new form AboutPanel */
     public AboutPanel(VizzyForm vf) {
         this.vf = vf;
         initComponents();
-        try {
-            this.setIconImage(vf.getIconImage());
-        } catch (Exception e) {
-        }
-        int x = vf.getX() + vf.getWidth() / 2 - getWidth( )/ 2;
-        int y = vf.getY() + vf.getHeight() / 2 - getHeight()/ 2;
-        setLocation(x, y);
-        vf.setAlwaysOnTop(false);
-        setVisible(true);
+        init();
     }
 
     /** This method is called from within the constructor to
@@ -164,7 +156,6 @@ public class AboutPanel extends javax.swing.JFrame {
             if (Desktop.isDesktopSupported())
                 Desktop.getDesktop().mail(new URI("mailto:sergei.ledvanov@gmail.com"));
         } catch (Exception ex1) {
-
         }
     }//GEN-LAST:event_emailClicked
 
@@ -182,7 +173,6 @@ public class AboutPanel extends javax.swing.JFrame {
             if (Desktop.isDesktopSupported())
                 Desktop.getDesktop().browse(new URI("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JPVRL8G9JYAVL&lc=EE&item_name=Vizzy%20Flash%20Tracer&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"));
         } catch (Exception ex1) {
-
         }
     }//GEN-LAST:event_donateClicked
 
@@ -198,5 +188,23 @@ public class AboutPanel extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
+
+    private void init() {
+        try {
+            this.setIconImage(vf.getIconImage());
+        } catch (Exception e) {
+        }
+        int x = vf.getX() + vf.getWidth() / 2 - getWidth( )/ 2;
+        int y = vf.getY() + vf.getHeight() / 2 - getHeight()/ 2;
+        setLocation(x, y);
+        vf.setAlwaysOnTop(false);
+        setVisible(true);
+    }
+
+    @Override
+    public void dispose() {
+        vf = null;
+        super.dispose();
+    }
 
 }
