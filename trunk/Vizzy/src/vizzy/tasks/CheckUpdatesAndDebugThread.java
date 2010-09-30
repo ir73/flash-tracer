@@ -23,9 +23,9 @@ public class CheckUpdatesAndDebugThread extends Thread {
         boolean aut = mainForm.isAlwaysOnTop();
         mainForm.setAlwaysOnTop(false);
         mainForm.checkDebugPlayers();
-        if (mainForm.isCheckUpdates) {
+        if (mainForm.settings.isCheckUpdates()) {
             Date nowDate = new Date();
-            long compareResult = nowDate.getTime() - mainForm.lastUpdateDate.getTime();
+            long compareResult = nowDate.getTime() - mainForm.settings.getLastUpdateDate().getTime();
             if (compareResult > 7 * 24 * 60 * 60 * 1000) {
                 mainForm.checkUpdates(false);
             }

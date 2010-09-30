@@ -160,7 +160,7 @@ public class AboutPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_emailClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        vf.setAlwaysOnTop(vf.isAlwaysONTOP);
+        vf.setAlwaysOnTop(vf.settings.isAlwaysOnTop());
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -177,7 +177,7 @@ public class AboutPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_donateClicked
 
     private void onWIndowClose(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onWIndowClose
-        vf.setAlwaysOnTop(vf.isAlwaysONTOP);
+        vf.setAlwaysOnTop(vf.settings.isAlwaysOnTop());
         dispose();
     }//GEN-LAST:event_onWIndowClose
 

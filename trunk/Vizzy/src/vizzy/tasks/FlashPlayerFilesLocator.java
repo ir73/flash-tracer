@@ -15,7 +15,7 @@ import vizzy.model.FlashPlayerFiles;
  */
 public class FlashPlayerFilesLocator {
 
-    public static FlashPlayerFiles evalFilesPaths() {
+    public static FlashPlayerFiles findFilesPaths() {
 
         FlashPlayerFiles fpf = new FlashPlayerFiles();
         

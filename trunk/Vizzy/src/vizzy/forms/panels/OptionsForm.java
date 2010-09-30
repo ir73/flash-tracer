@@ -13,8 +13,10 @@ package vizzy.forms.panels;
 
 import java.io.File;
 import java.util.HashMap;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import vizzy.forms.VizzyForm;
+import vizzy.model.SettingsModel;
 import vizzy.tasks.CheckUpdates;
 
 /**
@@ -24,12 +26,13 @@ import vizzy.tasks.CheckUpdates;
 public class OptionsForm extends javax.swing.JFrame {
 
     private VizzyForm vf;
+    private final SettingsModel settings;
 
     /** Creates new form OptionsForm */
-    public OptionsForm(VizzyForm vf) {
+    public OptionsForm(VizzyForm vf, SettingsModel settings) {
         this.vf = vf;
+        this.settings = settings;
         initComponents();
-
         init();
     }
 
@@ -112,7 +115,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jFontSizeTextField.setBounds(290, 40, 80, 20);
         jLayeredPane2.add(jFontSizeTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jFontComboBox.setModel(vf.fontsModel);
+        jFontComboBox.setModel(new DefaultComboBoxModel(settings.getFontNames()));
         jFontComboBox.setBounds(10, 40, 270, 22);
         jLayeredPane2.add(jFontComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -420,7 +423,7 @@ public class OptionsForm extends javax.swing.JFrame {
     }//GEN-LAST:event_browseButtonClicked
 
     private void cancelClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelClicked
-        vf.setAlwaysOnTop(vf.isAlwaysONTOP);
+        vf.setAlwaysOnTop(vf.settings.isAlwaysOnTop());
         dispose();
     }//GEN-LAST:event_cancelClicked
 
@@ -482,15 +485,15 @@ public class OptionsForm extends javax.swing.JFrame {
 
         vf.jTraceTextArea.setText("");
         vf.setFlashLogFile(jFlashLogTextField.getText());
-        if (vf.logType == 0) {
-            vf.setCurrentLogFile(vf.flashLogFileName);
+        if (vf.settings.getLogType() == 0) {
+            vf.setCurrentLogFile(vf.settings.getFlashLogFileName());
         }
         vf.setCheckUpdates(jUpdatesCheckBox.isSelected());
         vf.setMaxNumLinesEnabled(jNumLinesEnabledCheckBox.isSelected());
         vf.setMaxNumLines(jNumLinesTextField.getText());
         vf.setUTF(jUTFCheckBox.isSelected());
         vf.setRefreshFreq(jFreqTextField.getText());
-        vf.setAlwaysOnTop(vf.isAlwaysONTOP);
+        vf.setAlwaysOnTop(vf.settings.isAlwaysOnTop());
         vf.setRestoreOnUpdate(jRestoreCheckBox.isSelected());
         vf.setHighlightKeywords(jHighlightKeywordsCheckBox.isSelected());
         vf.setCustomASEditor(jCustomASEditorTextFiled.getText());
@@ -506,7 +509,7 @@ public class OptionsForm extends javax.swing.JFrame {
 
         vf.recentHash = null;
         vf.createLoadTimerTask().run();
-        if (vf.isAutoRefresh) {
+        if (vf.settings.isAutoRefresh()) {
             vf.startReadLogFileTimer();
         } else {
             vf.stopReadLogFileTimer();
@@ -516,26 +519,26 @@ public class OptionsForm extends javax.swing.JFrame {
     }
 
     private void initVars() {
-        jUTFCheckBox.setSelected(vf.isUTF);
-        jUpdatesCheckBox.setSelected(vf.isCheckUpdates);
-        jNumLinesEnabledCheckBox.setSelected(vf.maxNumLinesEnabled);
-        jNumLinesTextField.setText(String.valueOf(vf.maxNumLines));
-        jRestoreCheckBox.setSelected(vf.restoreOnUpdate);
+        jUTFCheckBox.setSelected(vf.settings.isUTF());
+        jUpdatesCheckBox.setSelected(vf.settings.isCheckUpdates());
+        jNumLinesEnabledCheckBox.setSelected(vf.settings.isMaxNumLinesEnabled());
+        jNumLinesTextField.setText(String.valueOf(vf.settings.getMaxNumLines()));
+        jRestoreCheckBox.setSelected(vf.settings.isRestoreOnUpdate());
 
         jFontComboBox.setSelectedItem(vf.jTraceTextArea.getFont().getName());
         jFontSizeTextField.setText(String.valueOf(vf.jTraceTextArea.getFont().getSize()));
-        jFlashLogTextField.setText(vf.flashLogFileName);
-        jFreqTextField.setText(String.valueOf(vf.refreshFreq));
+        jFlashLogTextField.setText(vf.settings.getFlashLogFileName());
+        jFreqTextField.setText(String.valueOf(vf.settings.getRefreshFreq()));
         jVersionLabel.setText("Current version is: " + CheckUpdates.VERSION);
         jNumLinesTextField.setEnabled(jNumLinesEnabledCheckBox.isSelected());
         jCheckBoxBuffer.setSelected(vf.mmcfgInitializer.getKey("TraceOutputBuffered", "0").equals("1"));
         jCheckBoxTraceAll.setSelected(vf.mmcfgInitializer.getKey("AS3Trace", "0").equals("1"));
         jCheckBoxVerbose.setSelected(vf.mmcfgInitializer.getKey("AS3Verbose", "0").equals("1"));
         jCheckBoxStatic.setSelected(vf.mmcfgInitializer.getKey("AS3StaticProfile", "0").equals("1"));
-        jEnableSmartTraceCheckBox.setSelected(vf.isSmartTraceEnabled);
-        jHighlightKeywordsCheckBox.setSelected(vf.highlightKeywords);
-        jCustomASEditorTextFiled.setText(vf.customASEditor);
-        if (vf.isDefaultASEditor) {
+        jEnableSmartTraceCheckBox.setSelected(vf.settings.isSmartTraceEnabled());
+        jHighlightKeywordsCheckBox.setSelected(vf.settings.isHighlightKeywords());
+        jCustomASEditorTextFiled.setText(vf.settings.getCustomASEditor());
+        if (vf.settings.isDefaultASEditor()) {
             jDefaultRadioButton.setSelected(true);
         } else {
             jCustomEditorRadioButton.setSelected(true);
