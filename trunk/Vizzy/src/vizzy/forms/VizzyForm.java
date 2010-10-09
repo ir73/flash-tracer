@@ -590,7 +590,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
 
     }
     @Override
-    public void onHighlightKeywordsChanged(boolean highlightKeywords) {
+    public void onHighlightStackTraceErrorsChanged(boolean highlightKeywords) {
 
     }
     @Override
@@ -637,10 +637,6 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     public void onWordWrapChanged(boolean wordWrap) {
         jWordWrapCheckbox.setSelected(settings.isWordWrap());
         jTraceTextArea.setLineWrap(settings.isWordWrap());
-    }
-    @Override
-    public void onSmartTraceEnabledChanged(boolean smartTraceEnabled) {
-        
     }
     @Override
     public void onCheckUpdatesChanged(boolean checkUpdates) {
@@ -764,6 +760,12 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     @Override
     public JScrollHighlightPanel getHighLightScroll() {
         return (JScrollHighlightPanel)jScrollHighlight;
+    }
+    @Override
+    public void onEnableStackTraceClickChanged(boolean enableStackTraceClick) {
+    }
+    @Override
+    public void onEnableCodePopupChanged(boolean enableCodePopup) {
     }
 
 }

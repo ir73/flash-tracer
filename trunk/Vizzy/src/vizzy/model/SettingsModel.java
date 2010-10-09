@@ -46,10 +46,9 @@ public class SettingsModel {
     private int logType = 0;
     private String customASEditor = "\"C:\\Program Files\\FlashDevelop\\FlashDevelop.exe\" %file% -line %line%";
     private boolean isDefaultASEditor = true;
-    private boolean highlightKeywords = true;
+    private boolean highlightStackTraceErrors = true;
     private boolean isAutoRefresh = true;
     private boolean isUTF = true;
-    private boolean isSmartTraceEnabled = true;
     private boolean isCheckUpdates = true;
     private boolean maxNumLinesEnabled = false;
     private long maxNumLines = 20;
@@ -73,6 +72,8 @@ public class SettingsModel {
     private boolean isPolicyFileRecorded;
     private Image appIcon;
     private boolean isUIActionsAvailable;
+    private boolean enableTraceClick;
+    private boolean enableCodePopup;
 
     private KeywordsHighlighter keywordsHighlighter;
     private HandleWordAtPosition handleWordAtPosition;
@@ -264,14 +265,14 @@ public class SettingsModel {
         }
     }
 
-    public boolean isHighlightKeywords() {
-        return highlightKeywords;
+    public boolean isHighlightStackTraceErrors() {
+        return highlightStackTraceErrors;
     }
 
-    public void setHighlightKeywords(boolean highlightKeywords, boolean doFireEvent) {
-        this.highlightKeywords = highlightKeywords;
+    public void setHighlightStackTraceErrors(boolean highlightKeywords, boolean doFireEvent) {
+        this.highlightStackTraceErrors = highlightKeywords;
         if (doFireEvent && listener != null) {
-            getListener().onHighlightKeywordsChanged(this.highlightKeywords);
+            getListener().onHighlightStackTraceErrorsChanged(this.highlightStackTraceErrors);
         }
     }
 
@@ -287,17 +288,6 @@ public class SettingsModel {
         this.isUTF = isUTF;
         if (doFireEvent && listener != null) {
             getListener().onUTFChanged(this.isUTF);
-        }
-    }
-
-    public boolean isSmartTraceEnabled() {
-        return isSmartTraceEnabled;
-    }
-
-    public void setSmartTraceEnabled(boolean isSmartTraceEnabled, boolean doFireEvent) {
-        this.isSmartTraceEnabled = isSmartTraceEnabled;
-        if (doFireEvent && listener != null) {
-            getListener().onSmartTraceEnabledChanged(this.isSmartTraceEnabled);
         }
     }
 
@@ -605,6 +595,28 @@ public class SettingsModel {
         window = bounds;
         if (doFireEvent && listener != null) {
             getListener().onMainWindowLocationChanged(this.window);
+        }
+    }
+
+    public boolean isEnableTraceClick() {
+        return enableTraceClick;
+    }
+
+    public void setEnableTraceClick(boolean enableStackTraceClick, boolean doFireEvent) {
+        this.enableTraceClick = enableStackTraceClick;
+        if (doFireEvent && listener != null) {
+            getListener().onEnableStackTraceClickChanged(this.enableTraceClick);
+        }
+    }
+
+    public boolean isEnableCodePopup() {
+        return enableCodePopup;
+    }
+
+    public void setEnableCodePopup(boolean enableCodePopup, boolean doFireEvent) {
+        this.enableCodePopup = enableCodePopup;
+        if (doFireEvent && listener != null) {
+            getListener().onEnableCodePopupChanged(this.enableCodePopup);
         }
     }
 
