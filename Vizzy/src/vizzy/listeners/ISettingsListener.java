@@ -29,7 +29,7 @@ public interface ISettingsListener {
 
     public void onUTFChanged(boolean uTF);
 
-    public void onHighlightKeywordsChanged(boolean highlightKeywords);
+    public void onHighlightStackTraceErrorsChanged(boolean highlightKeywords);
 
     public void onPolicyLogFileNameChanged(String policyLogFileName);
 
@@ -50,8 +50,6 @@ public interface ISettingsListener {
     public void onAutoRefreshChanged(boolean autoRefresh);
 
     public void onWordWrapChanged(boolean wordWrap);
-
-    public void onSmartTraceEnabledChanged(boolean smartTraceEnabled);
 
     public void onCheckUpdatesChanged(boolean checkUpdates);
 
@@ -88,5 +86,9 @@ public interface ISettingsListener {
     public void onInit();
 
     public void onAfterInit();
+
+    public void onEnableStackTraceClickChanged(boolean enableStackTraceClick);
+
+    public void onEnableCodePopupChanged(boolean enableCodePopup);
 
 }

@@ -281,8 +281,9 @@ public final class VizzyController implements ILogFileListener {
         settings.setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"), true);
         settings.setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"), true);
         settings.setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"), true);
-        settings.setSmartTraceEnabled(props.getProperty("settings.enabelSmartTrace", "true").equals("true"), true);
-        settings.setHighlightKeywords(props.getProperty("settings.highlightKeywords", "true").equals("true"), true);
+        settings.setHighlightStackTraceErrors(props.getProperty("settings.enableHighlightErrors", "true").equals("true"), true);
+        settings.setEnableCodePopup(props.getProperty("settings.enableCodePopups", "true").equals("true"), true);
+        settings.setEnableTraceClick(props.getProperty("settings.enableTraceClick", "true").equals("true"), true);
         settings.setCustomASEditor(props.getProperty("settings.customASEditor", null), true);
         settings.setDefaultASEditor(props.getProperty("settings.isDefaultUsed", "true").equals("true"), true);
         settings.setTraceFont(props.getProperty("settings.font.name", settings.getDefaultFont()), 
@@ -315,7 +316,7 @@ public final class VizzyController implements ILogFileListener {
             startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
         }
 
-        highlightKeywords();
+        highlightStackTraceErrors();
     }
 
     @Override
@@ -330,20 +331,20 @@ public final class VizzyController implements ILogFileListener {
                 "50KB. You can customize this value in Options menu.", "Warning", JOptionPane.ERROR_MESSAGE);
     }
 
-    private void highlightKeywords() {
-        if (settings.isSmartTraceEnabled() && settings.isHighlightKeywords()) {
+    private void highlightStackTraceErrors() {
+        if (settings.isHighlightStackTraceErrors()) {
             settings.getKeywordsHighlighter().highlight();
         }
     }
 
     private void handleWordAtPosition() {
-        if (settings.isSmartTraceEnabled()) {
+        if (settings.isEnableTraceClick()) {
             settings.getHandleWordAtPosition().findObjectAtPositionAndExecute();
         }
     }
 
     public void stopShowCodeTimer() {
-        if (!settings.isSmartTraceEnabled()) {
+        if (!settings.isEnableCodePopup()) {
             return;
         }
         if (showCodePopupTimer != null) {
@@ -352,7 +353,7 @@ public final class VizzyController implements ILogFileListener {
         }
     }
     public void startShowCodePopupTimer(Point pt) {
-        if (!settings.isSmartTraceEnabled()) {
+        if (!settings.isEnableCodePopup()) {
             return;
         }
         stopShowCodeTimer();
@@ -360,7 +361,7 @@ public final class VizzyController implements ILogFileListener {
         showCodePopupTimer.schedule(new ShowCodePopupTimerTask(this, pt), 500, 500);
     }
     public void startHideCodePopupTimer() {
-        if (!settings.isSmartTraceEnabled()) {
+        if (!settings.isEnableCodePopup()) {
             return;
         }
         stopHideCodePopupTimer();
@@ -368,7 +369,7 @@ public final class VizzyController implements ILogFileListener {
         hideCodePopupTimer.schedule(new HideCodePopupTimerTask(this), 500, 500);
     }
     public void stopHideCodePopupTimer() {
-        if (!settings.isSmartTraceEnabled()) {
+        if (!settings.isEnableCodePopup()) {
             return;
         }
         if (hideCodePopupTimer != null) {
@@ -377,7 +378,7 @@ public final class VizzyController implements ILogFileListener {
         }
     }
     public void hideCodePopup() {
-        if (!settings.isSmartTraceEnabled()) {
+        if (!settings.isEnableCodePopup()) {
             return;
         }
         if (!settings.getCodePopupHandler().isVisible()) {
@@ -387,7 +388,7 @@ public final class VizzyController implements ILogFileListener {
         settings.getCodePopupHandler().hide();
     }
     public void onHideCodePopup() {
-        if (!settings.isSmartTraceEnabled()) {
+        if (!settings.isEnableCodePopup()) {
             return;
         }
         stopHideCodePopupTimer();
@@ -401,7 +402,7 @@ public final class VizzyController implements ILogFileListener {
         }
     }
     public void onShowCodePopup(Point pt) {
-        if (!settings.isSmartTraceEnabled()) {
+        if (!settings.isEnableCodePopup()) {
             return;
         }
         stopShowCodeTimer();
@@ -486,7 +487,7 @@ public final class VizzyController implements ILogFileListener {
         settings.getSearcher().setWord("");
         settings.getSearcher().clearHighlights();
         settings.getSearcher().setWasSearching(false);
-        highlightKeywords();
+        highlightStackTraceErrors();
         settings.clearSearch();
     }
 
@@ -600,8 +601,9 @@ public final class VizzyController implements ILogFileListener {
         props.setProperty("settings.maxNumLines", String.valueOf(settings.getMaxNumLines()));
         props.setProperty("settings.maxNumLinesEnabled", String.valueOf(settings.isMaxNumLinesEnabled()));
         props.setProperty("settings.logtype", String.valueOf(settings.getLogType()));
-        props.setProperty("settings.highlightKeywords", String.valueOf(settings.isHighlightKeywords()));
-        props.setProperty("settings.enabelSmartTrace", String.valueOf(settings.isSmartTraceEnabled()));
+        props.setProperty("settings.enableHighlightErrors", String.valueOf(settings.isHighlightStackTraceErrors()));
+        props.setProperty("settings.enableCodePopups", String.valueOf(settings.isEnableCodePopup()));
+        props.setProperty("settings.enableTraceClick", String.valueOf(settings.isEnableTraceClick()));
         props.setProperty("settings.customASEditor", String.valueOf(settings.getCustomASEditor()));
         props.setProperty("settings.isDefaultASEditor", String.valueOf(settings.isDefaultASEditor()));
         props.setProperty("update.last", String.valueOf(settings.getLastUpdateDate().getTime()));
@@ -639,7 +641,7 @@ public final class VizzyController implements ILogFileListener {
             settings.getSearcher().setWord(selectedItem);
             settings.getSearcher().setWasSearching(true);
             startSearch(true);
-            highlightKeywords();
+            highlightStackTraceErrors();
         } 
     }
 
@@ -648,7 +650,7 @@ public final class VizzyController implements ILogFileListener {
         if (selectedItem != null && !selectedItem.equals("")) {
             settings.getSearcher().setWasSearching(true);
             startSearch(true);
-            highlightKeywords();
+            highlightStackTraceErrors();
         }
     }
 
@@ -657,7 +659,7 @@ public final class VizzyController implements ILogFileListener {
         if (selectedItem != null && !selectedItem.equals("")) {
             settings.getSearcher().setWasSearching(true);
             startSearch(false);
-            highlightKeywords();
+            highlightStackTraceErrors();
         }
     }
 
@@ -698,7 +700,7 @@ public final class VizzyController implements ILogFileListener {
             settings.getSearcher().setWasSearching(true);
             settings.highlightTraceKeyword(text);
             startSearch(true);
-            highlightKeywords();
+            highlightStackTraceErrors();
         }
     }
 
@@ -757,10 +759,11 @@ public final class VizzyController implements ILogFileListener {
         settings.setRefreshFreq(s.getRefreshFreq(), true);
         settings.setAlwaysOnTop(s.isAlwaysOnTop(), true);
         settings.setRestoreOnUpdate(s.isRestoreOnUpdate(), true);
-        settings.setHighlightKeywords(s.isHighlightKeywords(), true);
+        settings.setHighlightStackTraceErrors(s.isHighlightStackTraceErrors(), true);
         settings.setCustomASEditor(s.getCustomASEditor(), true);
         settings.setDefaultASEditor(s.isDefaultASEditor(), true);
-        settings.setSmartTraceEnabled(s.isSmartTraceEnabled(), true);
+        settings.setEnableCodePopup(s.isEnableCodePopup(), true);
+        settings.setEnableTraceClick(s.isEnableTraceClick(), true);
 
         mmcfgInitializer.saveKeys(mmCFG);
 
