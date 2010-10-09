@@ -4,12 +4,8 @@
  */
 package vizzy.tasks;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import vizzy.model.SettingsModel;
+import vizzy.util.DefaultHashMap;
 
 /**
  *
@@ -27,14 +24,14 @@ import vizzy.model.SettingsModel;
 public class MMCFGInitializer {
 
     private File mmcfg;
-    private HashMap<String, String> map;
+    private DefaultHashMap<String, String> map;
 
     private boolean isMmcfgCreated;
     private boolean isPolicyFileRecorded;
     private String traceFileLocation;
 
     public MMCFGInitializer() {
-        map = new HashMap<String, String>();
+        map = new DefaultHashMap<String, String>();
     }
 
     public void init() {
@@ -73,18 +70,13 @@ public class MMCFGInitializer {
     }
 
     public void recordPolicyFile() {
-        HashMap<String, String> m = new HashMap<String, String>();
-        m.put("PolicyFileLog", "1");
-        m.put("PolicyFileLogAppend", "1");
-        saveKeys(map);
-        isPolicyFileRecorded = true;
-    }
-
-    public String getKey(String keyname, String def) {
-        if (map.containsKey(keyname)) {
-            return map.get(keyname);
-        } else {
-            return def;
+        try {
+            HashMap<String, String> m = new HashMap<String, String>();
+            m.put("PolicyFileLog", "1");
+            m.put("PolicyFileLogAppend", "1");
+            saveKeys(map);
+            isPolicyFileRecorded = true;
+        } catch (Exception e) {
         }
     }
 
@@ -114,7 +106,7 @@ public class MMCFGInitializer {
     private void readMMCFG() {
         try {
             List readLines = FileUtils.readLines(mmcfg, "UTF-8");
-            map = new HashMap<String, String>();
+            map = new DefaultHashMap<String, String>();
             for (Object object : readLines) {
                 String[] k = ((String)object).split("=");
                 if (k[0].length() ==  0) {
@@ -183,4 +175,13 @@ public class MMCFGInitializer {
     public void setMmcfgCreated(boolean mmcfgCreated) {
         this.isMmcfgCreated = mmcfgCreated;
     }
+
+    public DefaultHashMap<String, String> getMmcfgKeys() {
+        return map;
+    }
+
+    public void setMmcfgKeys(DefaultHashMap<String, String> map) {
+        this.map = map;
+    }
+
 }

@@ -13,9 +13,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import vizzy.forms.VizzyForm;
+import vizzy.listeners.ILogFileListener;
+import vizzy.model.SettingsModel;
 
 /**
  *
@@ -23,19 +22,12 @@ import vizzy.forms.VizzyForm;
  */
 public class LoadFileTask extends TimerTask {
 
-    private VizzyForm tracerForm;
-    private String fileName;
-    private long maxNumLines;
-    private boolean numMaxLinesEnabled;
-    private boolean isUTF;
+    private SettingsModel settings;
+    private ILogFileListener listener;
 
-    /** Creates a new instance of LoadFileTask */
-    public LoadFileTask(String fileName, long maxNumLines, boolean numMaxLinesEnabled, boolean isUTF, VizzyForm tracerForm) {
-        this.fileName = fileName;
-        this.maxNumLines = maxNumLines;
-        this.numMaxLinesEnabled = numMaxLinesEnabled;
-        this.tracerForm = tracerForm;
-        this.isUTF = isUTF;
+    public LoadFileTask(SettingsModel settings, ILogFileListener listener) {
+        this.settings = settings;
+        this.listener = listener;
     }
 
     @Override
@@ -44,13 +36,13 @@ public class LoadFileTask extends TimerTask {
         ByteArrayOutputStream bo = null;
         RandomAccessFile raf = null;
         try {
-            File inputFile = new File(fileName);
+            File inputFile = new File(settings.getCurrentLogFile());
             raf = new RandomAccessFile(inputFile, "r");
             bo = new ByteArrayOutputStream();
 
             int len = (int) raf.length();
-            if (numMaxLinesEnabled && len > maxNumLines) {
-                int v = (int) (len - maxNumLines);
+            if (settings.isMaxNumLinesEnabled() && len > settings.getMaxNumLines()) {
+                int v = (int) (len - settings.getMaxNumLines());
                 raf.seek(v);
             }
 
@@ -61,27 +53,27 @@ public class LoadFileTask extends TimerTask {
             }
 
             String s = null;
-            if (isUTF) {
+            if (settings.isUTF()) {
                 s = new String(bo.toByteArray(), "UTF-8");
             } else {
                 s = new String(bo.toByteArray());
             }
 
-            tracerForm.onFileRead(s);
+            listener.onLogFileRead(s);
 
         } catch (OutOfMemoryError ex) {
-            tracerForm.onOutOfMemory();
-//            Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
+            listener.onOutOfMemory();
         } catch (FileNotFoundException ex) {
-            tracerForm.onFileRead("");
+            listener.onLogFileRead("");
         } catch (Exception ex) {
-//            Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 bo.close();
+            } catch (Exception ex) {
+            }
+            try {
                 raf.close();
             } catch (Exception ex) {
-                //Logger.getLogger(LoadFileTask.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

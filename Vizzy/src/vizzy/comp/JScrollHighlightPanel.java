@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package vizzy.comp;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,10 +23,13 @@ public class JScrollHighlightPanel extends JPanel {
 
     private ArrayList<Integer> indexes;
     private JTextArea ta;
+    private final static int MARKER_HEIGHT = 3;
+    private final static int MARKER_X = 2;
 
     public ArrayList<Integer> getIndexes() {
         return indexes;
     }
+
     public void setIndexes(ArrayList<Integer> indexes) {
         this.indexes = indexes;
         repaint();
@@ -36,39 +40,57 @@ public class JScrollHighlightPanel extends JPanel {
         super.paint(g);
 
         if (indexes != null) {
+            double textAreaHeight = (double)getTa().getHeight();
+            double highlightPanelHeight = getHeight() - MARKER_HEIGHT;
             for (Integer integer : indexes) {
                 try {
-                    int line = getTa().getLineOfOffset(integer);
-                    int lineHeight = (int) (getHeight() * ((double) line / (double) getTa().getLineCount()));
-                    
+                    Rectangle rect = getTa().modelToView(integer);
+
+                    int lineHeight = (int) (highlightPanelHeight * ((double) rect.getY() / textAreaHeight));
+
                     int w = getWidth() - 5;
-                    int h = 3;
-                    int x = 2;
                     int y = lineHeight;
-                    
+
                     g.setColor(Color.LIGHT_GRAY);
-                    g.fillRect(x, y, w, h);
+                    g.fillRect(MARKER_X, y, w, MARKER_HEIGHT);
                     g.setColor(Color.BLACK);
-                    g.drawRect(x, y, w, h);
-                } catch (BadLocationException ex) {
+                    g.drawRect(MARKER_X, y, w, MARKER_HEIGHT);
+                } catch (Exception ex) {
                     Logger.getLogger(JScrollHighlightPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
+
+//        if (indexes != null) {
+//            int height = getTa().getHeight();
+//            Point coords = new Point(getTa().getWidth(), 1);
+//            double columns = getTa().viewToModel(coords);
+//            double lineCount = Math.ceil(getTa().getText().length() / columns);
+//            double highlightPanelHeight = getHeight() - MARKER_HEIGHT;
+//            for (Integer integer : indexes) {
+//                try {
+//                    int line = (int) ((double) integer / columns);
+//                    int lineHeight = (int) (highlightPanelHeight * ((double) line / lineCount));
+//
+//                    int w = getWidth() - 5;
+//                    int y = lineHeight;
+//
+//                    g.setColor(Color.LIGHT_GRAY);
+//                    g.fillRect(MARKER_X, y, w, MARKER_HEIGHT);
+//                    g.setColor(Color.BLACK);
+//                    g.drawRect(MARKER_X, y, w, MARKER_HEIGHT);
+//                } catch (Exception ex) {
+//                    Logger.getLogger(JScrollHighlightPanel.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//        }
     }
 
-    /**
-     * @return the ta
-     */
     public JTextArea getTa() {
         return ta;
     }
 
-    /**
-     * @param ta the ta to set
-     */
     public void setTa(JTextArea ta) {
         this.ta = ta;
     }
-
 }

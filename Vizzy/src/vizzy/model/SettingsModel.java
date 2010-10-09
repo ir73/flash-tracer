@@ -6,14 +6,20 @@
 package vizzy.model;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 import vizzy.forms.panels.SnapshotForm;
+import vizzy.listeners.ISettingsListener;
+import vizzy.tasks.HandleWordAtPosition;
+import vizzy.tasks.KeywordsHighlighter;
+import vizzy.tasks.ShowCodePopupTask;
+import vizzy.tasks.WordSearcher;
+import vizzy.util.DefaultHashMap;
 
 /**
  *
@@ -25,12 +31,14 @@ public class SettingsModel {
     public static final String OS_WINDOWS = "windows";
     public static final String OS_WINDOWS_VISTA = "vista";
 
-    public static String OSName = System.getProperty("os.name").toLowerCase();
-    public static String newLine = System.getProperty("line.separator");
-    public static String userHome = System.getProperty("user.home");
+    public static final String OSName = System.getProperty("os.name").toLowerCase();
+    public static final String newLine = System.getProperty("line.separator");
+    public static final String userHome = System.getProperty("user.home");
 
-    private static SettingsModel instance;
-    
+    private final String POLICY_LOG_FILE_NAME = "policyfiles.txt";
+
+    private ISettingsListener listener;
+
     private String defaultFont;
     private Font[] fonts;
     private String flashLogFileName;
@@ -47,7 +55,7 @@ public class SettingsModel {
     private long maxNumLines = 20;
     private boolean restoreOnUpdate = false;
     private long refreshFreq = 500;
-    private boolean isAlwaysONTop;
+    private boolean isAlwaysOnTop;
     private Date lastUpdateDate = new Date(0L);
     private boolean detectPlayer;
     private boolean isHightlightAll = true;
@@ -59,77 +67,76 @@ public class SettingsModel {
     private Rectangle window;
     private DefaultComboBoxModel searchKeywordsModel;
     private String[] fontNames;
+    private String recentHash;
+    private String traceContent;
+    private File settingsFile = new File("tracer.properties");
+    private boolean isPolicyFileRecorded;
+    private Image appIcon;
+    private boolean isUIActionsAvailable;
 
-    private SettingsModel() {
+    private KeywordsHighlighter keywordsHighlighter;
+    private HandleWordAtPosition handleWordAtPosition;
+    private ShowCodePopupTask codePopupHandler;
+    private WordSearcher searcher;
+    private DefaultHashMap<String, String> mmcfgKeys;
+
+    private ArrayList<SnapshotForm> snapshotForms = new ArrayList<SnapshotForm>();
+
+    public SettingsModel() {
         super();
     }
 
-    public synchronized static SettingsModel getInstance() {
-        if (instance == null) {
-            instance = new SettingsModel();
-        }
-        return instance;
-    }
-
-    public void parseProperties(Properties props, Rectangle rect) {
-        setLastUpdateDate(props.getProperty("update.last"));
-        setDetectPlayer(props.getProperty("settings.detectplayer", "true").equals("true"));
-        setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
-        setFlashLogFileName(props.getProperty("settings.filename", getFlashLogFileName()));
-        setRefreshFreq(props.getProperty("settings.refreshFreq", "500"));
-        setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
-        setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
-        setMaxNumLines(props.getProperty("settings.maxNumLines", "50000"));
-        setRestoreOnUpdate(props.getProperty("settings.restore", "false").equals("true"));
-        setAlwaysONTop(props.getProperty("settings.alwaysontop", "false").equals("true"));
-        setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
-        setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
-        setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
-        setSmartTraceEnabled(props.getProperty("settings.enabelSmartTrace", "true").equals("true"));
-        setHighlightKeywords(props.getProperty("settings.highlightKeywords", "true").equals("true"));
-        setCustomASEditor(props.getProperty("settings.customASEditor", null));
-        setDefaultASEditor(props.getProperty("settings.isDefaultUsed", "true").equals("true"));
-        setTraceFont(props.getProperty("settings.font.name", getDefaultFont()), props.getProperty("settings.font.size", "12"));
-        setSearchKeywords(props.getProperty("search.keywords", "").split("\\|\\|\\|"));
-        setFilter(false);
-        setLogType(props.getProperty("settings.logtype", "0"));
-        setMainWindowLocation(props.getProperty("settings.window.x", String.valueOf(rect.getX())),
-                props.getProperty("settings.window.y", String.valueOf(rect.getY())),
-                props.getProperty("settings.window.width", String.valueOf(rect.getWidth())),
-                props.getProperty("settings.window.height", String.valueOf(rect.getHeight())));
-    }
-
-    public void setCustomASEditor(String property) {
+    public void setCustomASEditor(String property, boolean doFireEvent) {
         if (property != null) {
             customASEditor = property;
+            if (handleWordAtPosition != null) {
+                handleWordAtPosition.setCustomASEditor(this.customASEditor);
+            }
+            if (doFireEvent && listener != null) {
+                getListener().onCustomASEditorChanged(this.customASEditor);
+            }
         }
     }
 
-    public void setRefreshFreq(String property) {
-        setRefreshFreq(Long.parseLong(property));
+    public void setRefreshFreq(String property, boolean doFireEvent) {
+        setRefreshFreq(Long.parseLong(property), doFireEvent);
     }
 
-    public void setLogType(String property) {
-        setLogType(Integer.parseInt(property));
+    public void setLogType(String property, boolean doFireEvent) {
+        setLogType(Integer.parseInt(property), doFireEvent);
     }
 
-    public void setHighlightAll(boolean b) {
+    public void setHighlightAll(boolean b, boolean doFireEvent) {
         isHightlightAll = b;
+        searcher.setHighlightAll(this.isHightlightAll);
+        if (doFireEvent && listener != null) {
+            getListener().onHightlightAllChanged(this.isHightlightAll);
+        }
     }
 
-    public void setWordWrap(boolean b) {
+    public void setWordWrap(boolean b, boolean doFireEvent) {
         isWordWrap = b;
+        if (doFireEvent && listener != null) {
+            getListener().onWordWrapChanged(this.isWordWrap);
+        }
     }
 
-    public void setAutoRefresh(boolean b) {
+    public void setAutoRefresh(boolean b, boolean doFireEvent) {
         isAutoRefresh = b;
+        if (doFireEvent && listener != null) {
+            getListener().onAutoRefreshChanged(this.isAutoRefresh);
+        }
     }
 
-    public void setFilter(boolean b) {
+    public void setFilter(boolean b, boolean doFireEvent) {
         isFilter = b;
+        searcher.setFilter(this.isFilter);
+        if (doFireEvent && listener != null) {
+            getListener().onFilterChanged(this.isFilter);
+        }
     }
 
-    public void setSearchKeywords(String[] keywords) {
+    public void setSearchKeywords(String[] keywords, boolean doFireEvent) {
         List<String> list = new ArrayList<String>();
         list.add("");
         for (String word : keywords) {
@@ -139,29 +146,49 @@ public class SettingsModel {
         }
         this.searchKeywords = list.toArray(new String[0]);
         this.searchKeywordsModel = new DefaultComboBoxModel(getSearchKeywords());
+        if (doFireEvent && listener != null) {
+            getListener().onSearchKeywordsChanged(this.searchKeywords, this.searchKeywordsModel);
+        }
     }
 
-    public void setTraceFont(String name, String size) {
+    public void setTraceFont(String name, String size, boolean doFireEvent) {
         traceFont = new Font(name, 0, Integer.parseInt(size));
+        if (doFireEvent && listener != null) {
+            getListener().onTraceFontChanged(this.traceFont);
+        }
     }
 
-    public void setCurrentLogFile(String filen) {
+    public void setTraceFont(Font font, boolean doFireEvent) {
+        traceFont = font;
+        if (doFireEvent && listener != null) {
+            getListener().onTraceFontChanged(this.traceFont);
+        }
+    }
+
+    public void setCurrentLogFile(String filen, boolean doFireEvent) {
         currentLogFile = filen;
+        if (doFireEvent && listener != null) {
+            getListener().onCurrentLogFileChanged(this.currentLogFile);
+        }
     }
 
-    public void setMaxNumLines(String lines) {
-        setMaxNumLines(Long.valueOf(lines));
+    public void setMaxNumLines(String lines, boolean doFireEvent) {
+        setMaxNumLines(Long.valueOf(lines), doFireEvent);
     }
 
-    public void setMainWindowLocation(String x, String y, String w, String h) {
-        window = new Rectangle(Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(w), Integer.parseInt(h));
+    public void setMainWindowLocation(String x, String y, String w, String h, boolean doFireEvent) {
+        window = new Rectangle((int)Double.parseDouble(x), (int)Double.parseDouble(y),
+                (int)Double.parseDouble(w), (int)Double.parseDouble(h));
+        if (doFireEvent && listener != null) {
+            getListener().onMainWindowLocationChanged(this.window);
+        }
     }
 
-    public void setLastUpdateDate(String last) {
+    public void setLastUpdateDate(String last, boolean doFireEvent) {
         if (last != null) {
             Date newDate = new Date(Long.valueOf(last));
             if (lastUpdateDate == null || lastUpdateDate.before(newDate)) {
-                setLastUpdateDate(lastUpdateDate);
+                setLastUpdateDate(lastUpdateDate, doFireEvent);
             }
         }
     }
@@ -170,32 +197,53 @@ public class SettingsModel {
         return fonts;
     }
 
-    public void setFonts(Font[] fonts) {
+    public void setFonts(Font[] fonts, boolean doFireEvent) {
         this.fonts = fonts;
+        if (doFireEvent && listener != null) {
+            getListener().onFontsChanged(this.fonts);
+        }
     }
 
     public String getFlashLogFileName() {
         return flashLogFileName;
     }
 
-    public void setFlashLogFileName(String flashLogFileName) {
+    public void setFlashLogFileName(String flashLogFileName, boolean doFireEvent) {
         this.flashLogFileName = flashLogFileName;
+        File f = new File(flashLogFileName);
+        if (f.exists() && f.isFile()) {
+            int lastIndexOf = f.getAbsolutePath().lastIndexOf(File.separator);
+            String dir = "";
+            if (lastIndexOf > -1) {
+                dir = f.getAbsolutePath().substring(0, lastIndexOf + 1);
+            }
+            setPolicyLogFileName(dir + POLICY_LOG_FILE_NAME, doFireEvent);
+        }
+        if (doFireEvent && listener != null) {
+            getListener().onFlashLogFileNameChanged(this.flashLogFileName);
+        }
     }
 
     public String getPolicyLogFileName() {
         return policyLogFileName;
     }
 
-    public void setPolicyLogFileName(String policyLogFileName) {
+    public void setPolicyLogFileName(String policyLogFileName, boolean doFireEvent) {
         this.policyLogFileName = policyLogFileName;
+        if (doFireEvent && listener != null) {
+            getListener().onPolicyLogFileNameChanged(this.policyLogFileName);
+        }
     }
 
     public int getLogType() {
         return logType;
     }
 
-    public void setLogType(int logType) {
+    public void setLogType(int logType, boolean doFireEvent) {
         this.logType = logType;
+        if (doFireEvent && listener != null) {
+            getListener().onLogTypeChanged(this.logType);
+        }
     }
 
     public String getCustomASEditor() {
@@ -206,112 +254,156 @@ public class SettingsModel {
         return isDefaultASEditor;
     }
 
-    public void setDefaultASEditor(boolean isDefaultASEditor) {
+    public void setDefaultASEditor(boolean isDefaultASEditor, boolean doFireEvent) {
         this.isDefaultASEditor = isDefaultASEditor;
+        if (handleWordAtPosition != null) {
+            handleWordAtPosition.setDefaultEditorUsed(this.isDefaultASEditor);
+        }
+        if (doFireEvent && listener != null) {
+            getListener().onDefaultASEditorChanged(this.isDefaultASEditor);
+        }
     }
 
     public boolean isHighlightKeywords() {
         return highlightKeywords;
     }
 
-    public void setHighlightKeywords(boolean highlightKeywords) {
+    public void setHighlightKeywords(boolean highlightKeywords, boolean doFireEvent) {
         this.highlightKeywords = highlightKeywords;
+        if (doFireEvent && listener != null) {
+            getListener().onHighlightKeywordsChanged(this.highlightKeywords);
+        }
     }
 
     public boolean isAutoRefresh() {
         return isAutoRefresh;
     }
 
-    public void setIsAutoRefresh(boolean isAutoRefresh) {
-        this.isAutoRefresh = isAutoRefresh;
-    }
-
     public boolean isUTF() {
         return isUTF;
     }
 
-    public void setUTF(boolean isUTF) {
+    public void setUTF(boolean isUTF, boolean doFireEvent) {
         this.isUTF = isUTF;
+        if (doFireEvent && listener != null) {
+            getListener().onUTFChanged(this.isUTF);
+        }
     }
 
     public boolean isSmartTraceEnabled() {
         return isSmartTraceEnabled;
     }
 
-    public void setSmartTraceEnabled(boolean isSmartTraceEnabled) {
+    public void setSmartTraceEnabled(boolean isSmartTraceEnabled, boolean doFireEvent) {
         this.isSmartTraceEnabled = isSmartTraceEnabled;
+        if (doFireEvent && listener != null) {
+            getListener().onSmartTraceEnabledChanged(this.isSmartTraceEnabled);
+        }
     }
 
     public boolean isCheckUpdates() {
         return isCheckUpdates;
     }
 
-    public void setCheckUpdates(boolean isCheckUpdates) {
+    public void setCheckUpdates(boolean isCheckUpdates, boolean doFireEvent) {
         this.isCheckUpdates = isCheckUpdates;
+        if (doFireEvent && listener != null) {
+            getListener().onCheckUpdatesChanged(this.isCheckUpdates);
+        }
     }
 
     public boolean isMaxNumLinesEnabled() {
         return maxNumLinesEnabled;
     }
 
-    public void setMaxNumLinesEnabled(boolean maxNumLinesEnabled) {
+    public void setMaxNumLinesEnabled(boolean maxNumLinesEnabled, boolean doFireEvent) {
         this.maxNumLinesEnabled = maxNumLinesEnabled;
+        if (doFireEvent && listener != null) {
+            getListener().onMaxNumLinesEnabledChanged(this.maxNumLinesEnabled);
+        }
     }
 
     public long getMaxNumLines() {
         return maxNumLines;
     }
 
-    public void setMaxNumLines(long maxNumLines) {
+    public void setMaxNumLines(long maxNumLines, boolean doFireEvent) {
         this.maxNumLines = maxNumLines;
+        if (doFireEvent && listener != null) {
+            getListener().onMaxNumLinesChanged(this.maxNumLines);
+        }
     }
 
     public boolean isRestoreOnUpdate() {
         return restoreOnUpdate;
     }
 
-    public void setRestoreOnUpdate(boolean restoreOnUpdate) {
+    public void setRestoreOnUpdate(boolean restoreOnUpdate, boolean doFireEvent) {
         this.restoreOnUpdate = restoreOnUpdate;
+        if (doFireEvent && listener != null) {
+            getListener().onRestoreOnUpdateChanged(this.restoreOnUpdate);
+        }
     }
 
     public long getRefreshFreq() {
         return refreshFreq;
     }
 
-    public void setRefreshFreq(long refreshFreq) {
+    public void setRefreshFreq(long refreshFreq, boolean doFireEvent) {
         this.refreshFreq = refreshFreq;
+        if (doFireEvent && listener != null) {
+            getListener().onRefreshFreqChanged(this.refreshFreq);
+        }
     }
 
     public boolean isAlwaysOnTop() {
-        return isAlwaysONTop;
+        return isAlwaysOnTop;
     }
 
-    public void setAlwaysONTop(boolean isAlwaysONTop) {
-        this.isAlwaysONTop = isAlwaysONTop;
+    public void setAlwaysOnTop(boolean isAlwaysONTop, boolean doFireEvent) {
+        this.isAlwaysOnTop = isAlwaysONTop;
+        if (doFireEvent && listener != null) {
+            getListener().onAlwaysOnTopChanged(this.isAlwaysOnTop);
+        }
+    }
+
+    public void setAlwaysOnTopUI(boolean isAlwaysOnTop, boolean doFireEvent) {
+        if (doFireEvent && listener != null) {
+            getListener().onAlwaysOnTopUIChanged(isAlwaysOnTop);
+        }
     }
 
     public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(Date lastUpdateDate) {
+    public void setLastUpdateDate(Date lastUpdateDate, boolean doFireEvent) {
         this.lastUpdateDate = lastUpdateDate;
+        if (doFireEvent && listener != null) {
+            getListener().onLastUpdateDateChanged(this.lastUpdateDate);
+        }
     }
 
     public boolean isDetectPlayer() {
         return detectPlayer;
     }
 
-    public void setDetectPlayer(boolean detectPlayer) {
+    public void setDetectPlayer(boolean detectPlayer, boolean doFireEvent) {
         this.detectPlayer = detectPlayer;
+        if (doFireEvent && listener != null) {
+            getListener().onDetectPlayerChanged(this.detectPlayer);
+        }
     }
 
     public String getDefaultFont() {
         return defaultFont;
     }
 
-    public void setDefaultFont(String defaultFont) {
+    public void setDefaultFont(String defaultFont, boolean doFireEvent) {
         this.defaultFont = defaultFont;
+        if (doFireEvent && listener != null) {
+            getListener().onDefaultFontChanged(this.defaultFont);
+        }
     }
 
     public boolean isHightlightAll() {
@@ -342,20 +434,180 @@ public class SettingsModel {
         return searchKeywordsModel;
     }
 
-    public void setSearchKeywordsModel(DefaultComboBoxModel searchKeywordsModel) {
-        this.searchKeywordsModel = searchKeywordsModel;
-    }
-
     public Rectangle getMainWindowLocation() {
         return window;
     }
 
-    public void setFontNames(String[] fontNames) {
+    public void setFontNames(String[] fontNames, boolean doFireEvent) {
         this.fontNames = fontNames;
+        if (doFireEvent && listener != null) {
+            getListener().onSetFontNamesChanged(this.fontNames);
+        }
     }
 
     public String[] getFontNames() {
         return fontNames;
     }
+
+    public String getRecentHash() {
+        return recentHash;
+    }
+
+    public void setRecentHash(String recentHash, boolean doFireEvent) {
+        this.recentHash = recentHash;
+        if (doFireEvent && listener != null) {
+            getListener().onRecentHashChanged(this.recentHash);
+        }
+    }
+
+    public String getTraceContent() {
+        return traceContent;
+    }
+
+    public void setTraceContent(String traceContent, boolean doFireEvent) {
+        this.traceContent = traceContent;
+        if (doFireEvent && listener != null) {
+            getListener().onTraceContentChanged(this.traceContent);
+        }
+    }
+
+    public ISettingsListener getListener() {
+        return listener;
+    }
+
+    public void setListener(ISettingsListener listener) {
+        this.listener = listener;
+    }
+
+    public void setPolicyFileRecorded(boolean policyFileRecorded) {
+        this.isPolicyFileRecorded = policyFileRecorded;
+    }
+
+    public boolean isPolicyFileRecorded() {
+        return isPolicyFileRecorded;
+    }
+
+    public KeywordsHighlighter getKeywordsHighlighter() {
+        return keywordsHighlighter;
+    }
+
+    public void setKeywordsHighlighter(KeywordsHighlighter keywordsHighlighter) {
+        this.keywordsHighlighter = keywordsHighlighter;
+    }
+
+    public HandleWordAtPosition getHandleWordAtPosition() {
+        return handleWordAtPosition;
+    }
+
+    public void setHandleWordAtPosition(HandleWordAtPosition handleWordAtPosition) {
+        this.handleWordAtPosition = handleWordAtPosition;
+    }
+
+    public ShowCodePopupTask getCodePopupHandler() {
+        return codePopupHandler;
+    }
+
+    public void setCodePopupHandler(ShowCodePopupTask codePopupHandler) {
+        this.codePopupHandler = codePopupHandler;
+    }
+
+    public WordSearcher getSearcher() {
+        return searcher;
+    }
+
+    public void setSearcher(WordSearcher searcher) {
+        this.searcher = searcher;
+    }
+
+    public File getSettingsFile() {
+        return settingsFile;
+    }
+
+    public void setSettingsFile(File settingsFile) {
+        this.settingsFile = settingsFile;
+    }
+
+    public Image getAppIcon() {
+        return appIcon;
+    }
+
+    public void setAppIcon(Image appIcon) {
+        this.appIcon = appIcon;
+    }
+
+    public ArrayList<SnapshotForm> getSnapshotForms() {
+        return snapshotForms;
+    }
+
+    public void setSnapshotForms(ArrayList<SnapshotForm> snapshotForms) {
+        this.snapshotForms = snapshotForms;
+    }
+
+    public DefaultHashMap<String, String> getMmcfgKeys() {
+        return mmcfgKeys;
+    }
+
+    public void setMmcfgKeys(DefaultHashMap<String, String> mmcfgKeys) {
+        this.mmcfgKeys = mmcfgKeys;
+    }
+
+    public boolean isUIActionsAvailable() {
+        return isUIActionsAvailable;
+    }
+
+    public void setUIActionsAvailable(boolean isUIActionsAvailable) {
+        this.isUIActionsAvailable = isUIActionsAvailable;
+    }
+
+    public void search(String word, int offset, boolean scrollToSearchResult) {
+        if (listener != null) {
+            listener.onSearch(word, offset, scrollToSearchResult);
+        }
+    }
+
+    public void highlightTraceKeyword(String text) {
+        if (listener != null) {
+            listener.onHighlightTraceKeyword(text);
+        }
+        
+    }
+
+    public void optionsClosed() {
+        if (listener != null) {
+            listener.onOptionsClosed();
+        }
+    }
+
+    public void clearTrace(boolean doFireEvent) {
+        setTraceContent("", doFireEvent);
+        setRecentHash(null, doFireEvent);
+    }
+
+    public void clearSearch() {
+        if (listener != null) {
+            listener.onSearchCleared();
+        }
+    }
+
+    public void onInit() {
+        if (listener != null) {
+            listener.onInit();
+        }
+    }
+
+    public void onAfterInit() {
+        if (listener != null) {
+            listener.onAfterInit();
+        }
+    }
+
+    public void setMainWindowLocation(Rectangle bounds, boolean doFireEvent) {
+        window = bounds;
+        if (doFireEvent && listener != null) {
+            getListener().onMainWindowLocationChanged(this.window);
+        }
+    }
+
+    
 
 }

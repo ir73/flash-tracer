@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import vizzy.listeners.IUpdateCheckListener;
 import vizzy.util.DialogUtils;
 import vizzy.util.FileUtil;
 
@@ -24,18 +25,21 @@ import vizzy.util.FileUtil;
  *
  * @author sergeil
  */
-public class CheckUpdates {
+public class CheckUpdates extends Thread {
 
     public static final String VERSION = "2.3";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
     private static final String WEBSITE_FEATURES_PHRASE = "Current version features: ";
     private boolean reportIfOk;
+    private IUpdateCheckListener listener;
 
-    public CheckUpdates(boolean reportIfOk) {
+    public CheckUpdates(boolean reportIfOk, IUpdateCheckListener listener) {
         this.reportIfOk = reportIfOk;
+        this.listener = listener;
     }
 
-    public void start() {
+    @Override
+    public void run() {
         try {
             URL u = new URL("http://code.google.com/p/flash-tracer/");
             URLConnection openConnection = u.openConnection();
@@ -66,6 +70,8 @@ public class CheckUpdates {
                     String newFeatures = r.substring(i + WEBSITE_FEATURES_PHRASE.length(), i2);
                     newFeatures = newFeatures.replaceAll("\\|", "\n");
 
+                    listener.offerUpdate();
+                    
                     Object[] options = {"Yes",
                         "No",};
 
@@ -91,7 +97,11 @@ public class CheckUpdates {
                 }
             }
         } catch (Exception ex) {
+        } finally {
+            listener.updateFinished();
+            listener = null;
         }
+        
     }
 
     private void downloadNewVersion(String newVer) {
@@ -133,6 +143,10 @@ public class CheckUpdates {
             }
 
             FileUtil.copyfile(tmpFile.getAbsolutePath(), saveFile.getAbsolutePath());
+            
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(saveFile);
+            }
 
         } catch (Exception ex) {
             Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex);

@@ -13,8 +13,10 @@ package vizzy.forms.panels;
 
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Rectangle;
 import java.net.URI;
-import vizzy.forms.VizzyForm;
+import vizzy.controller.VizzyController;
+import vizzy.model.SettingsModel;
 
 /**
  *
@@ -22,13 +24,15 @@ import vizzy.forms.VizzyForm;
  */
 public class AboutPanel extends javax.swing.JFrame {
 
-    private VizzyForm vf;
+    private VizzyController controller;
+    private SettingsModel settings;
 
     /** Creates new form AboutPanel */
-    public AboutPanel(VizzyForm vf) {
-        this.vf = vf;
+    public AboutPanel(Rectangle rect, VizzyController controller, SettingsModel settings) {
+        this.controller = controller;
+        this.settings = settings;
         initComponents();
-        init();
+        initSizeAndPosition(rect);
     }
 
     /** This method is called from within the constructor to
@@ -160,8 +164,7 @@ public class AboutPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_emailClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        vf.setAlwaysOnTop(vf.settings.isAlwaysOnTop());
-        dispose();
+        controller.aboutOKClick();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void onMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseEntered
@@ -177,8 +180,7 @@ public class AboutPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_donateClicked
 
     private void onWIndowClose(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onWIndowClose
-        vf.setAlwaysOnTop(vf.settings.isAlwaysOnTop());
-        dispose();
+        controller.aboutOKClick();
     }//GEN-LAST:event_onWIndowClose
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -189,21 +191,20 @@ public class AboutPanel extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
 
-    private void init() {
+    private void initSizeAndPosition(Rectangle rect) {
         try {
-            this.setIconImage(vf.getIconImage());
+            this.setIconImage(settings.getAppIcon());
         } catch (Exception e) {
         }
-        int x = vf.getX() + vf.getWidth() / 2 - getWidth( )/ 2;
-        int y = vf.getY() + vf.getHeight() / 2 - getHeight()/ 2;
+        int x = (int)(rect.getX() + rect.getWidth() / 2 - getWidth( )/ 2);
+        int y = (int)(rect.getY() + rect.getHeight() / 2 - getHeight()/ 2);
         setLocation(x, y);
-        vf.setAlwaysOnTop(false);
-        setVisible(true);
     }
 
     @Override
     public void dispose() {
-        vf = null;
+        controller = null;
+        settings = null;
         super.dispose();
     }
 

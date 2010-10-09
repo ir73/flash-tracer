@@ -12,11 +12,9 @@ package vizzy.model;
 public class FlashPlayerFiles {
 
     private String logPath;
-    private String policyPath;
     
-    public FlashPlayerFiles(String logPath, String policyPath) {
+    public FlashPlayerFiles(String logPath) {
         this.logPath = logPath;
-        this.policyPath = policyPath;
     }
 
     public FlashPlayerFiles() {
@@ -35,20 +33,6 @@ public class FlashPlayerFiles {
      */
     public void setLogPath(String logPath) {
         this.logPath = logPath;
-    }
-
-    /**
-     * @return the policyPath
-     */
-    public String getPolicyPath() {
-        return policyPath;
-    }
-
-    /**
-     * @param policyPath the policyPath to set
-     */
-    public void setPolicyPath(String policyPath) {
-        this.policyPath = policyPath;
     }
 
 }

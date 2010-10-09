@@ -18,12 +18,10 @@ import javax.swing.JOptionPane;
  */
 public class DebugPlayerDetector {
 
-    private boolean isDebugOCX;
-
     public DebugPlayerDetector() {
     }
 
-    public void start() {
+    public void offerDetection() {
         Object[] options = {"Yes",
             "No",};
         int reply = JOptionPane.showOptionDialog(null, "Debug Flash Player detection has not been performed yet. " +
@@ -37,20 +35,6 @@ public class DebugPlayerDetector {
         if (reply == JOptionPane.YES_OPTION) {
             detect();
         }
-    }
-
-    /**
-     * @return the isDebugOCX
-     */
-    public boolean isIsDebugOCX() {
-        return isDebugOCX;
-    }
-
-    /**
-     * @param isDebugOCX the isDebugOCX to set
-     */
-    public void setIsDebugOCX(boolean isDebugOCX) {
-        this.isDebugOCX = isDebugOCX;
     }
 
     private void detect() {

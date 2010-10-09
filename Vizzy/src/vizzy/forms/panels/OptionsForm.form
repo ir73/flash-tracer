@@ -563,6 +563,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Trace all executed methods. Warning: use with &quot;Buffer Trace Output&quot; only! (AS3 only)&lt;/html&gt;"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxTraceAllActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
@@ -574,11 +577,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Trace bytecode. Traces detailed information about SWF bytecode and runtime parsing. (AS3 only)&lt;/html&gt;"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxVerboseActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBoxStatic">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Outputs information about functions, bytecode, memory used, etc. (AS3 only)&lt;/html&gt;"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxStaticActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
