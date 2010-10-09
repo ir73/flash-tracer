@@ -14,7 +14,6 @@ package vizzy.forms.panels;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +24,6 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import vizzy.listeners.ICodePopupListener;
 import vizzy.model.SettingsModel;
 import vizzy.util.StringUtils;
 
@@ -34,7 +32,6 @@ import vizzy.util.StringUtils;
  * @author sergeil
  */
 public class CodeForm extends JPanel {
-    private ICodePopupListener listener;
     private int scrollPos;
     private int highlightedLinePos;
 
@@ -78,11 +75,6 @@ public class CodeForm extends JPanel {
     // End of variables declaration//GEN-END:variables
 
     public void updateSize() {
-//        Dimension dim = jCodeTextPane.getPreferredScrollableViewportSize();
-//        jCodeTextPane.setPreferredSize(dim);
-//        dim = new Dimension((int)Math.min(400, dim.getWidth()) + (int)jScrollPane1.getVerticalScrollBar().getPreferredSize().getWidth(), (int)getPreferredSize().getHeight());
-//        setPreferredSize(dim);
-
         Dimension dim = jCodeTextPane.getPreferredScrollableViewportSize();
         jCodeTextPane.setPreferredSize(dim);
         dim = new Dimension(Math.min(400, dim.width)
@@ -123,34 +115,6 @@ public class CodeForm extends JPanel {
         } catch (BadLocationException ex) {
             Logger.getLogger(CodeForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    public void mousePressed(MouseEvent e) {
-    }
-
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    public void mouseEntered(MouseEvent e) {
-        listener.mouseEntered(e);
-    }
-
-    public void mouseExited(MouseEvent e) {
-        if (e.getX() > getWidth() || e.getX() < 0
-                || e.getY() > getHeight() || e.getY() < 0) {
-            listener.mouseExited(e);
-        }
-    }
-
-    public void dispose() {
-        listener = null;
-    }
-
-    public void addCodePopupListener(ICodePopupListener listener) {
-        this.listener = listener;
     }
 
     public void initUI() {

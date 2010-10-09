@@ -12,676 +12,30 @@
 package vizzy.forms;
 
 import java.awt.Font;
-import java.awt.MouseInfo;
-import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
+import org.apache.commons.lang.StringEscapeUtils;
 import vizzy.comp.JScrollHighlightPanel;
-import vizzy.forms.panels.AboutPanel;
-import vizzy.forms.panels.OptionsForm;
-import vizzy.forms.panels.SnapshotForm;
-import vizzy.listeners.ICodePopupListener;
+import vizzy.controller.VizzyController;
+import vizzy.listeners.IVizzyView;
 import vizzy.model.SettingsModel;
-import vizzy.tasks.CheckUpdates;
-import vizzy.tasks.CheckUpdatesAndDebugThread;
-import vizzy.tasks.DebugPlayerDetector;
-import vizzy.tasks.DeleteFile;
-import vizzy.tasks.FlashPlayerFilesLocator;
-import vizzy.tasks.HandleWordAtPosition;
-import vizzy.tasks.HideCodePopupTimerTask;
-import vizzy.tasks.KeywordsHighlighter;
-import vizzy.tasks.LoadFileTask;
-import vizzy.tasks.MMCFGInitializer;
-import vizzy.tasks.ShowCodePopupTask;
-import vizzy.tasks.ShowCodePopupTimerTask;
-import vizzy.tasks.WordSearcher;
-import vizzy.model.FlashPlayerFiles;
-import vizzy.util.OSXAdapter;
-import vizzy.model.SourceAndLine;
-import vizzy.tasks.FontsInitializer;
-import vizzy.util.TextTransfer;
 
 /**
  *
  * @author sergeil
  */
-public class VizzyForm extends javax.swing.JFrame {
-
-    private boolean needToScrolldown = true;
-    private boolean isCapturingScroll = false;
-    private Timer showCodePopupTimer;
-    private Timer readFileTimer;
-    private Timer hideCodePopupTimer;
-    private KeywordsHighlighter keywordsHighlighter;
-    private HandleWordAtPosition handleWordAtPosition;
-    private ShowCodePopupTask codePopupHandler;
-    private WordSearcher searcher;
-    private JScrollBar vbar;
-    private String traceContent;
-    private Properties props;
-    private File settingsFile = new File("tracer.properties");
-    private OptionsForm optionsForm;
-    public SettingsModel settings;
-
-    public MMCFGInitializer mmcfgInitializer;
-    public ArrayList<SnapshotForm> snapshotForms = new ArrayList<SnapshotForm>();
-    public String recentHash;
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    VizzyForm vizzyForm = new VizzyForm();
-                } catch (Exception ex) {
-                    Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-    }
-    
-    /** Creates new form VizzyForm */
-    public VizzyForm() {
-        super();
-        initUIManager();
-        initComponents();
-        init();
-    }
-
-    private void initUIManager() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-            Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-    }
-
-    private void init() {
-        preInit();
-        initSystemFonts();
-        initFlashLog();
-        initMMCFG();
-        loadProperties();
-        initVars();
-        initSettings();
-        initListeners();
-        initThreads();
-
-        setVisible(true);
-    }
-
-    public void checkUpdates(boolean reportIfOk) {
-        settings.setLastUpdateDate(new Date());
-        CheckUpdates cu = new CheckUpdates(reportIfOk);
-        cu.start();
-    }
-
-    private void preInit() {
-        settings = SettingsModel.getInstance();
-        if (SettingsModel.OS_MAC_OS_X.equals(SettingsModel.OSName)) {
-            try {
-                OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("onClose", (Class[]) null));
-            } catch (Exception ex) {
-                Logger.getLogger(VizzyForm.class.getName()).log(Level.WARNING, null, ex);
-            }
-        }
-    }
-
-    /**
-     * Loads system fonts found on machine
-     */
-    private void initSystemFonts() {
-        FontsInitializer f = new FontsInitializer();
-        f.loadSystemFonts();
-        settings.setFonts(f.getFonts());
-        settings.setFontNames(f.getFontNames());
-    }
-
-    /**
-     * Get flashlog.txt file location depending on user's
-     * operation system
-     */
-    private void initFlashLog() {
-        FlashPlayerFiles fpf = FlashPlayerFilesLocator.findFilesPaths();
-        if (fpf.getLogPath() != null) {
-            setFlashLogFile(fpf.getLogPath());
-        }
-        if (fpf.getPolicyPath() != null) {
-            setPolicyLogFile(fpf.getPolicyPath());
-        }
-    }
-
-    /**
-     * Create mm.cfg file if necessary or
-     * get flashlog.txt file location if it's written
-     * in mm.cfg
-     */
-    private void initMMCFG() {
-        mmcfgInitializer = new MMCFGInitializer();
-        mmcfgInitializer.init();
-        if (mmcfgInitializer.isMmcfgCreated()) {
-            JOptionPane.showMessageDialog(null, "Vizzy has created mm.cfg file for you. " +
-                    "To see flash trace output, please restart all your open browsers.",
-                    "Info", JOptionPane.INFORMATION_MESSAGE);
-        }
-        if (mmcfgInitializer.getTraceFileLocation() != null) {
-            setFlashLogFile(mmcfgInitializer.getTraceFileLocation());
-        }
-    }
-
-    private void initListeners() {
-        vbar.addMouseListener(new MouseListener() {
-            public void mouseClicked(MouseEvent e) {
-            }
-            public void mousePressed(MouseEvent e) {
-                isCapturingScroll = true;
-            }
-            public void mouseReleased(MouseEvent e) {
-                isCapturingScroll = false;
-            }
-            public void mouseEntered(MouseEvent e) {
-            }
-            public void mouseExited(MouseEvent e) {
-            }
-        });
-
-        vbar.addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                if (isCapturingScroll) {
-                    adjustScroller();
-                }
-            }
-        });
-    }
-
-    private void addSearchKeyword(String selectedItem) {
-        DefaultComboBoxModel searchKeywordsModel = settings.getSearchKeywordsModel();
-        if (searchKeywordsModel.getIndexOf(selectedItem) == -1) {
-            searchKeywordsModel.insertElementAt(selectedItem, 0);
-            if (searchKeywordsModel.getSize() > 7) {
-                searchKeywordsModel.removeElementAt(7);
-            }
-        }
-    }
-
-    private void initThreads() {
-        CheckUpdatesAndDebugThread cut = new CheckUpdatesAndDebugThread(this);
-        cut.start();
-    }
-
-    private void initSettings() {
-        settings.parseProperties(props, getBounds());
-        setLastUpdateDate(props.getProperty("update.last"));
-        setDetectPlayer(props.getProperty("settings.detectplayer", "true").equals("true"));
-        setCheckUpdates(props.getProperty("settings.autoupdates", "true").equals("true"));
-        setFlashLogFile(props.getProperty("settings.filename", settings.getFlashLogFileName()));
-        setRefreshFreq(props.getProperty("settings.refreshFreq", "500"));
-        setUTF(props.getProperty("settings.isUTF", "true").equals("true"));
-        setMaxNumLinesEnabled(props.getProperty("settings.maxNumLinesEnabled", "false").equals("true"));
-        setMaxNumLines(props.getProperty("settings.maxNumLines", "50000"));
-        setRestoreOnUpdate(props.getProperty("settings.restore", "false").equals("true"));
-        setOnTop(props.getProperty("settings.alwaysontop", "false").equals("true"));
-        setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"));
-        setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"));
-        setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"));
-        setEnableSmartTrace(props.getProperty("settings.enabelSmartTrace", "true").equals("true"));
-        setHighlightKeywords(props.getProperty("settings.highlightKeywords", "true").equals("true"));
-        setCustomASEditor(props.getProperty("settings.customASEditor", null));
-        setDefaultEditorUsed(props.getProperty("settings.isDefaultASEditor", "true").equals("true"));
-        setTraceFont(props.getProperty("settings.font.name", settings.getDefaultFont()), props.getProperty("settings.font.size", "12"));
-        setSearchKeywords(props.getProperty("search.keywords", "").split("\\|\\|\\|"));
-        setFiltering(false);
-        setLogType(props.getProperty("settings.logtype", "0"));
-        setDialogLocation(props.getProperty("settings.window.x", String.valueOf(this.getX())),
-                props.getProperty("settings.window.y", String.valueOf(this.getY())),
-                props.getProperty("settings.window.width", String.valueOf(this.getWidth())),
-                props.getProperty("settings.window.height", String.valueOf(this.getHeight())));
-
-        createLoadTimerTask().run();
-        if (settings.isAutoRefresh()) {
-            startReadLogFileTimer();
-        } else {
-            stopReadLogFileTimer();
-        }
-    }
-
-    /**
-     * Checks that the user has debug flash player installed
-     * Check is only valid for Windows OS and for
-     * IE browser only
-     */
-    public void checkDebugPlayers() {
-        if (settings.isDetectPlayer()) {
-            DebugPlayerDetector d = new DebugPlayerDetector();
-            d.start();
-        }
-        settings.setDetectPlayer(false);
-    }
-
-    private void initVars() {
-        try {
-            URL myIconUrl = this.getClass().getResource("/img/vizzy.png");
-            this.setIconImage(new ImageIcon(myIconUrl, "Vizzy Flash Tracer").getImage());
-        } catch (Exception e) {
-        }
-
-        JScrollHighlightPanel scrollPanel = (JScrollHighlightPanel)jScrollHighlight;
-        this.vbar = jScrollPane1.getVerticalScrollBar();
-        this.searcher = new WordSearcher(jTraceTextArea, scrollPanel);
-        this.keywordsHighlighter = new KeywordsHighlighter(jTraceTextArea);
-        this.handleWordAtPosition = new HandleWordAtPosition(jTraceTextArea);
-        this.codePopupHandler = new ShowCodePopupTask(jTraceTextArea, new ICodePopupListener() {
-            public void mouseExited(MouseEvent e) {
-//                startHideCodeTimer();
-            }
-            public void mouseEntered(MouseEvent e) {
-//                stopHideCodeTimer();
-            }
-        });
-
-        scrollPanel.setTa(jTraceTextArea);
-        scrollPanel.setLocation(jTraceTextArea.getX(), jTraceTextArea.getY());
-        scrollPanel.setSize(scrollPanel.getWidth(), jTraceTextArea.getHeight()/2);
-
-        String defaultFont = "Courier New";
-        Font[] fonts = settings.getFonts();
-        for (Font font : fonts) {
-            if (font.getName().toLowerCase().indexOf("courier") > -1) {
-                defaultFont = font.getName();
-                break;
-            }
-        }
-        settings.setDefaultFont(defaultFont);
-    }
-
-    public void onClose() {
-        saveSetting("settings.detectplayer", String.valueOf(settings.isDetectPlayer()));
-        saveSetting("settings.autoupdates", String.valueOf(settings.isCheckUpdates()));
-        saveSetting("settings.refreshFreq", String.valueOf(settings.getRefreshFreq()));
-        saveSetting("settings.isUTF", String.valueOf(settings.isUTF()));
-        saveSetting("settings.autorefresh", String.valueOf(settings.isAutoRefresh()));
-        saveSetting("settings.alwaysontop", String.valueOf(jOnTopCheckbox.isSelected()));
-        saveSetting("settings.highlight_all", String.valueOf(jHighlightAllCheckbox.isSelected()));
-        saveSetting("settings.wordwrap", String.valueOf(jWordWrapCheckbox.isSelected()));
-        saveSetting("settings.font.name", jTraceTextArea.getFont().getName());
-        saveSetting("settings.font.size", String.valueOf(jTraceTextArea.getFont().getSize()));
-        saveSetting("settings.filename", settings.getFlashLogFileName());
-        saveSetting("settings.window.x", String.valueOf(getX()));
-        saveSetting("settings.window.y", String.valueOf(getY()));
-        saveSetting("settings.window.width", String.valueOf(getWidth()));
-        saveSetting("settings.window.height", String.valueOf(getHeight()));
-        saveSetting("settings.restore", String.valueOf(settings.isRestoreOnUpdate()));
-        saveSetting("settings.maxNumLines", String.valueOf(settings.getMaxNumLines()));
-        saveSetting("settings.maxNumLinesEnabled", String.valueOf(settings.isMaxNumLinesEnabled()));
-        saveSetting("settings.logtype", String.valueOf(settings.getLogType()));
-        saveSetting("settings.highlightKeywords", String.valueOf(settings.isHighlightKeywords()));
-        saveSetting("settings.enabelSmartTrace", String.valueOf(settings.isSmartTraceEnabled()));
-        saveSetting("settings.customASEditor", String.valueOf(settings.getCustomASEditor()));
-        saveSetting("settings.isDefaultASEditor", String.valueOf(settings.isDefaultASEditor()));
-        saveSetting("update.last", String.valueOf(settings.getLastUpdateDate().getTime()));
-
-        StringBuilder keywords = new StringBuilder();
-        DefaultComboBoxModel searchKeywordsModel = settings.getSearchKeywordsModel();
-        for (int i = 0; i < searchKeywordsModel.getSize(); i++) {
-            String keyword = (String) searchKeywordsModel.getElementAt(i);
-            if (i != 0) {
-                keywords.append("|||");
-            }
-            if (!"".equals(keyword)) {
-                keywords.append(keyword);
-            }
-        }
-        saveSetting("search.keywords", keywords.toString());
-
-        try {
-            props.store(new FileOutputStream(settingsFile), "");
-        } catch (FileNotFoundException ex) {
-            System.err.println("error saving setting 1.");
-        } catch (IOException ex) {
-            System.err.println("error saving setting 2.");
-        }
-    }
-
-    private void loadProperties() {
-        props = new Properties();
-        try {
-            props.load(new FileInputStream(new File("tracer.properties")));
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-        }
-    }
-
-    private void saveSetting(String key, String val) {
-        props.setProperty(key, val);
-    }
-
-    private void adjustScroller() {
-        int sum = vbar.getValue() + vbar.getVisibleAmount();
-        int am = vbar.getMaximum();
-        if (sum >= am) {
-            needToScrolldown = true;
-        } else {
-            needToScrolldown = false;
-        }
-    }
-
-    public LoadFileTask createLoadTimerTask() {
-        return new LoadFileTask(settings.getCurrentLogFile(), settings.getMaxNumLines(), settings.isMaxNumLinesEnabled(), settings.isUTF(), this);
-    }
-
-    public void onOutOfMemory() {
-        setMaxNumLinesEnabled(true);
-        setMaxNumLines("50000");
-
-        startReadLogFileTimer();
-
-        JOptionPane.showMessageDialog(null, "The log file is too big and Vizzy has run out of memory." +
-                " The limit for loading log has been set to " +
-                "50KB. Please change this value if needed in Options panel.", "Warning", JOptionPane.ERROR_MESSAGE);
-    }
-
-    public void onFileRead(String log) {
-        int len = log.length();
-        int max = len > 500 ? len - 500 : 0;
-        String currentHash = len + "" + log.substring(max, len);
-
-        if (currentHash.equals(recentHash)) {
-            return;
-        }
-
-        recentHash = currentHash;
-        traceContent = log;
-        
-        boolean isSetTxt = !(searcher.isWasSearching() && searcher.isFilter());
-        if (isSetTxt) {
-            jTraceTextArea.setText(traceContent);
-        }
-
-        if (searcher.isWasSearching()) {
-            startSearch(searcher.getLastCaretPos() - 1, false);
-        }
-
-        if (needToScrolldown) {
-            jTraceTextArea.setCaretPosition(jTraceTextArea.getDocument().getLength());
-        }
-
-        highlightKeywords();
-
-        if (settings.isRestoreOnUpdate()) {
-            setExtendedState(JFrame.NORMAL);
-            repaint();
-        }
-    }
-
-    private void highlightKeywords() {
-        if (settings.isSmartTraceEnabled() && settings.isHighlightKeywords()) {
-            keywordsHighlighter.highlight();
-        }
-    }
-
-    private void handleWordAtPosition() {
-        if (settings.isSmartTraceEnabled()) {
-            handleWordAtPosition.handle();
-        }
-    }
-
-    private void startSearch(boolean scrollToSearchResult) {
-        startSearch(searcher.getLastCaretPos(), scrollToSearchResult);
-    }
-
-//    private void startSearch() {
-//        startSearch(true);
-//    }
-
-    private void startSearch(int lastCarPos, boolean scrollToSearchResult) {
-        if (jSearchComboBox.getSelectedItem() == null) {
-            return;
-        }
-        String word = (String) jSearchComboBox.getSelectedItem();
-        if (searcher.isFilter()) {
-            try {
-                jTraceTextArea.setText(searcher.filter(traceContent, word));
-            } catch (Exception ex) {
-            }
-            jSearchWarnLabel.setVisible(false);
-        } else {
-            int offset = searcher.search(traceContent, word, lastCarPos);
-            if (offset != -1) {
-                jSearchWarnLabel.setVisible(true);
-                jSearchWarnLabel.setText("<html>Result: <font color=\"blue\"><b>" + word + "</b></font> found!</html>");
-                if (scrollToSearchResult) {
-                    needToScrolldown = false;
-                    try {
-                        jTraceTextArea.scrollRectToVisible(jTraceTextArea
-                                .modelToView(offset));
-                        searcher.setLastCaretPos(offset + 1);
-                    } catch (BadLocationException e) {
-                    }
-                }
-
-            } else {
-                searcher.setLastCaretPos(0);
-                jSearchWarnLabel.setVisible(true);
-                jSearchWarnLabel.setText("<html>Result: <font color=\"red\"><b>" + word + "</b></font> not found!</html>");
-            }
-        }
-
-    }
-
-    public void stopShowCodeTimer() {
-        if (showCodePopupTimer != null) {
-            showCodePopupTimer.cancel();
-            showCodePopupTimer = null;
-        }
-    }
-    public void startShowCodeTimer(MouseEvent me) {
-        stopShowCodeTimer();
-        showCodePopupTimer = new Timer();
-        showCodePopupTimer.schedule(new ShowCodePopupTimerTask(this, me), 500, 500);
-    }
-    public void startHideCodeTimer() {
-        stopHideCodeTimer();
-        hideCodePopupTimer = new Timer();
-        hideCodePopupTimer.schedule(new HideCodePopupTimerTask(this), 500, 500);
-    }
-    public void stopHideCodeTimer() {
-        if (hideCodePopupTimer != null) {
-            hideCodePopupTimer.cancel();
-            hideCodePopupTimer = null;
-        }
-    }
-    public void hideCodePopup() {
-        if (!codePopupHandler.isVisible()) {
-            return;
-        }
-        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-        if (!codePopupHandler.isMouseAtCodePopup(mouseLocation)) {
-            codePopupHandler.hide();
-        }
-    }
-    public void onHideCodePopup() {
-        stopHideCodeTimer();
-        hideCodePopup();
-    }
-    public void onShowCodePopup(MouseEvent me) {
-        stopShowCodeTimer();
-        hideCodePopup();
-
-        Point pt = new Point(me.getX(), me.getY());
-        int offset = jTraceTextArea.viewToModel(pt);
-        SourceAndLine source = handleWordAtPosition.tryPositionForSourceFile(offset);
-        if (source == null) {
-            return;
-        }
-        codePopupHandler.show(pt, source);
-    }
-
-    public void startReadLogFileTimer() {
-        stopReadLogFileTimer();
-        readFileTimer = new Timer();
-        readFileTimer.schedule(createLoadTimerTask(), 1000, settings.getRefreshFreq());
-    }
-
-    public void stopReadLogFileTimer() {
-        if (readFileTimer != null) {
-            readFileTimer.cancel();
-            readFileTimer = null;
-        }
-    }
-
-    public void setEnableSmartTrace(boolean isSmartTraceEnabled) {
-        settings.setSmartTraceEnabled(isSmartTraceEnabled);
-    }
-
-    public void setCustomASEditor(String property) {
-        settings.setCustomASEditor(property);
-        handleWordAtPosition.setCustomASEditor(settings.getCustomASEditor());
-    }
-
-    public void setDefaultEditorUsed(boolean isDefaultASEditor) {
-        settings.setDefaultASEditor(isDefaultASEditor);
-        handleWordAtPosition.setDefaultEditorUsed(settings.isDefaultASEditor());
-    }
-
-    public void setCheckUpdates(boolean isCheckUpdates) {
-        settings.setCheckUpdates(isCheckUpdates);
-    }
-
-    public void setMaxNumLinesEnabled(boolean maxNumLinesEnabled) {
-        settings.setMaxNumLinesEnabled(maxNumLinesEnabled);
-    }
-
-    private void setDetectPlayer(boolean detectPlayer) {
-        settings.setDetectPlayer(detectPlayer);
-    }
-
-    public void setRefreshFreq(String property) {
-        settings.setRefreshFreq(property);
-    }
-
-    public void setUTF(boolean isUTF) {
-        settings.setUTF(isUTF);
-    }
-
-    private void setOnTop(boolean isAlwaysONTop) {
-        settings.setAlwaysONTop(isAlwaysONTop);
-        jOnTopCheckbox.setSelected(settings.isAlwaysOnTop());
-        setAlwaysOnTop(settings.isAlwaysOnTop());
-    }
-
-    private void setLogType(String property) {
-        settings.setLogType(property);
-        if (settings.getLogType() == 1) {
-            if (!mmcfgInitializer.isPolicyFileRecorded()) {
-                mmcfgInitializer.recordPolicyFile();
-                JOptionPane.showMessageDialog(null, "Vizzy has updated mm.cfg file to enable policy logging. " +
-                        "Please restart all your browsers for changes to take effect.",
-                    "Info", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-        logTypeCombo.setSelectedIndex(settings.getLogType());
-        if (settings.getLogType() == 0) {
-            setCurrentLogFile(settings.getFlashLogFileName());
-        } else {
-            setCurrentLogFile(settings.getPolicyLogFileName());
-        }
-    }
-
-    public void setHighlightAll(boolean b) {
-        settings.setHighlightAll(b);
-        jHighlightAllCheckbox.setSelected(settings.isHightlightAll());
-        searcher.setHighlightAll(settings.isHightlightAll());
-    }
-
-    public void setWordWrap(boolean b) {
-        settings.setWordWrap(b);
-        jWordWrapCheckbox.setSelected(settings.isWordWrap());
-        jTraceTextArea.setLineWrap(settings.isWordWrap());
-        for (SnapshotForm snapshotForm : snapshotForms) {
-            snapshotForm.setWordWrap(settings.isWordWrap());
-        }
-    }
-
-    public void setAutoRefresh(boolean b) {
-        settings.setAutoRefresh(b);
-        jAutorefreshCheckBox.setSelected(settings.isAutoRefresh());
-    }
-
-    public void setFiltering(boolean b) {
-        settings.setFilter(b);
-        jFilterCheckbox.setSelected(settings.isFilter());
-        jMultipleLabel.setVisible(settings.isFilter());
-        searcher.setIsFilter(settings.isFilter());
-        jHighlightAllCheckbox.setEnabled(!settings.isFilter());
-    }
-
-    public void setSearchKeywords(String[] keywords) {
-        settings.setSearchKeywords(keywords);
-        jSearchComboBox.setModel(settings.getSearchKeywordsModel());
-    }
-
-    public void setTraceFont(String name, String size) {
-        settings.setTraceFont(name, size);
-        jTraceTextArea.setFont(settings.getTraceFont());
-    }
-
-    public void setFlashLogFile(String flashLogFileName) {
-        settings.setFlashLogFileName(flashLogFileName);
-    }
-
-    public void setPolicyLogFile(String policyLogFileName) {
-        settings.setPolicyLogFileName(policyLogFileName);
-    }
-
-    public void setCurrentLogFile(String filen) {
-        settings.setCurrentLogFile(filen);
-    }
-
-    public void setMaxNumLines(String maxNumLines) {
-        settings.setMaxNumLines(maxNumLines);
-    }
-
-    public void setDialogLocation(String x, String y, String w, String h) {
-        settings.setMainWindowLocation(x, y, w, h);
-        setBounds(settings.getMainWindowLocation());
-    }
-
-    public void setRestoreOnUpdate(boolean restoreOnUpdate) {
-        settings.setRestoreOnUpdate(restoreOnUpdate);
-    }
-    
-    public void setHighlightKeywords(boolean highlightKeywords) {
-        settings.setHighlightKeywords(highlightKeywords);
-    }
-
-    public void setLastUpdateDate(String last) {
-        settings.setLastUpdateDate(last);
-    }
+public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -720,6 +74,13 @@ public class VizzyForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vizzy Flash Tracer");
+        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
+            }
+            public void windowLostFocus(java.awt.event.WindowEvent evt) {
+                formWindowLostFocus(evt);
+            }
+        });
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -815,11 +176,6 @@ public class VizzyForm extends javax.swing.JFrame {
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchComboBox.setEditable(true);
-        jSearchComboBox.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jSearchComboBoxKeyReleased(evt);
-            }
-        });
         jSearchComboBox.setBounds(9, 39, 370, 20);
         jLayeredPane1.add(jSearchComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -993,165 +349,111 @@ public class VizzyForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jHighlightAllCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jHighlightAllCheckboxChecked
-        setHighlightAll(jHighlightAllCheckbox.isSelected());
-        if (jSearchComboBox.getSelectedItem() != null && !jSearchComboBox.getSelectedItem().equals("")) {
-            searcher.setWasSearching(true);
-            startSearch(true);
-            highlightKeywords();
-        }
+        if (!settings.isUIActionsAvailable()) return;
+        controller.highlightAllClicked(jHighlightAllCheckbox.isSelected(), jSearchComboBox.getSelectedItem());
 }//GEN-LAST:event_jHighlightAllCheckboxChecked
 
     private void jFilterCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFilterCheckboxChecked
-        jTraceTextArea.setText(traceContent);
-        setFiltering(jFilterCheckbox.isSelected());
-        if (jSearchComboBox.getSelectedItem() != null && !jSearchComboBox.getSelectedItem().equals("")) {
-            searcher.setWasSearching(true);
-            startSearch(false);
-            highlightKeywords();
-        }
+        if (!settings.isUIActionsAvailable()) return;
+        controller.filterClicked(jFilterCheckbox.isSelected(), jSearchComboBox.getSelectedItem());
 }//GEN-LAST:event_jFilterCheckboxChecked
 
     private void jTraceTextAreaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTraceTextAreaKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_F3) {
-            if (jTraceTextArea.getSelectedText() != null && jTraceTextArea.getSelectedText().length() > 0) {
-                jSearchComboBox.setSelectedItem(jTraceTextArea.getSelectedText());
-            }
-            searcher.setWasSearching(true);
-            startSearch(true);
-            highlightKeywords();
-        }
+        if (!settings.isUIActionsAvailable()) return;
+        controller.textAreaKeyPressed(jTraceTextArea.getSelectedText(), evt);
 }//GEN-LAST:event_jTraceTextAreaKeyPressed
 
     private void jAutorefreshCheckBoxjAutorefreshCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAutorefreshCheckBoxjAutorefreshCheckboxChecked
-        setAutoRefresh(jAutorefreshCheckBox.isSelected());
-        if (settings.isAutoRefresh()) {
-            createLoadTimerTask().run();
-            startReadLogFileTimer();
-        } else {
-            stopReadLogFileTimer();
-        }
+        if (!settings.isUIActionsAvailable()) return;
+        controller.autoRefreshClicked(jAutorefreshCheckBox.isSelected());
 }//GEN-LAST:event_jAutorefreshCheckBoxjAutorefreshCheckboxChecked
 
     private void jWordWrapCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWordWrapCheckboxChecked
-        setWordWrap(jWordWrapCheckbox.isSelected());
+        if (!settings.isUIActionsAvailable()) return;
+        controller.wordWrapClicked(jWordWrapCheckbox.isSelected());
 }//GEN-LAST:event_jWordWrapCheckboxChecked
 
     private void jOnTopCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOnTopCheckboxChecked
-        setOnTop(jOnTopCheckbox.isSelected());
+        if (!settings.isUIActionsAvailable()) return;
+        controller.alwaysOnTopClicked(jOnTopCheckbox.isSelected());
 }//GEN-LAST:event_jOnTopCheckboxChecked
 
     private void jClearTraceButtondeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearTraceButtondeleteActionPerformed
-        new DeleteFile(settings.getCurrentLogFile());
-        jTraceTextArea.setText("");
-        traceContent = "";
-        recentHash = null;
-        needToScrolldown = true;
-        ((JScrollHighlightPanel)jScrollHighlight).setIndexes(null);
+        if (!settings.isUIActionsAvailable()) return;
+        controller.clearTraceClicked();
 }//GEN-LAST:event_jClearTraceButtondeleteActionPerformed
 
     private void jTraceTextAreaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMousePressed
-        if (settings.isAutoRefresh()) {
-            stopReadLogFileTimer();
-        }
+        if (!settings.isUIActionsAvailable()) return;
+        controller.textAreaMousePressed();
     }//GEN-LAST:event_jTraceTextAreaMousePressed
 
     private void jTraceTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseReleased
+        if (!settings.isUIActionsAvailable()) return;
         String selection = jTraceTextArea.getSelectedText();
-        if (selection == null || "".equals(selection)) {
-            handleWordAtPosition();
-        }
-        if (settings.isAutoRefresh()) {
-            startReadLogFileTimer();
-        }
+        controller.textAreaMouseReleased(selection);
     }//GEN-LAST:event_jTraceTextAreaMouseReleased
 
     private void jClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearActionPerformed
-        jTraceTextArea.setText(traceContent);
-        searcher.clearHighlights();
-        searcher.setWasSearching(false);
-        jSearchComboBox.setSelectedItem("");
-        jSearchWarnLabel.setVisible(false);
-        ((JScrollHighlightPanel)jScrollHighlight).setIndexes(null);
-        highlightKeywords();
+        if (!settings.isUIActionsAvailable()) return;
+        controller.clearSearchClicked();
 }//GEN-LAST:event_jClearActionPerformed
 
     private void logTypeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logTypeComboActionPerformed
-        setLogType(String.valueOf(logTypeCombo.getSelectedIndex()));
-        createLoadTimerTask().run();
-        if (settings.isAutoRefresh()) {
-            startReadLogFileTimer();
-        }
+        if (!settings.isUIActionsAvailable()) return;
+        controller.setLogTypeClicked(String.valueOf(logTypeCombo.getSelectedIndex()));
     }//GEN-LAST:event_logTypeComboActionPerformed
 
     private void menuCopyAllClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCopyAllClicked
-        TextTransfer tt = new TextTransfer();
-        tt.setClipboardContents(jTraceTextArea.getText());
+        if (!settings.isUIActionsAvailable()) return;
+        controller.copyAllClicked(jTraceTextArea.getText());
     }//GEN-LAST:event_menuCopyAllClicked
 
     private void menuOptionsClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOptionsClicked
-        if (settings.isAlwaysOnTop()) {
-            setAlwaysOnTop(false);
-        }
-
-        if (optionsForm == null) {
-            optionsForm = new OptionsForm(this, settings);
-        }
-
-        optionsForm.setVisible(true);
+        if (!settings.isUIActionsAvailable()) return;
+        controller.openOptionsClicked();
     }//GEN-LAST:event_menuOptionsClicked
 
     private void menuSnapshotClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSnapshotClicked
-        SnapshotForm snapshotForm = new SnapshotForm(this);
-        snapshotForm.setLocation(getLocation().x - snapshotForm.getWidth() - snapshotForms.size() * 20, getLocation().y  - snapshotForms.size() * 20);
-        snapshotForm.setSize(snapshotForm.getWidth(), getHeight());
-        snapshotForm.setVisible(true);
-        
-        snapshotForms.add(snapshotForm);
+        if (!settings.isUIActionsAvailable()) return;
+        controller.snapshotClicked(jTraceTextArea.getText());
     }//GEN-LAST:event_menuSnapshotClicked
 
     private void aboutClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutClicked
-        new AboutPanel(this);
+        if (!settings.isUIActionsAvailable()) return;
+        controller.aboutOpenClicked();
     }//GEN-LAST:event_aboutClicked
 
     private void jTraceTextAreaMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseMoved
-        if (!codePopupHandler.isVisible()) {
-            startShowCodeTimer(evt);
-        } else if (hideCodePopupTimer == null) {
-            startHideCodeTimer();
-        }
+        if (!settings.isUIActionsAvailable()) return;
+        controller.textAreaMouseMoved(evt);
     }//GEN-LAST:event_jTraceTextAreaMouseMoved
 
     private void jTraceTextAreaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseExited
-        stopShowCodeTimer();
+        if (!settings.isUIActionsAvailable()) return;
+        controller.textAreaMouseExited(evt);
     }//GEN-LAST:event_jTraceTextAreaMouseExited
 
     private void formWindowDeactivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowDeactivated
-        stopShowCodeTimer();
-        hideCodePopup();
+        if (!settings.isUIActionsAvailable()) return;
+        controller.formWindowDeactivated();
     }//GEN-LAST:event_formWindowDeactivated
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        onClose();
+        if (!settings.isUIActionsAvailable()) return;
+        controller.onClose();
     }//GEN-LAST:event_formWindowClosing
 
     private void jTraceTextAreaMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseWheelMoved
-        vbar.dispatchEvent(evt);
-        adjustScroller();
+        if (!settings.isUIActionsAvailable()) return;
+        traceAreaScrollBar.dispatchEvent(evt);
+        checkNeedScrollDown();
     }//GEN-LAST:event_jTraceTextAreaMouseWheelMoved
 
-    private void jSearchComboBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jSearchComboBoxKeyReleased
-        if (jSearchComboBox.getSelectedItem() == null) {
-            return;
-        }
-        if (jSearchComboBox.getSelectedItem().equals("")) {
-            jClearActionPerformed(null);
-        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            addSearchKeyword((String) jSearchComboBox.getSelectedItem());
-            searcher.setWasSearching(true);
-            startSearch(true);
-            highlightKeywords();
-        } 
-    }//GEN-LAST:event_jSearchComboBoxKeyReleased
+    private void formWindowLostFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowLostFocus
+        if (!settings.isUIActionsAvailable()) return;
+        controller.formWindowDeactivated();
+    }//GEN-LAST:event_formWindowLostFocus
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JCheckBox jAutorefreshCheckBox;
@@ -1180,5 +482,288 @@ public class VizzyForm extends javax.swing.JFrame {
     public javax.swing.JCheckBox jWordWrapCheckbox;
     public javax.swing.JComboBox logTypeCombo;
     // End of variables declaration//GEN-END:variables
+
+    private boolean needToScrolldown = true;
+    private boolean isCapturingScroll = false;
+
+    private JScrollBar traceAreaScrollBar;
+    private SettingsModel settings;
+    private VizzyController controller;
+
+    public VizzyForm(VizzyController controller, SettingsModel settings) {
+        super();
+        this.controller = controller;
+        this.settings = settings;
+    }
+    @Override
+    public void onInit() {
+        initComponents();
+    }
+    @Override
+    public void onAfterInit() {
+        initVars();
+        initListeners();
+        setVisible(true);
+    }
+
+    private void initListeners() {
+        traceAreaScrollBar.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {
+            }
+            public void mousePressed(MouseEvent e) {
+                isCapturingScroll = true;
+            }
+            public void mouseReleased(MouseEvent e) {
+                isCapturingScroll = false;
+            }
+            public void mouseEntered(MouseEvent e) {
+            }
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+
+        traceAreaScrollBar.addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (isCapturingScroll) {
+                    checkNeedScrollDown();
+                }
+            }
+        });
+    }
+
+    private void initVars() {
+        traceAreaScrollBar = jScrollPane1.getVerticalScrollBar();
+        jSearchComboBox.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {
+            }
+            public void keyPressed(KeyEvent e) {
+            }
+            public void keyReleased(KeyEvent e) {
+                if (!settings.isUIActionsAvailable()) return;
+                controller.searchKeyReleased((String) jSearchComboBox.getSelectedItem(), e);
+            }
+        });
+        getHighLightScroll().setTa(jTraceTextArea);
+    }
+
+    private void checkNeedScrollDown() {
+        int sum = traceAreaScrollBar.getValue() + traceAreaScrollBar.getVisibleAmount();
+        int am = traceAreaScrollBar.getMaximum();
+        if (sum >= am) {
+            needToScrolldown = true;
+        } else {
+            needToScrolldown = false;
+        }
+    }
+
+
+
+
+
+
+
+
+
+    
+    @Override
+    public void onCustomASEditorChanged(String customASEditor) {
+        
+    }
+    @Override
+    public void onRefreshFreqChanged(long refreshFreq) {
+        
+    }
+    @Override
+    public void onLogTypeChanged(int logType) {
+        logTypeCombo.setSelectedIndex(settings.getLogType());
+    }
+    @Override
+    public void onHightlightAllChanged(boolean hightlightAll) {
+        jHighlightAllCheckbox.setSelected(settings.isHightlightAll());
+    }
+    @Override
+    public void onDefaultASEditorChanged(boolean defaultASEditor) {
+        
+    }
+    @Override
+    public void onUTFChanged(boolean uTF) {
+
+    }
+    @Override
+    public void onHighlightKeywordsChanged(boolean highlightKeywords) {
+
+    }
+    @Override
+    public void onPolicyLogFileNameChanged(String policyLogFileName) {
+
+    }
+    @Override
+    public void onFlashLogFileNameChanged(String flashLogFileName) {
+
+    }
+    @Override
+    public void onFontsChanged(Font[] fonts) {
+    }
+    @Override
+    public void onMainWindowLocationChanged(Rectangle window) {
+        setBounds(settings.getMainWindowLocation());
+    }
+    @Override
+    public void onCurrentLogFileChanged(String currentLogFile) {
+
+    }
+    @Override
+    public void onTraceFontChanged(Font traceFont) {
+        jTraceTextArea.setFont(settings.getTraceFont());
+    }
+    @Override
+    public void onSearchKeywordsChanged(String[] searchKeywords, DefaultComboBoxModel searchKeywordsModel) {
+        jSearchComboBox.setModel(settings.getSearchKeywordsModel());
+    }
+    @Override
+    public void onFilterChanged(boolean filter) {
+        if (!filter) {
+            jTraceTextArea.setText(settings.getTraceContent());
+        }
+        jFilterCheckbox.setSelected(settings.isFilter());
+        jMultipleLabel.setVisible(settings.isFilter());
+        jHighlightAllCheckbox.setEnabled(!settings.isFilter());
+    }
+    @Override
+    public void onAutoRefreshChanged(boolean autoRefresh) {
+        jAutorefreshCheckBox.setSelected(settings.isAutoRefresh());
+    }
+    @Override
+    public void onWordWrapChanged(boolean wordWrap) {
+        jWordWrapCheckbox.setSelected(settings.isWordWrap());
+        jTraceTextArea.setLineWrap(settings.isWordWrap());
+    }
+    @Override
+    public void onSmartTraceEnabledChanged(boolean smartTraceEnabled) {
+        
+    }
+    @Override
+    public void onCheckUpdatesChanged(boolean checkUpdates) {
+
+    }
+    @Override
+    public void onMaxNumLinesEnabledChanged(boolean maxNumLinesEnabled) {
+
+    }
+    @Override
+    public void onMaxNumLinesChanged(long maxNumLines) {
+
+    }
+    @Override
+    public void onRestoreOnUpdateChanged(boolean restoreOnUpdate) {
+
+    }
+    @Override
+    public void onAlwaysOnTopChanged(boolean alwaysONTop) {
+        jOnTopCheckbox.setSelected(settings.isAlwaysOnTop());
+        setAlwaysOnTop(settings.isAlwaysOnTop());
+    }
+    @Override
+    public void onLastUpdateDateChanged(Date lastUpdateDate) {
+
+    }
+    @Override
+    public void onDetectPlayerChanged(boolean detectPlayer) {
+
+    }
+    @Override
+    public void onDefaultFontChanged(String defaultFont) {
+
+    }
+    @Override
+    public void onSetFontNamesChanged(String[] fontNames) {
+
+    }
+    @Override
+    public void onRecentHashChanged(String recentHash) {
+
+    }
+    @Override
+    public void onTraceContentChanged(String traceContent) {
+        if ("".equals(traceContent) || traceContent == null) {
+            jTraceTextArea.setText(settings.getTraceContent());
+            needToScrolldown = true;
+            ((JScrollHighlightPanel) jScrollHighlight).setIndexes(null);
+        } else {
+            boolean filteringOff = !(settings.getSearcher().isWasSearching() && settings.getSearcher().isFilter());
+            if (filteringOff) {
+                jTraceTextArea.setText(traceContent);
+            }
+            if (needToScrolldown) {
+                jTraceTextArea.setCaretPosition(jTraceTextArea.getDocument().getLength());
+            }
+            if (settings.isRestoreOnUpdate()) {
+                setExtendedState(JFrame.NORMAL);
+                repaint();
+            }
+        }
+    }
+    @Override
+    public JTextArea getTextArea() {
+        return jTraceTextArea;
+    }
+    
+    @Override
+    public void onSearch(String word, int offset, boolean scrollToSearchResult) {
+        if (settings.getSearcher().isFilter()) {
+            try {
+                jTraceTextArea.setText(settings.getSearcher().filter(settings.getTraceContent(), word));
+            } catch (Exception ex) {
+            }
+            jSearchWarnLabel.setVisible(false);
+        } else {
+            String trimmedWord = word.length() > 37 ? word.substring(0, 40) + "..." : word;
+            if (offset != -1) {
+                jSearchWarnLabel.setVisible(true);
+                jSearchWarnLabel.setText("<html>Found: <font color=\"blue\"><b>"
+                        + StringEscapeUtils.escapeHtml(trimmedWord)
+                        + "</b></font></html>");
+                if (scrollToSearchResult) {
+                    needToScrolldown = false;
+                    try {
+                        jTraceTextArea.scrollRectToVisible(jTraceTextArea
+                                .modelToView(offset));
+                    } catch (BadLocationException e) {
+                    }
+                }
+            } else {
+                jSearchWarnLabel.setVisible(true);
+                jSearchWarnLabel.setText("<html>Not found: <font color=\"red\"><b>"
+                        + StringEscapeUtils.escapeHtml(trimmedWord)
+                        + "</b></font></html>");
+            }
+        }
+    }
+    @Override
+    public void onOptionsClosed() {
+//        jTraceTextArea.setText("");
+    }
+    @Override
+    public void onHighlightTraceKeyword(String text) {
+        jSearchComboBox.setSelectedItem(text);
+    }
+
+    @Override
+    public void onSearchCleared() {
+        jTraceTextArea.setText(settings.getTraceContent());
+        jSearchComboBox.setSelectedItem("");
+        jSearchWarnLabel.setVisible(false);
+        ((JScrollHighlightPanel)jScrollHighlight).setIndexes(null);
+    }
+
+    @Override
+    public void onAlwaysOnTopUIChanged(boolean alwaysOnTop) {
+        setAlwaysOnTop(alwaysOnTop);
+    }
+
+    @Override
+    public JScrollHighlightPanel getHighLightScroll() {
+        return (JScrollHighlightPanel)jScrollHighlight;
+    }
 
 }

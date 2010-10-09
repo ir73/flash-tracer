@@ -5,26 +5,31 @@
 
 package vizzy.tasks;
 
-import java.awt.event.MouseEvent;
+import java.awt.Point;
 import java.util.TimerTask;
-import vizzy.forms.VizzyForm;
+import vizzy.controller.VizzyController;
 
 /**
  *
- * @author sergeil
+ * @author sergeilne
  */
 public class ShowCodePopupTimerTask extends TimerTask {
-    private final VizzyForm aThis;
-    private final MouseEvent me;
+    private VizzyController aThis;
+    private Point pt;
 
-    public ShowCodePopupTimerTask(VizzyForm aThis, MouseEvent me) {
+    public ShowCodePopupTimerTask(VizzyController aThis, Point pt) {
         this.aThis = aThis;
-        this.me = me;
+        this.pt = pt;
     }
 
     @Override
     public void run() {
-        aThis.onShowCodePopup(me);
+        try {
+            aThis.onShowCodePopup(pt);
+        } catch (Exception e) {
+        }
+        aThis = null;
+        pt = null;
     }
 
 }

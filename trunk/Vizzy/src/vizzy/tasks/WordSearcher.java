@@ -18,6 +18,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import vizzy.comp.JScrollHighlightPanel;
+import vizzy.model.Conf;
 
 
 /**
@@ -26,24 +27,42 @@ import vizzy.comp.JScrollHighlightPanel;
  */
 public class WordSearcher {
     
-    protected JTextArea comp;
-    
-    private int _lastCaretPos = 0;
-    
+    private JTextArea textArea;
+    private int lastCaretPos = 0;
+    private String word;
     private boolean wasSearching = false;
-    
     private boolean highlightAll = false;
-    
     private boolean isFilter = false;
-    
     private boolean forcedScreenScroll = true;
-
-    private JScrollHighlightPanel panel;
-
+    private JScrollHighlightPanel highlightPanel;
     private List<Object> highlightObjects = new ArrayList<Object>();
     
-    Highlighter.HighlightPainter highlightedSearchResultPainter = new MyHighlightPainter(new Color(0, 150, 0));
-    Highlighter.HighlightPainter searchResultPainter = new MyHighlightPainter(new Color(200, 255, 200));
+    public WordSearcher() {
+    }
+
+    public JTextArea getTextArea() {
+        return textArea;
+    }
+
+    public void setTextArea(JTextArea textArea) {
+        this.textArea = textArea;
+    }
+
+    public JScrollHighlightPanel getHighlightPanel() {
+        return highlightPanel;
+    }
+
+    public void setHighlightPanel(JScrollHighlightPanel highlightPanel) {
+        this.highlightPanel = highlightPanel;
+    }
+
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
 
     class MyHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
         public MyHighlightPainter(Color color) {
@@ -51,25 +70,20 @@ public class WordSearcher {
         }
     }
     
-    public WordSearcher(JTextArea comp, JScrollHighlightPanel panel) {
-        this.comp = comp;
-        this.panel = panel;
-    }
-    
     // Search for a word and return the offset of the
     // first occurrence. Highlights are added for all
     // occurrences found.
-    public int search(String content, String word) {
-        return search(content, word, 0);
+    public int search(String content) {
+        return search(content, 0);
     }
     
-    public int search(String content, String word, int lastCaretPos) {
+    public int search(String content, int lastCaretPos) {
         //System.out.println("word = "+ word);
         word = word.toLowerCase();
         content = content.toLowerCase();
         
         int firstOffset = -1;
-        Highlighter highlighter = comp.getHighlighter();
+        Highlighter highlighter = getTextArea().getHighlighter();
         
         clearHighlights();
         
@@ -83,7 +97,7 @@ public class WordSearcher {
             int endIndex = lastIndex + wordSize;
             
             try {
-                highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, highlightedSearchResultPainter));
+                highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, Conf.highlightedSearchResultPainter));
             } catch (Exception e) {
                 // Nothing to do
             }
@@ -96,7 +110,7 @@ public class WordSearcher {
                 int endIndex = lastIndex + wordSize;
 
                 try {
-                    highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, highlightedSearchResultPainter));
+                    highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, Conf.highlightedSearchResultPainter));
                 } catch (Exception e) {
                     // Nothing to do
                 }
@@ -113,7 +127,7 @@ public class WordSearcher {
             while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
                 int endIndex = lastIndex + wordSize;
                 try {
-                    highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, searchResultPainter));
+                    highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, Conf.searchResultPainter));
                     indexes.add(lastIndex);
                 } catch (BadLocationException e) {
                     break;
@@ -121,18 +135,18 @@ public class WordSearcher {
 
                 lastIndex = endIndex;
             }
-           panel.setIndexes(indexes);
-           panel.repaint();
+            getHighlightPanel().setIndexes(indexes);
+            getHighlightPanel().repaint();
         }
         return firstOffset;
     }
 
     public int getLastCaretPos() {
-        return _lastCaretPos;
+        return lastCaretPos;
     }
 
     public void setLastCaretPos(int lastCaretPos) {
-        this._lastCaretPos = lastCaretPos;
+        this.lastCaretPos = lastCaretPos;
     }
 
     public boolean isWasSearching() {
@@ -152,7 +166,7 @@ public class WordSearcher {
     }
 
     public void clearHighlights() {
-        Highlighter highlighter = comp.getHighlighter();
+        Highlighter highlighter = getTextArea().getHighlighter();
         for (Object object : highlightObjects) {
             highlighter.removeHighlight(object);
         }
@@ -170,7 +184,7 @@ public class WordSearcher {
         return isFilter;
     }
 
-    public void setIsFilter(boolean isFilter) {
+    public void setFilter(boolean isFilter) {
         this.isFilter = isFilter;
     }
 
@@ -186,12 +200,12 @@ public class WordSearcher {
         String[] words = word.split(",");
         
         StringBuilder sb = new StringBuilder("");
-        comp.setText(content);
-        int totalLines = comp.getLineCount();
+        getTextArea().setText(content);
+        int totalLines = getTextArea().getLineCount();
 
         for (int i=0; i < totalLines; i++) {
-            int start = comp.getLineStartOffset(i);
-            int end   = comp.getLineEndOffset(i);
+            int start = getTextArea().getLineStartOffset(i);
+            int end   = getTextArea().getLineEndOffset(i);
             String lineText = content.substring(start, end);
 
             for (int j = 0; j < words.length; j++) {

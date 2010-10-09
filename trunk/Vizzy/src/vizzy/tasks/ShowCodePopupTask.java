@@ -17,7 +17,6 @@ import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 import org.apache.commons.io.FileUtils;
 import vizzy.forms.panels.CodeForm;
-import vizzy.listeners.ICodePopupListener;
 import vizzy.model.SourceAndLine;
 
 /**
@@ -26,29 +25,26 @@ import vizzy.model.SourceAndLine;
  */
 public class ShowCodePopupTask {
 
-    private final ICodePopupListener listener;
-    private final JTextArea owner;
+    private JTextArea owner;
     private CodeForm codeForm;
     private Popup popup;
     private Point codeFormlocationOnScreen;
+    private SourceAndLine source;
+    private Object lock = new Object();
 
-    public ShowCodePopupTask(JTextArea owner, ICodePopupListener listener) {
-        this.owner = owner;
-        this.listener = listener;
+    public ShowCodePopupTask() {
+        
     }
 
     public void hide() {
-
-        codeFormlocationOnScreen = null;
-        if (codeForm != null) {
-            synchronized (codeForm) {
-                codeForm.dispose();
+        synchronized (lock) {
+            source = null;
+            codeFormlocationOnScreen = null;
+            if (codeForm != null) {
                 codeForm = null;
             }
-        }
 
-        if (popup != null) {
-            synchronized (popup) {
+            if (popup != null) {
                 popup.hide();
                 popup = null;
             }
@@ -56,7 +52,7 @@ public class ShowCodePopupTask {
     }
 
     public boolean isVisible() {
-        return codeForm != null;
+        return popup != null;
     }
 
     public boolean isMouseAtCodePopup(Point pt) {
@@ -73,70 +69,92 @@ public class ShowCodePopupTask {
     }
 
     public void show(Point pt, SourceAndLine source) {
-        File file = new File(source.filePath);
-        if (!file.exists()) {
-            return;
-        }
-        try {
-
-            List<String> lines = FileUtils.readLines(file);
-            if (lines.size() < source.lineNum) {
+        synchronized (lock) {
+            this.source = source;
+            File file = new File(source.filePath);
+            if (!file.exists()) {
                 return;
             }
+            try {
 
-            int fromLine = 0;
-            int toLine = lines.size() - 1;
-
-            lines = lines.subList(fromLine, toLine);
-
-            codeForm = new CodeForm();
-            synchronized (codeForm) {
-                codeForm.addCodePopupListener(listener);
-                codeForm.initStyles(owner.getFont());
-                codeForm.setText(lines, source.lineNum - 1);
-                codeForm.updateSize();
-
-                Point codeFormLocation = new Point();
-                Dimension codeFormPreferredSize = codeForm.getPreferredSize();
-
-                Point textAreaScreenLocation = owner.getLocationOnScreen();
-                Dimension textAreaPreferredSize = owner.getPreferredSize();
-                codeFormLocation.x = (int) (textAreaScreenLocation.x + pt.getX());
-                codeFormLocation.y = (int) (textAreaScreenLocation.y + pt.getY());
-
-                if (codeFormLocation.x + codeFormPreferredSize.width >= textAreaScreenLocation.x + textAreaPreferredSize.width) {
-                    codeFormLocation.x -= codeFormPreferredSize.width;
+                List<String> lines = FileUtils.readLines(file);
+                if (lines.size() < source.lineNum) {
+                    return;
                 }
 
-                if (codeFormLocation.y + codeFormPreferredSize.height >= textAreaScreenLocation.y + textAreaPreferredSize.height) {
-                    codeFormLocation.y -= codeFormPreferredSize.height;
-                    codeFormLocation.y -= 4;
-                } else {
-                    codeFormLocation.y += 4;
-                }
+                int fromLine = 0;
+                int toLine = lines.size() - 1;
 
-                PopupFactory pf = PopupFactory.getSharedInstance();
-                popup = pf.getPopup(owner, codeForm, codeFormLocation.x, codeFormLocation.y);
-                popup.show();
+                lines = lines.subList(fromLine, toLine);
 
-                codeForm.revalidate();
-                codeForm.repaint();
+                codeForm = new CodeForm();
+                synchronized (codeForm) {
+                    codeForm.initStyles(owner.getFont());
+                    codeForm.setText(lines, source.lineNum - 1);
+                    codeForm.updateSize();
 
-                codeFormlocationOnScreen = codeForm.getLocationOnScreen();
+                    Point codeFormLocation = new Point();
+                    Dimension codeFormPreferredSize = codeForm.getPreferredSize();
 
-                SwingUtilities.invokeLater(new Runnable() {
+                    Point textAreaScreenLocation = owner.getLocationOnScreen();
+                    Dimension textAreaPreferredSize = owner.getPreferredSize();
+                    codeFormLocation.x = (int) (textAreaScreenLocation.x + pt.getX());
+                    codeFormLocation.y = (int) (textAreaScreenLocation.y + pt.getY());
 
-                    public void run() {
-                        codeForm.scrollText();
-                        codeForm.setFocus();
+                    if (codeFormLocation.x + codeFormPreferredSize.width >= textAreaScreenLocation.x + textAreaPreferredSize.width) {
+                        codeFormLocation.x -= codeFormPreferredSize.width;
                     }
-                });
+
+                    if (codeFormLocation.y + codeFormPreferredSize.height >= textAreaScreenLocation.y + textAreaPreferredSize.height) {
+                        codeFormLocation.y -= codeFormPreferredSize.height;
+                        codeFormLocation.y -= 4;
+                    } else {
+                        codeFormLocation.y += 4;
+                    }
+
+                    PopupFactory pf = PopupFactory.getSharedInstance();
+                    popup = pf.getPopup(owner, codeForm, codeFormLocation.x, codeFormLocation.y);
+                    popup.show();
+
+                    codeForm.revalidate();
+                    codeForm.repaint();
+
+                    codeFormlocationOnScreen = codeForm.getLocationOnScreen();
+
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        public void run() {
+                            try {
+                                codeForm.scrollText();
+                                codeForm.setFocus();
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+                }
+
+
+            } catch (Exception ex) {
+                Logger.getLogger(ShowCodePopupTask.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-
-        } catch (Exception ex) {
-            Logger.getLogger(ShowCodePopupTask.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+    }
+
+    public JTextArea getOwner() {
+        return owner;
+    }
+
+    public void setOwner(JTextArea owner) {
+        this.owner = owner;
+    }
+
+    public SourceAndLine getSource() {
+        return source;
+    }
+
+    public void setSource(SourceAndLine source) {
+        this.source = source;
     }
 
 }

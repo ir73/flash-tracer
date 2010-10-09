@@ -8,7 +8,12 @@ package vizzy.tasks;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Highlighter;
+import vizzy.model.Conf;
 import vizzy.model.SourceAndLine;
 
 /**
@@ -16,6 +21,17 @@ import vizzy.model.SourceAndLine;
  * @author sergeil
  */
 public class HandleWordAtPosition {
+
+    public HandleWordAtPosition() {
+    }
+
+    public JTextArea getTextArea() {
+        return textArea;
+    }
+
+    public void setTextArea(JTextArea textArea) {
+        this.textArea = textArea;
+    }
     
     class MinPositionParam {
         public String separator;
@@ -30,41 +46,57 @@ public class HandleWordAtPosition {
     public static final String FILE_TEMPLATE = "file:///";
     private String customASEditor;
     private boolean defaultASEditor;
-    private final JTextArea jTraceTextArea;
+    private JTextArea textArea;
+    private Object highlight;
+    private final Object lock = new Object();
 
-    public HandleWordAtPosition(JTextArea jTraceTextArea) {
-        this.jTraceTextArea = jTraceTextArea;
-    }
-
-    public SourceAndLine tryPositionForSourceFile(int offset) {
-        SourceAndLine source = extractSourceFile(offset, jTraceTextArea.getText());
-        return source;
-    }
-
-    public void handle() {
+    public void findObjectAtPositionAndExecute() {
         if (!Desktop.isDesktopSupported()) {
             return;
         }
 
         try {
-            checkHTTPLink();
+            checkHTTPLink(textArea.getCaretPosition(), true);
         } catch (Exception ex) {
         }
 
         try {
-            checkSourceFile();
+            checkSourceFile(textArea.getCaretPosition(), true);
         } catch (Exception ex) {
         }
     }
 
-    private void checkHTTPLink() throws Exception {
+    public void removeHighlight() {
+        synchronized (lock) {
+            try {
+                if (highlight != null) {
+                    textArea.getHighlighter().removeHighlight(highlight);
+                    highlight = null;
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public void highlightSourceLine(SourceAndLine source) {
+        removeHighlight();
+        synchronized (lock) {
+            try {
+                highlight = textArea.getHighlighter().addHighlight(source.startPos, source.startPos + source.filePath.length(), Conf.mouseOverObjectPainter);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(HandleWordAtPosition.class.getName()).log(Level.INFO, null, ex);
+            }
+        }
+    }
+
+    public SourceAndLine checkHTTPLink(int offset, boolean executeIfFound) throws Exception {
 
         int startIndex;
         int endIndex;
         String currentWord;
 
-        int currentIndex = jTraceTextArea.getCaretPosition();
-        String text = jTraceTextArea.getText();
+        int currentIndex = offset;
+        String text = textArea.getText();
 
         // CHECK FOR HTTP LINK
         startIndex = getMinPosition(text, currentIndex,
@@ -81,40 +113,47 @@ public class HandleWordAtPosition {
                     new MinPositionParam("\r", true),
                     new MinPositionParam("\"", true),
                     new MinPositionParam("'", true),
+                    new MinPositionParam("<", true),
+                    new MinPositionParam(">", true),
                     new MinPositionParam(" ", true)},
                 false);
 
         if (endIndex != -1 && startIndex != -1) {
             currentWord = text.substring(startIndex, endIndex);
-            if (currentWord != null 
+            if (currentWord != null
                     && (currentWord.startsWith(HTTP_TEMPLATE) || currentWord.startsWith(FILE_TEMPLATE))) {
-                Desktop.getDesktop().browse(new URI(currentWord));
-                jTraceTextArea.setSelectionStart(startIndex);
-                jTraceTextArea.setSelectionEnd(endIndex);
-                return;
+                SourceAndLine source = new SourceAndLine(currentWord, -1, startIndex);
+                highlightSourceLine(source);
+                if (executeIfFound) {
+                    Desktop.getDesktop().browse(new URI(currentWord));
+                }
+                return source;
             }
         }
+        return null;
     }
 
-    private void checkSourceFile() throws Exception {
-        SourceAndLine source = extractSourceFile(jTraceTextArea.getCaretPosition(), jTraceTextArea.getText());
+    public SourceAndLine checkSourceFile(int offset, boolean executeIfFound) throws Exception {
+        SourceAndLine source = extractSourceFile(offset, textArea.getText());
         if (source == null) {
-            return;
+            return null;
         }
+
+        highlightSourceLine(source);
         
-        if (defaultASEditor) {
-            File file = new File(source.filePath);
-            if (file.exists()) {
-                Desktop.getDesktop().open(file);
+        if (executeIfFound) {
+            if (defaultASEditor) {
+                File file = new File(source.filePath);
+                if (file.exists()) {
+                    Desktop.getDesktop().open(file);
+                }
+            } else if (customASEditor != null) {
+                String command = customASEditor.replace("%file%", "\"" + source.filePath + "\"").replace("%line%", String.valueOf(source.lineNum));
+                Runtime.getRuntime().exec(command);
             }
-        } else if (customASEditor != null) {
-            String command = customASEditor
-                    .replace("%file%", "\"" + source.filePath + "\"")
-                    .replace("%line%", String.valueOf(source.lineNum));
-            Process p = Runtime.getRuntime().exec(command);
         }
-        jTraceTextArea.setSelectionStart(source.startPos);
-        jTraceTextArea.setSelectionEnd(source.startPos + source.filePath.length());
+
+        return source;
     }
 
     private SourceAndLine extractSourceFile(int currentIndex, String text) {

@@ -6,22 +6,23 @@
 package vizzy.tasks;
 
 import java.util.TimerTask;
-import vizzy.forms.VizzyForm;
+import vizzy.controller.VizzyController;
 
 /**
  *
  * @author sergeil
  */
 public class HideCodePopupTimerTask extends TimerTask {
-    private final VizzyForm aThis;
+    private VizzyController aThis;
 
-    public HideCodePopupTimerTask(VizzyForm aThis) {
+    public HideCodePopupTimerTask(VizzyController aThis) {
         this.aThis = aThis;
     }
 
     @Override
     public void run() {
         aThis.onHideCodePopup();
+        aThis = null;
     }
 
 }

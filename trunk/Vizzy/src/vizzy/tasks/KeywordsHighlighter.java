@@ -4,12 +4,11 @@
  */
 package vizzy.tasks;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextArea;
-import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
+import vizzy.model.Conf;
 
 /**
  *
@@ -20,27 +19,25 @@ public class KeywordsHighlighter {
     private static String TEMPLATE_ERROR = ": Error #";
     private List<Object> highlightObjects = new ArrayList<Object>();
 
-    Highlighter.HighlightPainter errorPainter = new MyHighlightPainter(new Color(200, 200, 200));
-    Highlighter.HighlightPainter warningPainter = new MyHighlightPainter(new Color(230, 230, 230));
-
-    class MyHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
-
-        public MyHighlightPainter(Color color) {
-            super(color);
-        }
+    public KeywordsHighlighter() {
     }
-    private final JTextArea jTraceTextArea;
 
-    public KeywordsHighlighter(JTextArea jTraceTextArea) {
-        this.jTraceTextArea = jTraceTextArea;
+    public JTextArea getTextArea() {
+        return textArea;
     }
+
+    public void setTextArea(JTextArea textArea) {
+        this.textArea = textArea;
+    }
+
+    private JTextArea textArea;
 
     public void highlight() {
-        Highlighter highlighter = jTraceTextArea.getHighlighter();
+        Highlighter highlighter = getTextArea().getHighlighter();
         
         clearHighlights();
 
-        int totalLines = jTraceTextArea.getLineCount();
+        int totalLines = getTextArea().getLineCount();
         int start;
         int end;
         int ind;
@@ -48,12 +45,12 @@ public class KeywordsHighlighter {
 
         try {
             for (int i=0; i < totalLines; i++) {
-                start = jTraceTextArea.getLineStartOffset(i);
-                end = jTraceTextArea.getLineEndOffset(i);
-                lineText = jTraceTextArea.getText(start, end - start);
+                start = getTextArea().getLineStartOffset(i);
+                end = getTextArea().getLineEndOffset(i);
+                lineText = getTextArea().getText(start, end - start);
                 ind = lineText.indexOf(TEMPLATE_ERROR);
                 if (ind != -1) {
-                    highlightObjects.add(highlighter.addHighlight(start, start + ind, errorPainter));
+                    highlightObjects.add(highlighter.addHighlight(start, start + ind, Conf.errorPainter));
                 }
             }
         } catch (Exception e) {
@@ -61,7 +58,7 @@ public class KeywordsHighlighter {
     }
 
     public void clearHighlights() {
-        Highlighter highlighter = jTraceTextArea.getHighlighter();
+        Highlighter highlighter = getTextArea().getHighlighter();
         for (Object object : highlightObjects) {
             highlighter.removeHighlight(object);
         }

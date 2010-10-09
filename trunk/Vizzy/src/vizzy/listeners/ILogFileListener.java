@@ -5,16 +5,14 @@
 
 package vizzy.listeners;
 
-import java.awt.event.MouseEvent;
-
 /**
  *
  * @author sergeil
  */
-public interface ICodePopupListener {
+public interface ILogFileListener {
 
-    public void mouseExited(MouseEvent e);
+    public void onLogFileRead(String content);
 
-    public void mouseEntered(MouseEvent e);
+    public void onOutOfMemory();
 
 }

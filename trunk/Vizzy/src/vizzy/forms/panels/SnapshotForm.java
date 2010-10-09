@@ -11,23 +11,25 @@
 
 package vizzy.forms.panels;
 
-import vizzy.forms.VizzyForm;
+import vizzy.controller.VizzyController;
+import vizzy.model.SettingsModel;
 
 /**
  *
  * @author sergeil
  */
 public class SnapshotForm extends javax.swing.JFrame {
-
-    private final VizzyForm vf;
+    private VizzyController controller;
+    private SettingsModel settings;
 
     /** Creates new form OptionsForm */
-    public SnapshotForm(VizzyForm vf) {
-        this.vf = vf;
+    public SnapshotForm(VizzyController controller, SettingsModel settings) {
+        this.controller = controller;
+        this.settings = settings;
         initComponents();
 
         try {
-            this.setIconImage(vf.getIconImage());
+            this.setIconImage(settings.getAppIcon());
         } catch (Exception e) {
         }
     }
@@ -89,7 +91,7 @@ public class SnapshotForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void onWindowClose(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onWindowClose
-        vf.snapshotForms.remove(this);
+        controller.snapshotFormsClose(this);
         dispose();
     }//GEN-LAST:event_onWindowClose
 
@@ -99,21 +101,23 @@ public class SnapshotForm extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea;
     // End of variables declaration//GEN-END:variables
 
-    private void initVars() {
-        jTextArea.setText(vf.jTraceTextArea.getText());
-        jTextArea.setFont(vf.jTraceTextArea.getFont());
-        jTextArea.setLineWrap(vf.jTraceTextArea.getLineWrap());
-    }
-    
-    @Override
-    public void setVisible(boolean val) {
-        if (val) {
-            initVars();
-        }
-        super.setVisible(val);
-    }
-
     public void setWordWrap(boolean b) {
         jTextArea.setLineWrap(b);
     }
+
+    public void init(String text) {
+        jTextArea.setText(text);
+        jTextArea.setFont(settings.getTraceFont());
+        jTextArea.setLineWrap(settings.isWordWrap());
+        setVisible(true);
+    }
+
+    @Override
+    public void dispose() {
+        controller = null;
+        settings = null;
+        super.dispose();
+    }
+
+
 }
