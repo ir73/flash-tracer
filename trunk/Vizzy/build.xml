@@ -12,6 +12,8 @@
     <import file="nbproject/build-impl.xml"/>
     <import file="nbproject/profiler-build-impl.xml"/>
 
+    <property name="version" value="2.3"/>
+
     <target name="build-vizzy" depends="clean, jar">
 
         <copy todir="${dist.dir}" overwrite="true">
@@ -33,7 +35,7 @@
             <arg value="launch4j.xml"/>
         </exec>
 
-        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v2.3.zip">
+        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v${version}.zip">
         </zip>
 
         <mkdir dir="${dist.dir}/zip" />
@@ -43,6 +45,30 @@
         </move>
 
     </target>
+
+    <target name="build-vizzy-mac" description="Create OSX App bundle for Vizzy"
+        depends="clean-jar-bundle">
+        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
+        <jarbundler
+            dir="${basedir}"
+            verbose="true"
+            showPlist="false"
+            name="${ant.project.name}"
+            mainclass="vizzy.controller.VizzyController"
+            jar="${ant.project.name}.jar"
+            icon="${ant.project.name}.icns"
+            version="${version}"
+            >
+            <extraclasspathfileset dir="lib">
+                <include name="*.jar" />
+            </extraclasspathfileset>
+        </jarbundler>
+    </target>
+
+    <target name="clean-vizzy-mac" description="Clean up anything we can't rebuild">
+        <delete dir="${ant.project.name}.app" quiet="true"/>
+    </target>
+
     <!--
 
     There exist several targets which are by default empty and which can be 
