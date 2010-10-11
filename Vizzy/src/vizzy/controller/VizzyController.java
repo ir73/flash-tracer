@@ -179,8 +179,9 @@ public final class VizzyController implements ILogFileListener {
         settings.setMmcfgKeys(mmcfgInitializer.getMmcfgKeys());
         settings.setPolicyFileRecorded(mmcfgInitializer.isPolicyFileRecorded());
         if (mmcfgInitializer.isMmcfgCreated()) {
-            JOptionPane.showMessageDialog(null, "Vizzy has created mm.cfg file for you. " +
-                    "To see flash trace output, please restart all your browsers.",
+            JOptionPane.showMessageDialog(null, "Vizzy has created mm.cfg file for you.\n" +
+                    "Please restart all your browsers for the\n"
+                    + "changes to take effect.",
                     "Info", JOptionPane.INFORMATION_MESSAGE);
         }
         if (mmcfgInitializer.getTraceFileLocation() != null) {
@@ -327,9 +328,10 @@ public final class VizzyController implements ILogFileListener {
 
         startReadLogFileTimer();
 
-        JOptionPane.showMessageDialog(null, "The log file is too big and Vizzy has run out of memory." +
-                " Vizzy has set the limit of log file to " +
-                "50KB. You can customize this value in Options menu.", "Warning", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "The log file is too big and Vizzy has\n"
+                + "run out of memory. Vizzy has set the limit\n"
+                + "of log file to 50KB. You can customize this\n"
+                + "value in Options menu.", "Warning", JOptionPane.ERROR_MESSAGE);
     }
 
     private void highlightStackTraceErrors() {
@@ -441,8 +443,9 @@ public final class VizzyController implements ILogFileListener {
             if (!settings.isPolicyFileRecorded()) {
                 mmcfgInitializer.recordPolicyFile();
                 settings.setPolicyFileRecorded(true);
-                JOptionPane.showMessageDialog(null, "Vizzy has updated mm.cfg file to enable policy logging. " +
-                        "Please restart all your browsers for changes to take effect.",
+                JOptionPane.showMessageDialog(null, "Vizzy has updated mm.cfg file to enable\n"
+                        + "policy logging. Please restart all your browsers\n"
+                        + "for the changes to take effect.",
                     "Info", JOptionPane.INFORMATION_MESSAGE);
             }
         }

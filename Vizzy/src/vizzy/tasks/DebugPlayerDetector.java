@@ -24,8 +24,8 @@ public class DebugPlayerDetector {
     public void offerDetection() {
         Object[] options = {"Yes",
             "No",};
-        int reply = JOptionPane.showOptionDialog(null, "Debug Flash Player detection has not been performed yet. " +
-                "Would you like to perform it now?",
+        int reply = JOptionPane.showOptionDialog(null, "Debug Flash Player detection has not been\n"
+                + "performed yet. Would you like to perform it now?",
                 "Debug Flash Player Detection",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,

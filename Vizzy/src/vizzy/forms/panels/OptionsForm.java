@@ -299,7 +299,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane1.add(jDefaultRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         ASEditorButtonGroup.add(jCustomEditorRadioButton);
-        jCustomEditorRadioButton.setBounds(30, 142, -1, 21);
+        jCustomEditorRadioButton.setBounds(30, 142, 21, 20);
         jLayeredPane1.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jCustomASEditorTextFiled.setText("C:\\svn-projects-repos\\fd\\flashdevelop_sergei\\flashdevelop\\FD3\\FlashDevelop\\Bin\\Debug\\FlashDevelop.exe %file% -line %line");
