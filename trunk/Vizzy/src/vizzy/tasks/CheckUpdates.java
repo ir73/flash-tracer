@@ -75,9 +75,10 @@ public class CheckUpdates extends Thread {
                     Object[] options = {"Yes",
                         "No",};
 
-                    int reply = JOptionPane.showOptionDialog(null, "New version is availible (" + newVer + "). " +
-                            "Would you like Vizzy to download it to your computer for you?\n" +
-                            "Note: if you do not want to receive update notifications anymore, you can turn " +
+                    int reply = JOptionPane.showOptionDialog(null, "New version is availible (" + newVer + ").\n" +
+                            "Would you like Vizzy to download it?\n"
+                            + "Note: if you do not want to receive update\n"
+                            + "notifications anymore, you can turn\n" +
                             "them off in Options menu.\n\n" +
                             "Here is a list of features that new version has:\n" +
                             newFeatures,
@@ -92,7 +93,7 @@ public class CheckUpdates extends Thread {
                     }
                 } else {
                     if (reportIfOk) {
-                        JOptionPane.showMessageDialog(null, "You have the latest version installed!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "You have the latest version already!", "Info", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
@@ -151,8 +152,9 @@ public class CheckUpdates extends Thread {
         } catch (Exception ex) {
             Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex);
 
-            JOptionPane.showMessageDialog(null, "Failed to download update. Press OK to go to the web-site" +
-                    " and to download new version manually!",
+            JOptionPane.showMessageDialog(null, "Failed to download update. Press OK to go\n"
+                    + "to the web-site and to download\n"
+                    + "new version manually!",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
 

@@ -345,8 +345,8 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jWordWrapCheckbox" min="-2" pref="103" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jOnTopCheckbox" min="-2" pref="111" max="-2" attributes="0"/>
-                      <EmptySpace pref="228" max="32767" attributes="0"/>
+                      <Component id="jOnTopCheckbox" min="-2" pref="124" max="-2" attributes="0"/>
+                      <EmptySpace pref="215" max="32767" attributes="0"/>
                       <Component id="jClearTraceButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="logTypeCombo" min="-2" pref="117" max="-2" attributes="0"/>
