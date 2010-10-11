@@ -47,11 +47,6 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jAutorefreshCheckBox = new javax.swing.JCheckBox();
-        jClearTraceButton = new javax.swing.JButton();
-        jOnTopCheckbox = new javax.swing.JCheckBox();
-        jWordWrapCheckbox = new javax.swing.JCheckBox();
-        logTypeCombo = new javax.swing.JComboBox();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jHighlightAllCheckbox = new javax.swing.JCheckBox();
         jFilterCheckbox = new javax.swing.JCheckBox();
@@ -63,6 +58,12 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTraceTextArea = new javax.swing.JTextArea();
         jScrollHighlight = new vizzy.comp.JScrollHighlightPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jClearTraceButton = new javax.swing.JButton();
+        logTypeCombo = new javax.swing.JComboBox();
+        jWordWrapCheckbox = new javax.swing.JCheckBox();
+        jOnTopCheckbox = new javax.swing.JCheckBox();
+        jAutorefreshCheckBox = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -89,49 +90,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 formWindowDeactivated(evt);
             }
         });
-
-        jAutorefreshCheckBox.setSelected(true);
-        jAutorefreshCheckBox.setText("Autorefresh");
-        jAutorefreshCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jAutorefreshCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jAutorefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jAutorefreshCheckBoxjAutorefreshCheckboxChecked(evt);
-            }
-        });
-
-        jClearTraceButton.setText("Clear Log");
-        jClearTraceButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jClearTraceButtondeleteActionPerformed(evt);
-            }
-        });
-
-        jOnTopCheckbox.setText("Always On Top");
-        jOnTopCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jOnTopCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jOnTopCheckbox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jOnTopCheckboxChecked(evt);
-            }
-        });
-
-        jWordWrapCheckbox.setSelected(true);
-        jWordWrapCheckbox.setText("Word Wrap");
-        jWordWrapCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jWordWrapCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jWordWrapCheckbox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jWordWrapCheckboxChecked(evt);
-            }
-        });
-
-        logTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Flash Log", "Policy File" }));
-        logTypeCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logTypeComboActionPerformed(evt);
-            }
-        });
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Search"));
 
@@ -143,7 +102,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 jHighlightAllCheckboxChecked(evt);
             }
         });
-        jHighlightAllCheckbox.setBounds(10, 20, 120, 15);
+        jHighlightAllCheckbox.setBounds(10, 18, 120, 15);
         jLayeredPane1.add(jHighlightAllCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFilterCheckbox.setText("Filter");
@@ -154,16 +113,16 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 jFilterCheckboxChecked(evt);
             }
         });
-        jFilterCheckbox.setBounds(140, 20, 120, 15);
+        jFilterCheckbox.setBounds(130, 18, 80, 15);
         jLayeredPane1.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jMultipleLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         jMultipleLabel.setText("Hint: Use comma to separate keywords");
-        jMultipleLabel.setBounds(270, 20, 300, 14);
+        jMultipleLabel.setBounds(210, 18, 300, 14);
         jLayeredPane1.add(jMultipleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchWarnLabel.setText("<html></html>");
-        jSearchWarnLabel.setBounds(10, 62, 490, 16);
+        jSearchWarnLabel.setBounds(10, 63, 410, 16);
         jLayeredPane1.add(jSearchWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jButton1.setText("Clear");
@@ -172,11 +131,11 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 jClearActionPerformed(evt);
             }
         });
-        jButton1.setBounds(390, 38, 90, 23);
+        jButton1.setBounds(300, 38, 90, 24);
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchComboBox.setEditable(true);
-        jSearchComboBox.setBounds(9, 39, 370, 20);
+        jSearchComboBox.setBounds(9, 38, 280, 24);
         jLayeredPane1.add(jSearchComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTraceTextArea.setColumns(20);
@@ -222,7 +181,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         );
         jScrollHighlightLayout.setVerticalGroup(
             jScrollHighlightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 309, Short.MAX_VALUE)
+            .add(0, 337, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
@@ -230,14 +189,84 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+        );
+
+        jPanel3.setPreferredSize(new java.awt.Dimension(762, 26));
+
+        jClearTraceButton.setText("Clear Log");
+        jClearTraceButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jClearTraceButtondeleteActionPerformed(evt);
+            }
+        });
+
+        logTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Flash Log", "Policy File" }));
+        logTypeCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logTypeComboActionPerformed(evt);
+            }
+        });
+
+        jWordWrapCheckbox.setSelected(true);
+        jWordWrapCheckbox.setText("Word Wrap");
+        jWordWrapCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jWordWrapCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jWordWrapCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jWordWrapCheckboxChecked(evt);
+            }
+        });
+
+        jOnTopCheckbox.setText("Always On Top");
+        jOnTopCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jOnTopCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jOnTopCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jOnTopCheckboxChecked(evt);
+            }
+        });
+
+        jAutorefreshCheckBox.setSelected(true);
+        jAutorefreshCheckBox.setText("Autorefresh");
+        jAutorefreshCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jAutorefreshCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAutorefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jAutorefreshCheckBoxjAutorefreshCheckboxChecked(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                .add(jAutorefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jWordWrapCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jOnTopCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 228, Short.MAX_VALUE)
+                .add(jClearTraceButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                .add(jAutorefreshCheckBox)
+                .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jClearTraceButton)
+                .add(jWordWrapCheckbox)
+                .add(jOnTopCheckbox))
         );
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
@@ -246,20 +275,12 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jAutorefreshCheckBox)
-                .add(77, 77, 77)
-                .add(jWordWrapCheckbox)
-                .add(103, 103, 103)
-                .add(jOnTopCheckbox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 120, Short.MAX_VALUE)
-                .add(jClearTraceButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 119, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(11, 11, 11))
+                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
-                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
+                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE)
                     .addContainerGap()))
             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(jPanel1Layout.createSequentialGroup()
@@ -269,26 +290,21 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(428, Short.MAX_VALUE)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jClearTraceButton)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jOnTopCheckbox)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jWordWrapCheckbox)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jAutorefreshCheckBox))
-                .addContainerGap())
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(437, Short.MAX_VALUE)
+                .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(360, Short.MAX_VALUE)))
+                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(380, Short.MAX_VALUE)))
             .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .add(108, 108, 108)
+                    .add(92, 92, 92)
                     .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(41, 41, 41)))
+                    .add(32, 32, 32)))
         );
+
+        getContentPane().add(jPanel1);
 
         jMenu1.setText("Edit");
 
@@ -333,17 +349,6 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
-
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -448,6 +453,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         if (!settings.isUIActionsAvailable()) return;
         traceAreaScrollBar.dispatchEvent(evt);
         checkNeedScrollDown();
+        controller.traceAreaMouseWheel(evt);
     }//GEN-LAST:event_jTraceTextAreaMouseWheelMoved
 
     private void formWindowLostFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowLostFocus
@@ -473,6 +479,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     public javax.swing.JCheckBox jOnTopCheckbox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jScrollHighlight;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox jSearchComboBox;
@@ -491,7 +498,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     private VizzyController controller;
 
     public VizzyForm(VizzyController controller, SettingsModel settings) {
-        super();
+        super("Vizzy Flash Tracer");
         this.controller = controller;
         this.settings = settings;
     }
@@ -762,7 +769,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         return (JScrollHighlightPanel)jScrollHighlight;
     }
     @Override
-    public void onEnableStackTraceClickChanged(boolean enableStackTraceClick) {
+    public void onEnableTraceClickChanged(boolean enableStackTraceClick) {
     }
     @Override
     public void onEnableCodePopupChanged(boolean enableCodePopup) {

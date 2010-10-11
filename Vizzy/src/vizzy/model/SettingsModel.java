@@ -605,7 +605,7 @@ public class SettingsModel {
     public void setEnableTraceClick(boolean enableStackTraceClick, boolean doFireEvent) {
         this.enableTraceClick = enableStackTraceClick;
         if (doFireEvent && listener != null) {
-            getListener().onEnableStackTraceClickChanged(this.enableTraceClick);
+            getListener().onEnableTraceClickChanged(this.enableTraceClick);
         }
     }
 
