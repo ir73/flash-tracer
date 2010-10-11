@@ -157,7 +157,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jUTFCheckBox.setBounds(200, 16, 170, 20);
         jLayeredPane3.add(jUTFCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLabel4.setText("flashlog.txt location:");
+        jLabel4.setText("flash log location:");
         jLabel4.setBounds(10, 20, 180, 14);
         jLayeredPane3.add(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jFlashLogTextField.setBounds(10, 40, 250, 20);
@@ -177,20 +177,20 @@ public class OptionsForm extends javax.swing.JFrame {
                 browseButtonClicked(evt);
             }
         });
-        jButton1.setBounds(271, 38, 100, 23);
+        jButton1.setBounds(271, 40, 100, 24);
         jLayeredPane3.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Limit"));
-        jNumLinesTextField.setBounds(10, 160, 170, 20);
+        jNumLinesTextField.setBounds(10, 140, 170, 20);
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load from end of file:");
-        jLabel8.setBounds(10, 140, 360, 14);
+        jLabel8.setBounds(10, 120, 360, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when the log file gets too big and that might cause slower performance. Setting this limit is not mandatory because Vizzy will set this automatically if runs out of memory.</html>");
         jLabel11.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jLabel11.setBounds(10, 40, 360, 80);
+        jLabel11.setBounds(10, 40, 360, 70);
         jLayeredPane4.add(jLabel11, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jNumLinesEnabledCheckBox.setText("Load limited amount of bytes from the end of file only");
@@ -288,26 +288,27 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Smart Trace Parser"));
 
         jEnableClickCheckBox.setText("<html>1. Open HTTP links on click.<br>2. Open source files from stack traces on click with using:</html>");
-        jEnableClickCheckBox.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        jEnableClickCheckBox.setBounds(10, 40, 340, 50);
+        jEnableClickCheckBox.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jEnableClickCheckBox.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        jEnableClickCheckBox.setBounds(10, 60, 340, 50);
         jLayeredPane1.add(jEnableClickCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         ASEditorButtonGroup.add(jDefaultRadioButton);
         jDefaultRadioButton.setText("Default application");
-        jDefaultRadioButton.setBounds(30, 90, 320, 23);
+        jDefaultRadioButton.setBounds(30, 110, 320, 23);
         jLayeredPane1.add(jDefaultRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         ASEditorButtonGroup.add(jCustomEditorRadioButton);
-        jCustomEditorRadioButton.setBounds(30, 120, 21, 21);
+        jCustomEditorRadioButton.setBounds(30, 142, -1, 21);
         jLayeredPane1.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jCustomASEditorTextFiled.setText("C:\\svn-projects-repos\\fd\\flashdevelop_sergei\\flashdevelop\\FD3\\FlashDevelop\\Bin\\Debug\\FlashDevelop.exe %file% -line %line");
-        jCustomASEditorTextFiled.setBounds(50, 120, 300, 20);
+        jCustomASEditorTextFiled.setBounds(50, 140, 300, 24);
         jLayeredPane1.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnablePopupsCheckBox.setText("<html>Enable code popup when mouse is over the stack-trace source file</html>");
         jEnablePopupsCheckBox.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jEnablePopupsCheckBox.setBounds(10, 160, 340, 50);
+        jEnablePopupsCheckBox.setBounds(10, 180, 340, 50);
         jLayeredPane1.add(jEnablePopupsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnableHighlightErrorsCheckBox.setText("Highlight errors in stack traces");
@@ -327,8 +328,8 @@ public class OptionsForm extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 247, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(87, Short.MAX_VALUE))
+                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 313, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Trace Parser", jPanel5);

@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Highlighter;
 import vizzy.model.Conf;
 import vizzy.model.SourceAndLine;
 
@@ -184,8 +183,13 @@ public class HandleWordAtPosition {
                         && sIndex < eIndex) {
                     sIndex = sIndex + 1;
                     String filePath = currentWord.substring(sIndex, eIndex);
-                    int lineNum = Integer.parseInt(currentWord.substring(eIndex + 1, currentWord.length() - 1));
-                    return new SourceAndLine(filePath, lineNum, startIndex + sIndex);
+                    if (filePath != null) {
+                        File file = new File(filePath);
+                        if (file.exists()) {
+                            int lineNum = Integer.parseInt(currentWord.substring(eIndex + 1, currentWord.length() - 1));
+                            return new SourceAndLine(filePath, lineNum, startIndex + sIndex);
+                        }
+                    }
                 }
             }
         }

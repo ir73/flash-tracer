@@ -87,7 +87,7 @@ public interface ISettingsListener {
 
     public void onAfterInit();
 
-    public void onEnableStackTraceClickChanged(boolean enableStackTraceClick);
+    public void onEnableTraceClickChanged(boolean enableStackTraceClick);
 
     public void onEnableCodePopupChanged(boolean enableCodePopup);
 

@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -799,6 +800,10 @@ public final class VizzyController implements ILogFileListener {
             debugPlayerDetector = new DebugPlayerDetector();
             debugPlayerDetector.offerDetection();
         }
+    }
+
+    public void traceAreaMouseWheel(MouseWheelEvent evt) {
+        hideCodePopup();
     }
 
 }
