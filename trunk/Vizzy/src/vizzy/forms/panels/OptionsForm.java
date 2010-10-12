@@ -17,8 +17,8 @@ import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import vizzy.controller.VizzyController;
+import vizzy.model.Conf;
 import vizzy.model.SettingsModel;
-import vizzy.tasks.CheckUpdates;
 
 /**
  *
@@ -85,8 +85,8 @@ public class OptionsForm extends javax.swing.JFrame {
         jEnableHighlightErrorsCheckBox = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
         jVersionLabel = new javax.swing.JLabel();
-        jCheckNowButton = new javax.swing.JButton();
         jUpdatesCheckBox = new javax.swing.JCheckBox();
+        jCheckUpdatesButton = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -114,11 +114,11 @@ public class OptionsForm extends javax.swing.JFrame {
         jLabel2.setText("Font:");
         jLabel2.setBounds(10, 20, 260, 14);
         jLayeredPane2.add(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jFontSizeTextField.setBounds(290, 40, 80, 20);
+        jFontSizeTextField.setBounds(290, 40, 80, 23);
         jLayeredPane2.add(jFontSizeTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFontComboBox.setModel(new DefaultComboBoxModel(settings.getFontNames()));
-        jFontComboBox.setBounds(10, 40, 270, 22);
+        jFontComboBox.setBounds(10, 40, 270, 23);
         jLayeredPane2.add(jFontComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jRestoreCheckBox.setText("<html>Restore window on trace update if window minimized</html>");
@@ -160,7 +160,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jLabel4.setText("flash log location:");
         jLabel4.setBounds(10, 20, 180, 14);
         jLayeredPane3.add(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jFlashLogTextField.setBounds(10, 40, 250, 20);
+        jFlashLogTextField.setBounds(10, 40, 250, 23);
         jLayeredPane3.add(jFlashLogTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel1.setText("Log file read frequency (in milliseconds):");
@@ -168,7 +168,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane3.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFreqTextField.setText("1000");
-        jFreqTextField.setBounds(10, 90, 170, 20);
+        jFreqTextField.setBounds(10, 90, 170, 23);
         jLayeredPane3.add(jFreqTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jButton1.setText("Browse...");
@@ -177,11 +177,11 @@ public class OptionsForm extends javax.swing.JFrame {
                 browseButtonClicked(evt);
             }
         });
-        jButton1.setBounds(271, 40, 100, 24);
+        jButton1.setBounds(271, 40, 100, 23);
         jLayeredPane3.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Limit"));
-        jNumLinesTextField.setBounds(10, 140, 170, 20);
+        jNumLinesTextField.setBounds(10, 140, 170, 23);
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load from end of file:");
@@ -299,11 +299,11 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane1.add(jDefaultRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         ASEditorButtonGroup.add(jCustomEditorRadioButton);
-        jCustomEditorRadioButton.setBounds(30, 142, 21, 20);
+        jCustomEditorRadioButton.setBounds(30, 141, 21, 23);
         jLayeredPane1.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jCustomASEditorTextFiled.setText("C:\\svn-projects-repos\\fd\\flashdevelop_sergei\\flashdevelop\\FD3\\FlashDevelop\\Bin\\Debug\\FlashDevelop.exe %file% -line %line");
-        jCustomASEditorTextFiled.setBounds(50, 140, 300, 24);
+        jCustomASEditorTextFiled.setBounds(50, 140, 300, 23);
         jLayeredPane1.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnablePopupsCheckBox.setText("<html>Enable code popup when mouse is over the stack-trace source file</html>");
@@ -336,17 +336,17 @@ public class OptionsForm extends javax.swing.JFrame {
 
         jVersionLabel.setText("Current version is: 1.19");
 
-        jCheckNowButton.setText("Check now!");
-        jCheckNowButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckNowButtonActionPerformed(evt);
-            }
-        });
-
         jUpdatesCheckBox.setSelected(true);
         jUpdatesCheckBox.setText("Check for updates weekly at startup");
         jUpdatesCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jUpdatesCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        jCheckUpdatesButton.setText("Check now");
+        jCheckUpdatesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckUpdatesButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -355,9 +355,9 @@ public class OptionsForm extends javax.swing.JFrame {
             .add(jPanel4Layout.createSequentialGroup()
                 .add(21, 21, 21)
                 .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jCheckUpdatesButton)
                     .add(jUpdatesCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 353, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jVersionLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jCheckNowButton))
+                    .add(jVersionLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -368,7 +368,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(18, 18, 18)
                 .add(jVersionLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jCheckNowButton)
+                .add(jCheckUpdatesButton)
                 .addContainerGap(247, Short.MAX_VALUE))
         );
 
@@ -422,10 +422,6 @@ public class OptionsForm extends javax.swing.JFrame {
         jNumLinesTextField.setEnabled(jNumLinesEnabledCheckBox.isSelected());
 }//GEN-LAST:event_jNumLinesEnabledCheckBoxActionPerformed
 
-    private void jCheckNowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckNowButtonActionPerformed
-        controller.checkForUpdatesClicked();
-}//GEN-LAST:event_jCheckNowButtonActionPerformed
-
     private void jOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOKButtonActionPerformed
         okOptions();
     }//GEN-LAST:event_jOKButtonActionPerformed
@@ -472,6 +468,10 @@ public class OptionsForm extends javax.swing.JFrame {
         cancelOptions();
     }//GEN-LAST:event_formWindowClosing
 
+    private void jCheckUpdatesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckUpdatesButtonActionPerformed
+        controller.checkForUpdatesClicked();
+    }//GEN-LAST:event_jCheckUpdatesButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ASEditorButtonGroup;
     private javax.swing.JButton jButton1;
@@ -480,7 +480,7 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBoxStatic;
     private javax.swing.JCheckBox jCheckBoxTraceAll;
     private javax.swing.JCheckBox jCheckBoxVerbose;
-    private javax.swing.JButton jCheckNowButton;
+    private javax.swing.JButton jCheckUpdatesButton;
     private java.awt.TextField jCustomASEditorTextFiled;
     private javax.swing.JRadioButton jCustomEditorRadioButton;
     private javax.swing.JRadioButton jDefaultRadioButton;
@@ -554,7 +554,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jFontSizeTextField.setText(String.valueOf(settings.getTraceFont().getSize()));
         jFlashLogTextField.setText(settings.getFlashLogFileName());
         jFreqTextField.setText(String.valueOf(settings.getRefreshFreq()));
-        jVersionLabel.setText("Current version is: " + CheckUpdates.VERSION);
+        jVersionLabel.setText("Current version is: " + Conf.VERSION);
         jNumLinesTextField.setEnabled(jNumLinesEnabledCheckBox.isSelected());
         jCheckBoxBuffer.setSelected(settings.getMmcfgKeys().get("TraceOutputBuffered", "0").equals("1"));
         jCheckBoxTraceAll.setSelected(settings.getMmcfgKeys().get("AS3Trace", "0").equals("1"));

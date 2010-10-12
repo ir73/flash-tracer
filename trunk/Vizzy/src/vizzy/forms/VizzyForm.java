@@ -11,6 +11,7 @@
 
 package vizzy.forms;
 
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
@@ -19,7 +20,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
@@ -27,7 +32,9 @@ import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import org.apache.commons.lang.StringEscapeUtils;
 import vizzy.comp.JScrollHighlightPanel;
+import vizzy.comp.NewFeaturesPanel;
 import vizzy.controller.VizzyController;
+import vizzy.listeners.INewFeaturesListener;
 import vizzy.listeners.IVizzyView;
 import vizzy.model.SettingsModel;
 
@@ -36,6 +43,7 @@ import vizzy.model.SettingsModel;
  * @author sergeil
  */
 public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
+    private NewFeaturesPanel newFeaturesPanel;
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -90,9 +98,12 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 formWindowDeactivated(evt);
             }
         });
-        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
+
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
         jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Search"));
+        jLayeredPane1.setMaximumSize(new java.awt.Dimension(32767, 84));
+        jLayeredPane1.setPreferredSize(new java.awt.Dimension(0, 84));
 
         jHighlightAllCheckbox.setText("Highlight All");
         jHighlightAllCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -122,21 +133,26 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jLayeredPane1.add(jMultipleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchWarnLabel.setText("<html></html>");
-        jSearchWarnLabel.setBounds(10, 63, 410, 16);
+        jSearchWarnLabel.setBounds(10, 63, 410, 14);
         jLayeredPane1.add(jSearchWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jButton1.setText("Clear");
+        jButton1.setPreferredSize(new java.awt.Dimension(59, 24));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jClearActionPerformed(evt);
             }
         });
-        jButton1.setBounds(300, 38, 90, 24);
+        jButton1.setBounds(300, 38, 90, 23);
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchComboBox.setEditable(true);
-        jSearchComboBox.setBounds(9, 38, 280, 24);
+        jSearchComboBox.setBounds(9, 38, 280, 23);
         jLayeredPane1.add(jSearchComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jPanel1.add(jLayeredPane1);
+
+        jPanel2.setPreferredSize(new java.awt.Dimension(0, 0));
 
         jTraceTextArea.setColumns(20);
         jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12));
@@ -181,7 +197,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         );
         jScrollHighlightLayout.setVerticalGroup(
             jScrollHighlightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 337, Short.MAX_VALUE)
+            .add(0, 221, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
@@ -189,17 +205,19 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
         );
 
-        jPanel3.setPreferredSize(new java.awt.Dimension(762, 26));
+        jPanel1.add(jPanel2);
+
+        jPanel3.setPreferredSize(new java.awt.Dimension(762, 24));
 
         jClearTraceButton.setText("Clear Log");
         jClearTraceButton.addActionListener(new java.awt.event.ActionListener() {
@@ -209,6 +227,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         });
 
         logTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Flash Log", "Policy File" }));
+        logTypeCombo.setPreferredSize(new java.awt.Dimension(72, 23));
         logTypeCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logTypeComboActionPerformed(evt);
@@ -254,7 +273,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 .add(jWordWrapCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jOnTopCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 124, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 215, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 66, Short.MAX_VALUE)
                 .add(jClearTraceButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -269,42 +288,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 .add(jOnTopCheckbox))
         );
 
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE)
-                    .addContainerGap()))
-            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(437, Short.MAX_VALUE)
-                .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(jPanel1Layout.createSequentialGroup()
-                    .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(380, Short.MAX_VALUE)))
-            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .add(92, 92, 92)
-                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(32, 32, 32)))
-        );
-
-        getContentPane().add(jPanel1);
+        jPanel1.add(jPanel3);
 
         jMenu1.setText("Edit");
 
@@ -349,6 +333,17 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -773,6 +768,45 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     }
     @Override
     public void onEnableCodePopupChanged(boolean enableCodePopup) {
+    }
+    @Override
+    public void onShowNewFeaturesPanel() {
+        if (newFeaturesPanel == null) {
+            newFeaturesPanel = new NewFeaturesPanel("<html>Did you know that it is possible to explore stack"
+                    + " trace source files directly from Vizzy? "
+                    + "<a href=\"http://code.google.com/p/flash-tracer/wiki/Features\">Read more...</a></html>",
+                    new INewFeaturesListener() {
+                public void click() {
+                    removeNewFeaturesPanel();
+                    if (Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(new URI("http://code.google.com/p/flash-tracer/wiki/Features"));
+                        } catch (Exception ex) {
+                            Logger.getLogger(VizzyForm.class.getName()).log(Level.WARNING, null, ex);
+                        }
+                    }
+                }
+                public void close() {
+                    removeNewFeaturesPanel();
+                }
+            });
+            jPanel1.add(newFeaturesPanel, 1);
+        }
+        jPanel1.validate();
+        jPanel1.repaint();
+    }
+    @Override
+    public void onNewFeaturesPanelShownChanged(boolean wasNewFeaturesPanelShown) {
+    }
+
+
+    private void removeNewFeaturesPanel() {
+        controller.newFeaturesPanelClosed();
+        newFeaturesPanel.dispose();
+        jPanel1.remove(newFeaturesPanel);
+        newFeaturesPanel = null;
+        jPanel1.validate();
+        jPanel1.repaint();
     }
 
 }

@@ -91,4 +91,8 @@ public interface ISettingsListener {
 
     public void onEnableCodePopupChanged(boolean enableCodePopup);
 
+    public void onShowNewFeaturesPanel();
+
+    public void onNewFeaturesPanelShownChanged(boolean wasNewFeaturesPanelShown);
+
 }
