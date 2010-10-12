@@ -21,13 +21,20 @@
             <fileset dir="etc/" />
         </copy>
 
-<!--        <copy todir="${dist.dir}/Vizzy.app/Contents/Resources/Java" overwrite="true">
+        <copy todir="${dist.dir}/Vizzy.app/Contents/Resources/Java" overwrite="true">
             <fileset file="${dist.dir}/Vizzy.jar"/>
+        </copy>
+
+        <mkdir dir="${dist.dir}/Vizzy.app/Contents/Resources/Java/lib" />
+        <copy todir="${dist.dir}/Vizzy.app/Contents/Resources/Java/lib" overwrite="true" >
+            <fileset dir="${dist.dir}/lib"/>
         </copy>
         
         <copy todir="${dist.dir}/Vizzy.app/Contents/Resources" overwrite="true">
             <fileset file="res/Vizzy.icns"/>
-        </copy>-->
+        </copy>
+
+
 
         <delete dir="zip" />
         <mkdir dir="zip" />
@@ -47,8 +54,7 @@
         </zip>
 
         <move todir="${dist.dir}" overwrite="true" >
-            <fileset dir="zip">
-            </fileset>
+            <fileset dir="zip"/>
         </move>
 
     </target>

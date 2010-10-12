@@ -197,7 +197,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         );
         jScrollHighlightLayout.setVerticalGroup(
             jScrollHighlightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 221, Short.MAX_VALUE)
+            .add(0, 219, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
@@ -211,13 +211,13 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
+            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
         );
 
         jPanel1.add(jPanel2);
 
-        jPanel3.setPreferredSize(new java.awt.Dimension(762, 24));
+        jPanel3.setPreferredSize(new java.awt.Dimension(762, 26));
 
         jClearTraceButton.setText("Clear Log");
         jClearTraceButton.addActionListener(new java.awt.event.ActionListener() {

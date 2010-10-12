@@ -243,8 +243,8 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollHighlight" alignment="0" pref="225" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" alignment="1" pref="225" max="32767" attributes="0"/>
+                  <Component id="jScrollHighlight" alignment="0" pref="223" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="1" pref="223" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -302,7 +302,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="221" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="219" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -312,7 +312,7 @@
         <Container class="javax.swing.JPanel" name="jPanel3">
           <Properties>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[762, 24]"/>
+              <Dimension value="[762, 26]"/>
             </Property>
           </Properties>
 
