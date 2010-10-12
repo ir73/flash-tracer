@@ -14,7 +14,7 @@
             name="${ant.project.name}"
             mainclass="vizzy.controller.VizzyController"
             jar="${ant.project.name}.jar"
-            icon="res/${ant.project.name}.icns"
+            icon="${ant.project.name}.icns"
             version="${version}"
             >
             <extraclasspathfileset dir="lib">
