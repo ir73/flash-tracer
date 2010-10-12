@@ -21,8 +21,15 @@
             <fileset dir="etc/" />
         </copy>
 
-        <delete dir="zip" />
+<!--        <copy todir="${dist.dir}/Vizzy.app/Contents/Resources/Java" overwrite="true">
+            <fileset file="${dist.dir}/Vizzy.jar"/>
+        </copy>
+        
+        <copy todir="${dist.dir}/Vizzy.app/Contents/Resources" overwrite="true">
+            <fileset file="res/Vizzy.icns"/>
+        </copy>-->
 
+        <delete dir="zip" />
         <mkdir dir="zip" />
         <mkdir dir="${dist.dir}/${ant.project.name}" />
 
@@ -39,8 +46,7 @@
         <zip basedir="${dist.dir}" destfile="zip/${ant.project.name}_v${version}.zip">
         </zip>
 
-        <mkdir dir="${dist.dir}/zip" />
-        <move todir="${dist.dir}/zip" overwrite="true" >
+        <move todir="${dist.dir}" overwrite="true" >
             <fileset dir="zip">
             </fileset>
         </move>
