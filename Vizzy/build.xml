@@ -11,6 +11,7 @@
     <description>Builds, tests, and runs the project Vizzy.</description>
     <import file="nbproject/build-impl.xml"/>
     <import file="nbproject/profiler-build-impl.xml"/>
+    <import file="nbproject/profiler-build-impl.xml"/>
 
     <property name="version" value="2.3"/>
 
@@ -23,11 +24,11 @@
         <delete dir="zip" />
 
         <mkdir dir="zip" />
-        <mkdir dir="${dist.dir}/Vizzy" />
+        <mkdir dir="${dist.dir}/${ant.project.name}" />
 
-        <move todir="${dist.dir}/Vizzy" overwrite="true">
+        <move todir="${dist.dir}/${ant.project.name}" overwrite="true">
             <fileset dir="${dist.dir}">
-                <exclude name="Vizzy"/>
+                <exclude name="${ant.project.name}"/>
             </fileset>
         </move>
 
@@ -35,7 +36,7 @@
             <arg value="launch4j.xml"/>
         </exec>
 
-        <zip basedir="${dist.dir}" destfile="zip/Vizzy_v${version}.zip">
+        <zip basedir="${dist.dir}" destfile="zip/${ant.project.name}_v${version}.zip">
         </zip>
 
         <mkdir dir="${dist.dir}/zip" />
@@ -44,29 +45,6 @@
             </fileset>
         </move>
 
-    </target>
-
-    <target name="build-vizzy-mac" description="Create OSX App bundle for Vizzy"
-        depends="clean-jar-bundle">
-        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
-        <jarbundler
-            dir="${basedir}"
-            verbose="true"
-            showPlist="false"
-            name="${ant.project.name}"
-            mainclass="vizzy.controller.VizzyController"
-            jar="${ant.project.name}.jar"
-            icon="${ant.project.name}.icns"
-            version="${version}"
-            >
-            <extraclasspathfileset dir="lib">
-                <include name="*.jar" />
-            </extraclasspathfileset>
-        </jarbundler>
-    </target>
-
-    <target name="clean-vizzy-mac" description="Clean up anything we can't rebuild">
-        <delete dir="${ant.project.name}.app" quiet="true"/>
     </target>
 
     <!--

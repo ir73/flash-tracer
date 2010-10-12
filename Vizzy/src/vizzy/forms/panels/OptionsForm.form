@@ -133,7 +133,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="290" y="20" width="80" height="-1" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="290" y="20" width="80" height="14" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -143,14 +143,14 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="20" width="260" height="-1" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="20" width="260" height="14" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jFontSizeTextField">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="290" y="40" width="80" height="24" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="290" y="40" width="80" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -162,7 +162,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="40" width="270" height="24" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="40" width="270" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -245,14 +245,14 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="20" width="180" height="-1" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="20" width="180" height="14" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jFlashLogTextField">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="40" width="250" height="24" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="40" width="250" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -262,7 +262,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="70" width="350" height="-1" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="70" width="350" height="14" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -272,7 +272,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="90" width="170" height="24" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="90" width="170" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -285,7 +285,7 @@
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="271" y="40" width="100" height="24" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="271" y="40" width="100" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -305,7 +305,7 @@
                 <Component class="javax.swing.JTextField" name="jNumLinesTextField">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="140" width="170" height="24" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="140" width="170" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -315,7 +315,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="120" width="360" height="-1" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="120" width="360" height="14" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -347,7 +347,7 @@
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="20" width="350" height="-1" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="20" width="350" height="15" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -498,7 +498,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="30" y="110" width="320" height="-1" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="30" y="110" width="320" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -510,7 +510,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="30" y="143" width="-1" height="20" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="30" y="141" width="-1" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -520,7 +520,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="50" y="140" width="300" height="24" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="50" y="140" width="300" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -541,7 +541,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="10" y="20" width="340" height="-1" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="10" y="20" width="340" height="23" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -564,9 +564,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jCheckUpdatesButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jUpdatesCheckBox" alignment="0" min="-2" pref="353" max="-2" attributes="0"/>
                           <Component id="jVersionLabel" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
-                          <Component id="jCheckNowButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="31" max="32767" attributes="0"/>
                   </Group>
@@ -580,7 +580,7 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jVersionLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jCheckNowButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCheckUpdatesButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="247" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -591,14 +591,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Current version is: 1.19"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="jCheckNowButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Check now!"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckNowButtonActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jUpdatesCheckBox">
               <Properties>
@@ -613,6 +605,14 @@
                   <Insets value="[0, 0, 0, 0]"/>
                 </Property>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="jCheckUpdatesButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Check now"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckUpdatesButtonActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

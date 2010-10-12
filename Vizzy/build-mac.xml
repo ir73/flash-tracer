@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Vizzy" default="build-vizzy-mac" basedir=".">
+    <description>Builds, tests, and runs the project Vizzy.</description>
+
+    <property name="version" value="2.3"/>
+
+    <target name="build-vizzy-mac" description="Create OSX App bundle for Vizzy"
+        depends="clean-vizzy-mac">
+        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
+        <jarbundler
+            dir="${basedir}"
+            verbose="true"
+            showPlist="false"
+            name="${ant.project.name}"
+            mainclass="vizzy.controller.VizzyController"
+            jar="${ant.project.name}.jar"
+            icon="res/${ant.project.name}.icns"
+            version="${version}"
+            >
+            <extraclasspathfileset dir="lib">
+                <include name="*.jar" />
+            </extraclasspathfileset>
+        </jarbundler>
+    </target>
+
+    <target name="clean-vizzy-mac" description="Clean up anything we can't rebuild">
+        <delete dir="${ant.project.name}.app" quiet="true"/>
+    </target>
+
+</project>

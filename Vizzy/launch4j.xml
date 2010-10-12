@@ -12,7 +12,7 @@
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>res\vizzy.ico</icon>
+  <icon>res\Vizzy.ico</icon>
   <jre>
     <path></path>
     <minVersion>1.6.0</minVersion>

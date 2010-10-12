@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import vizzy.listeners.IUpdateCheckListener;
+import vizzy.model.Conf;
 import vizzy.util.DialogUtils;
 import vizzy.util.FileUtil;
 
@@ -27,7 +28,6 @@ import vizzy.util.FileUtil;
  */
 public class CheckUpdates extends Thread {
 
-    public static final String VERSION = "2.3";
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
     private static final String WEBSITE_FEATURES_PHRASE = "Current version features: ";
     private boolean reportIfOk;
@@ -62,7 +62,7 @@ public class CheckUpdates extends Thread {
             if (i > -1) {
                 String newVer = r.substring(i + WEBSITE_UPDATE_PHRASE.length(), i2);
                 double newVerd = Double.parseDouble(newVer);
-                double verd = Double.parseDouble(VERSION);
+                double verd = Double.parseDouble(Conf.VERSION);
                 if (newVerd > verd) {
 
                     i = r.indexOf(WEBSITE_FEATURES_PHRASE);

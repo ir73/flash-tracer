@@ -32,7 +32,7 @@ public class KeywordsHighlighter {
 
     private JTextArea textArea;
 
-    public void highlight() {
+    public boolean highlight() {
         Highlighter highlighter = getTextArea().getHighlighter();
         
         clearHighlights();
@@ -42,6 +42,7 @@ public class KeywordsHighlighter {
         int end;
         int ind;
         String lineText;
+        boolean highlighted = false;
 
         try {
             for (int i=0; i < totalLines; i++) {
@@ -51,10 +52,12 @@ public class KeywordsHighlighter {
                 ind = lineText.indexOf(TEMPLATE_ERROR);
                 if (ind != -1) {
                     highlightObjects.add(highlighter.addHighlight(start, start + ind, Conf.errorPainter));
+                    highlighted = true;
                 }
             }
         } catch (Exception e) {
         }
+        return highlighted;
     }
 
     public void clearHighlights() {

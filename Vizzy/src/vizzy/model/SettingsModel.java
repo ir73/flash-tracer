@@ -39,6 +39,7 @@ public class SettingsModel {
 
     private ISettingsListener listener;
 
+    private boolean wasNewFeaturesPanelShown;
     private String defaultFont;
     private Font[] fonts;
     private String flashLogFileName;
@@ -617,6 +618,23 @@ public class SettingsModel {
         this.enableCodePopup = enableCodePopup;
         if (doFireEvent && listener != null) {
             getListener().onEnableCodePopupChanged(this.enableCodePopup);
+        }
+    }
+
+    public void showNewFeaturesPanel() {
+        if (listener != null) {
+            getListener().onShowNewFeaturesPanel();
+        }
+    }
+
+    public boolean wasNewFeaturesPanelShown() {
+        return wasNewFeaturesPanelShown;
+    }
+
+    public void setNewFeaturesPanelShown(boolean wasNewFeaturesPanelShown, boolean doFireEvent) {
+        this.wasNewFeaturesPanelShown = wasNewFeaturesPanelShown;
+        if (doFireEvent && listener != null) {
+            getListener().onNewFeaturesPanelShownChanged(this.wasNewFeaturesPanelShown);
         }
     }
 

@@ -36,6 +36,7 @@ import vizzy.forms.panels.SnapshotForm;
 import vizzy.listeners.ILogFileListener;
 import vizzy.listeners.IUpdateCheckListener;
 import vizzy.listeners.IVizzyView;
+import vizzy.model.Conf;
 import vizzy.model.FlashPlayerFiles;
 import vizzy.model.SettingsModel;
 import vizzy.model.SourceAndLine;
@@ -288,6 +289,7 @@ public final class VizzyController implements ILogFileListener {
         settings.setEnableTraceClick(props.getProperty("settings.enableTraceClick", "true").equals("true"), true);
         settings.setCustomASEditor(props.getProperty("settings.customASEditor", null), true);
         settings.setDefaultASEditor(props.getProperty("settings.isDefaultUsed", "true").equals("true"), true);
+        settings.setNewFeaturesPanelShown(props.getProperty("settings.newFeaturesShown" + Conf.VERSION, "false").equals("true"), true);
         settings.setTraceFont(props.getProperty("settings.font.name", settings.getDefaultFont()), 
                 props.getProperty("settings.font.size", "12"), true);
         settings.setSearchKeywords(props.getProperty("search.keywords", "").split("\\|\\|\\|"), true);
@@ -336,7 +338,10 @@ public final class VizzyController implements ILogFileListener {
 
     private void highlightStackTraceErrors() {
         if (settings.isHighlightStackTraceErrors()) {
-            settings.getKeywordsHighlighter().highlight();
+            boolean highlighted = settings.getKeywordsHighlighter().highlight();
+            if (!settings.wasNewFeaturesPanelShown() && highlighted) {
+                settings.showNewFeaturesPanel();
+            }
         }
     }
 
@@ -610,6 +615,7 @@ public final class VizzyController implements ILogFileListener {
         props.setProperty("settings.enableTraceClick", String.valueOf(settings.isEnableTraceClick()));
         props.setProperty("settings.customASEditor", String.valueOf(settings.getCustomASEditor()));
         props.setProperty("settings.isDefaultASEditor", String.valueOf(settings.isDefaultASEditor()));
+        props.setProperty("settings.newFeaturesShown" + Conf.VERSION, String.valueOf(settings.wasNewFeaturesPanelShown()));
         props.setProperty("update.last", String.valueOf(settings.getLastUpdateDate().getTime()));
 
         StringBuilder keywords = new StringBuilder();
@@ -807,6 +813,10 @@ public final class VizzyController implements ILogFileListener {
 
     public void traceAreaMouseWheel(MouseWheelEvent evt) {
         hideCodePopup();
+    }
+
+    public void newFeaturesPanelClosed() {
+        settings.setNewFeaturesPanelShown(true, true);
     }
 
 }

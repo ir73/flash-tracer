@@ -21,4 +21,5 @@ public class Conf {
 
     public static final TextAreaHighlightPainter errorPainter = new TextAreaHighlightPainter(new Color(200, 200, 200));
     public static final TextAreaHighlightPainter warningPainter = new TextAreaHighlightPainter(new Color(230, 230, 230));
+    public static final String VERSION = "2.3";
 }
