@@ -1,8 +1,8 @@
 Windows:
-Run with Vizzy.exe or by double-clicking on Vizzy.jar
+Run with Vizzy.exe
 
 Mac OSX:
-Run by double-clicking on Vizzy.jar or vizzy_mac.sh (set chmod 777)
+Run Vizzy.app
 
 Linux:
 Run by double-clicking on Vizzy.jar or vizzy_linux.sh (set chmod 777)
