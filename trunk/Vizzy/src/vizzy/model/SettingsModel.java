@@ -69,7 +69,7 @@ public class SettingsModel {
     private String[] fontNames;
     private String recentHash;
     private String traceContent;
-    private File settingsFile = new File("tracer.properties");
+    private File settingsFile = new File("vizzy.properties");
     private boolean isPolicyFileRecorded;
     private Image appIcon;
     private boolean isUIActionsAvailable;

@@ -3,28 +3,37 @@
     <description>Builds, tests, and runs the project Vizzy.</description>
 
     <property name="version" value="2.3"/>
-
+    
     <target name="build-vizzy-mac" description="Create OSX App bundle for Vizzy"
         depends="clean-vizzy-mac">
-        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
+        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler"/>
+        <mkdir dir="${basedir}/dist-mac" />
         <jarbundler
-            dir="${basedir}"
+            dir="${basedir}/dist-mac"
             verbose="true"
             showPlist="false"
             name="${ant.project.name}"
             mainclass="vizzy.controller.VizzyController"
-            jar="${ant.project.name}.jar"
             icon="${ant.project.name}.icns"
             version="${version}"
+            stubfile="${basedir}/${ant.project.name}"
+            jvmversion="1.5+"
             >
-            <extraclasspathfileset dir="lib">
-                <include name="*.jar" />
-            </extraclasspathfileset>
+                <jarfileset dir="${basedir}" includes="lib/*.jar"/>
+                <jarfileset dir="${basedir}" includes="${ant.project.name}.jar"/>
+                <javafileset dir="${basedir}" includes="fp-detect/**"/>
         </jarbundler>
+        <antcall target="clean-after-build" />
     </target>
 
     <target name="clean-vizzy-mac" description="Clean up anything we can't rebuild">
         <delete dir="${ant.project.name}.app" quiet="true"/>
+    </target>
+
+    <target name="clean-after-build" description="Clean up">
+        <delete file="${ant.project.name}" quiet="true"/>
+        <delete file="${ant.project.name}.icns" quiet="true"/>
+        <delete file="build-mac.xml" quiet="true"/>
     </target>
 
 </project>

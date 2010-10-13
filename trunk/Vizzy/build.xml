@@ -10,52 +10,63 @@
 <project name="Vizzy" default="build-vizzy" basedir=".">
     <description>Builds, tests, and runs the project Vizzy.</description>
     <import file="nbproject/build-impl.xml"/>
-    <import file="nbproject/profiler-build-impl.xml"/>
-    <import file="nbproject/profiler-build-impl.xml"/>
 
     <property name="version" value="2.3"/>
 
     <target name="build-vizzy" depends="clean, jar">
-
+        <delete file="${dist.dir}/README.TXT" />
         <copy todir="${dist.dir}" overwrite="true">
             <fileset dir="etc/" />
         </copy>
-
-        <copy todir="${dist.dir}/Vizzy.app/Contents/Resources/Java" overwrite="true">
-            <fileset file="${dist.dir}/Vizzy.jar"/>
-        </copy>
-
-        <mkdir dir="${dist.dir}/Vizzy.app/Contents/Resources/Java/lib" />
-        <copy todir="${dist.dir}/Vizzy.app/Contents/Resources/Java/lib" overwrite="true" >
-            <fileset dir="${dist.dir}/lib"/>
-        </copy>
-        
-        <copy todir="${dist.dir}/Vizzy.app/Contents/Resources" overwrite="true">
-            <fileset file="res/Vizzy.icns"/>
-        </copy>
-
-
-
-        <delete dir="zip" />
-        <mkdir dir="zip" />
-        <mkdir dir="${dist.dir}/${ant.project.name}" />
 
         <move todir="${dist.dir}/${ant.project.name}" overwrite="true">
             <fileset dir="${dist.dir}">
                 <exclude name="${ant.project.name}"/>
             </fileset>
         </move>
+    </target>
+
+    <target name="build-vizzy-win" depends="build-vizzy">
+        <mkdir dir="${dist.dir}/win" />
+        <copy todir="${dist.dir}/win" overwrite="true">
+            <fileset dir="${dist.dir}/${ant.project.name}"/>
+        </copy>
 
         <exec executable="C:/tools/launch4j/launch4jc">
             <arg value="launch4j.xml"/>
         </exec>
 
-        <zip basedir="${dist.dir}" destfile="zip/${ant.project.name}_v${version}.zip">
-        </zip>
+        <delete dir="zip" />
+        <mkdir dir="zip" />
+        <zip basedir="${dist.dir}/win" destfile="zip/${ant.project.name}_v${version}.zip"/>
 
-        <move todir="${dist.dir}" overwrite="true" >
+        <move todir="${dist.dir}/win" overwrite="true" >
             <fileset dir="zip"/>
         </move>
+
+        <copy todir="${dist.dir}/${ant.project.name}" overwrite="true">
+            <fileset file="res/mac/**"/>
+        </copy>
+        <copy todir="${dist.dir}/${ant.project.name}" overwrite="true">
+            <fileset file="build-mac.xml"/>
+        </copy>
+    </target>
+
+    <target name="build-vizzy-mac" depends="build-vizzy">
+        <mkdir dir="${dist.dir}/mac" />
+        <copy todir="${dist.dir}/mac" overwrite="true">
+            <fileset dir="${dist.dir}/${ant.project.name}"/>
+        </copy>
+
+        <copy todir="${dist.dir}/mac/${ant.project.name}" overwrite="true">
+            <fileset file="res/mac/**"/>
+        </copy>
+        <copy todir="${dist.dir}/mac/${ant.project.name}" overwrite="true">
+            <fileset file="build-mac.xml"/>
+        </copy>
+    </target>
+
+    <target name="build-vizzy-all" depends="build-vizzy-win, build-vizzy-mac">
 
     </target>
 
