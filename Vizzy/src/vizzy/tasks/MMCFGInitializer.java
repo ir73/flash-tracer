@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
-import vizzy.model.SettingsModel;
+import vizzy.model.Conf;
 import vizzy.util.DefaultHashMap;
 
 /**
@@ -97,7 +97,7 @@ public class MMCFGInitializer {
                     lines.add(key + "=" + v);
                 }
             }
-            FileUtils.writeLines(mmcfg, "UTF-8", lines, SettingsModel.newLine);
+            FileUtils.writeLines(mmcfg, "UTF-8", lines, Conf.newLine);
         } catch (Exception ex) {
             Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -123,25 +123,25 @@ public class MMCFGInitializer {
     }
 
     private String evaluateMMCFGPath() {
-        String osName = SettingsModel.OSName;
+        String osName = Conf.OSName;
         if (osName == null) {
             return null;
         }
-        String homeDir = SettingsModel.userHome;
+        String homeDir = Conf.userHome;
         String mmcfgPath = null;
-        if (osName.indexOf(SettingsModel.OS_WINDOWS_VISTA) > -1) {
+        if (osName.indexOf(Conf.OS_WINDOWS_VISTA) > -1) {
             if (homeDir == null) {
                 return null;
             }
             mmcfgPath = homeDir + File.separator + "mm.cfg";
-        } else if (osName.indexOf(SettingsModel.OS_WINDOWS) > -1) {
+        } else if (osName.indexOf(Conf.OS_WINDOWS) > -1) {
             if (homeDir == null) {
                 return null;
             }
             mmcfgPath = homeDir + File.separator + "mm.cfg";
-        } else if (osName.indexOf(SettingsModel.OS_MAC_OS_X) > -1) {
+        } else if (osName.indexOf(Conf.OS_MAC_OS_X) > -1) {
             mmcfgPath = "/Library/Application Support/Macromedia/mm.cfg";
-        } else if (osName.indexOf(SettingsModel.OS_LINUX) > -1) {
+        } else if (osName.indexOf(Conf.OS_LINUX) > -1) {
             if (homeDir == null) {
                 return null;
             }

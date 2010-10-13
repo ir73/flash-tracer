@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import vizzy.model.Conf;
 
 /**
  *
@@ -49,13 +50,7 @@ public class DebugPlayerDetector {
     }
 
     private String getHtmlFile() {
-        String cp = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        if (cp.lastIndexOf('/') != -1) {
-            cp = cp.substring(0, cp.lastIndexOf('/') + 1);
-        } else {
-            cp = "";
-        }
-        File f = new File(cp + "fp-detect/fp-detect.html");
+        File f = new File(Conf.vizzyRootDir, "fp-detect/fp-detect.html");
         String p = f.getAbsolutePath();
         p = "file://" + p.replaceAll("\\\\", "/");
         return p;

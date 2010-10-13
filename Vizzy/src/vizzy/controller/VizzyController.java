@@ -64,8 +64,8 @@ import vizzy.util.TextTransfer;
 public final class VizzyController implements ILogFileListener {
 
     private static final Logger log = Logger.getLogger(VizzyController.class.getName());
-    private static VizzyController controller;
     private static IVizzyView view;
+    private static VizzyController controller;
 
     private SettingsModel settings;
     private MMCFGInitializer mmcfgInitializer;
@@ -133,17 +133,20 @@ public final class VizzyController implements ILogFileListener {
      * and packed
      */
     private void preInit() {
-        if (SettingsModel.OS_MAC_OS_X.equals(SettingsModel.OSName)) {
+        if (Conf.OS_MAC_OS_X.equals(Conf.OSName)) {
             try {
                 OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("onClose", (Class[]) null));
             } catch (Exception ex) {
                 Logger.getLogger(VizzyController.class.getName()).log(Level.WARNING, null, ex);
             }
-            File f = new File("Vizzy.app/Contents/Resources");
-            if (f.exists() && f.isDirectory()) {
-                settings.setSettingsFile(new File(f.getAbsolutePath(), Conf.VIZZY_PROPERTIES_FILENAME));
-            }
         }
+        String rootDir = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        if (rootDir.lastIndexOf('/') != -1) {
+            rootDir = rootDir.substring(0, rootDir.lastIndexOf('/') + 1);
+        } else {
+            rootDir = "";
+        }
+        Conf.vizzyRootDir = rootDir;
         try {
             URL myIconUrl = this.getClass().getResource("/img/vizzy.png");
             settings.setAppIcon(new ImageIcon(myIconUrl, "Vizzy Flash Tracer").getImage());
@@ -200,6 +203,7 @@ public final class VizzyController implements ILogFileListener {
      * Loads settings file
      */
     private void loadProperties() {
+        settings.setSettingsFile(new File(Conf.vizzyRootDir, Conf.VIZZY_PROPERTIES_FILENAME));
         props = new Properties();
         try {
             props.load(new FileInputStream(settings.getSettingsFile()));

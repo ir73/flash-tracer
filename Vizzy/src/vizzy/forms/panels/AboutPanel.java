@@ -16,6 +16,7 @@ import java.awt.Desktop;
 import java.awt.Rectangle;
 import java.net.URI;
 import vizzy.controller.VizzyController;
+import vizzy.model.Conf;
 import vizzy.model.SettingsModel;
 
 /**
@@ -149,7 +150,7 @@ public class AboutPanel extends javax.swing.JFrame {
     private void websiteClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_websiteClicked
         try {
             if (Desktop.isDesktopSupported())
-                Desktop.getDesktop().browse(new URI("http://code.google.com/p/flash-tracer"));
+                Desktop.getDesktop().browse(new URI(Conf.URL_PROJECT_HOME));
         } catch (Exception ex1) {
 
         }

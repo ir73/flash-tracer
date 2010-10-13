@@ -20,7 +20,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.logging.Level;
@@ -36,6 +35,7 @@ import vizzy.comp.NewFeaturesPanel;
 import vizzy.controller.VizzyController;
 import vizzy.listeners.INewFeaturesListener;
 import vizzy.listeners.IVizzyView;
+import vizzy.model.Conf;
 import vizzy.model.SettingsModel;
 
 /**
@@ -774,13 +774,13 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         if (newFeaturesPanel == null) {
             newFeaturesPanel = new NewFeaturesPanel("<html>Did you know that it is possible to explore stack"
                     + " trace source files directly from Vizzy? "
-                    + "<a href=\"http://code.google.com/p/flash-tracer/wiki/Features\">Read more...</a></html>",
+                    + "<a href=\"" + Conf.URL_PROJECT_HOME + "wiki/Features\">Read more...</a></html>",
                     new INewFeaturesListener() {
                 public void click() {
                     removeNewFeaturesPanel();
                     if (Desktop.isDesktopSupported()) {
                         try {
-                            Desktop.getDesktop().browse(new URI("http://code.google.com/p/flash-tracer/wiki/Features"));
+                            Desktop.getDesktop().browse(new URI(Conf.URL_PROJECT_HOME + "wiki/Features"));
                         } catch (Exception ex) {
                             Logger.getLogger(VizzyForm.class.getName()).log(Level.WARNING, null, ex);
                         }
