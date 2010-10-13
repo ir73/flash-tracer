@@ -26,17 +26,6 @@ import vizzy.util.DefaultHashMap;
  * @author sergeil
  */
 public class SettingsModel {
-    public static final String OS_LINUX = "linux";
-    public static final String OS_MAC_OS_X = "mac os x";
-    public static final String OS_WINDOWS = "windows";
-    public static final String OS_WINDOWS_VISTA = "vista";
-
-    public static final String OSName = System.getProperty("os.name").toLowerCase();
-    public static final String newLine = System.getProperty("line.separator");
-    public static final String userHome = System.getProperty("user.home");
-
-    private final String POLICY_LOG_FILE_NAME = "policyfiles.txt";
-
     private ISettingsListener listener;
 
     private boolean wasNewFeaturesPanelShown;
@@ -69,7 +58,7 @@ public class SettingsModel {
     private String[] fontNames;
     private String recentHash;
     private String traceContent;
-    private File settingsFile = new File("vizzy.properties");
+    private File settingsFile;
     private boolean isPolicyFileRecorded;
     private Image appIcon;
     private boolean isUIActionsAvailable;
@@ -219,7 +208,7 @@ public class SettingsModel {
             if (lastIndexOf > -1) {
                 dir = f.getAbsolutePath().substring(0, lastIndexOf + 1);
             }
-            setPolicyLogFileName(dir + POLICY_LOG_FILE_NAME, doFireEvent);
+            setPolicyLogFileName(dir + Conf.POLICY_LOG_FILE_NAME, doFireEvent);
         }
         if (doFireEvent && listener != null) {
             getListener().onFlashLogFileNameChanged(this.flashLogFileName);

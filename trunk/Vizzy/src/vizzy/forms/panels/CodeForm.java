@@ -24,7 +24,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import vizzy.model.SettingsModel;
+import vizzy.model.Conf;
 import vizzy.util.StringUtils;
 
 /**
@@ -99,7 +99,7 @@ public class CodeForm extends JPanel {
             scrollPos = -1;
             highlightedLinePos = -1;
             for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i) + SettingsModel.newLine;
+                String line = lines.get(i) + Conf.newLine;
                 if (i == boldLineNum) {
                     highlightedLinePos = doc.getLength();
                     doc.insertString(highlightedLinePos, line, doc.getStyle("bold"));

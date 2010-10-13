@@ -7,18 +7,23 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="Vizzy" default="build-vizzy" basedir=".">
+<project name="Vizzy" default="build-vizzy-all" basedir=".">
     <description>Builds, tests, and runs the project Vizzy.</description>
     <import file="nbproject/build-impl.xml"/>
 
     <property name="version" value="2.3"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="dist.dir.win" value="${dist.dir}/win"/>
+    <property name="dist.dir.mac" value="${dist.dir}/mac"/>
+    <property name="dist.dir.linux" value="${dist.dir}/linux"/>
 
-    <target name="build-vizzy" depends="clean, jar">
+    <target name="build-vizzy-common" depends="clean, jar">
         <delete file="${dist.dir}/README.TXT" />
         <copy todir="${dist.dir}" overwrite="true">
-            <fileset dir="etc/" />
+            <fileset dir="etc/common" />
         </copy>
 
+        <!--    move files to dist/Vizzy    -->
         <move todir="${dist.dir}/${ant.project.name}" overwrite="true">
             <fileset dir="${dist.dir}">
                 <exclude name="${ant.project.name}"/>
@@ -26,48 +31,60 @@
         </move>
     </target>
 
-    <target name="build-vizzy-win" depends="build-vizzy">
-        <mkdir dir="${dist.dir}/win" />
-        <copy todir="${dist.dir}/win" overwrite="true">
+    <target name="build-vizzy-win" depends="build-vizzy-common">
+        <mkdir dir="${dist.dir.win}" />
+        <mkdir dir="${dist.dir.win}/${ant.project.name}" />
+        <copy todir="${dist.dir.win}/${ant.project.name}" overwrite="true">
             <fileset dir="${dist.dir}/${ant.project.name}"/>
+        </copy>
+
+        <copy todir="${dist.dir.win}/${ant.project.name}" overwrite="true">
+            <fileset dir="etc/win" />
         </copy>
 
         <exec executable="C:/tools/launch4j/launch4jc">
             <arg value="launch4j.xml"/>
         </exec>
-
-        <delete dir="zip" />
-        <mkdir dir="zip" />
-        <zip basedir="${dist.dir}/win" destfile="zip/${ant.project.name}_v${version}.zip"/>
-
-        <move todir="${dist.dir}/win" overwrite="true" >
-            <fileset dir="zip"/>
-        </move>
-
-        <copy todir="${dist.dir}/${ant.project.name}" overwrite="true">
-            <fileset file="res/mac/**"/>
-        </copy>
-        <copy todir="${dist.dir}/${ant.project.name}" overwrite="true">
-            <fileset file="build-mac.xml"/>
-        </copy>
     </target>
 
-    <target name="build-vizzy-mac" depends="build-vizzy">
-        <mkdir dir="${dist.dir}/mac" />
-        <copy todir="${dist.dir}/mac" overwrite="true">
+    <target name="build-vizzy-linux" depends="build-vizzy-common">
+        <mkdir dir="${dist.dir.linux}" />
+        <mkdir dir="${dist.dir.linux}/${ant.project.name}" />
+        <copy todir="${dist.dir.linux}/${ant.project.name}" overwrite="true">
             <fileset dir="${dist.dir}/${ant.project.name}"/>
         </copy>
 
-        <copy todir="${dist.dir}/mac/${ant.project.name}" overwrite="true">
+        <copy todir="${dist.dir.linux}/${ant.project.name}" overwrite="true">
+            <fileset dir="etc/linux" />
+        </copy>
+    </target>
+
+    <target name="build-vizzy-mac" depends="build-vizzy-common">
+        <mkdir dir="${dist.dir.mac}" />
+        <mkdir dir="${dist.dir.mac}/${ant.project.name}" />
+        <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
+            <fileset dir="${dist.dir}/${ant.project.name}"/>
+        </copy>
+
+        <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
+            <fileset dir="etc/mac" />
+        </copy>
+
+        <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
             <fileset file="res/mac/**"/>
         </copy>
-        <copy todir="${dist.dir}/mac/${ant.project.name}" overwrite="true">
+        <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
             <fileset file="build-mac.xml"/>
         </copy>
     </target>
 
-    <target name="build-vizzy-all" depends="build-vizzy-win, build-vizzy-mac">
-
+    <target name="build-vizzy-all" depends="build-vizzy-win, build-vizzy-mac, build-vizzy-linux">
+        <delete dir="${dist.dir}/${ant.project.name}" />
+        <zip destfile="${dist.dir}/${ant.project.name}_v${version}.zip">
+            <fileset dir="${dist.dir.mac}" />
+            <fileset dir="${dist.dir.win}" />
+            <fileset dir="${dist.dir.linux}" />
+        </zip>
     </target>
 
     <!--

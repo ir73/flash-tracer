@@ -17,10 +17,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import org.apache.commons.io.FileUtils;
 import vizzy.listeners.IUpdateCheckListener;
 import vizzy.model.Conf;
 import vizzy.util.DialogUtils;
-import vizzy.util.FileUtil;
 
 /**
  *
@@ -41,17 +41,18 @@ public class CheckUpdates extends Thread {
     @Override
     public void run() {
         try {
-            URL u = new URL("http://code.google.com/p/flash-tracer/");
+            URL u = new URL(Conf.URL_PROJECT_HOME);
             URLConnection openConnection = u.openConnection();
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(
                     openConnection.getInputStream()));
             String inputLine;
-            StringBuffer response = new StringBuffer();
+            StringBuilder response = new StringBuilder();
 
             while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine + "\n");
+                response.append(inputLine)
+                        .append("\n");
             }
             in.close();
 
@@ -143,7 +144,7 @@ public class CheckUpdates extends Thread {
                 }
             }
 
-            FileUtil.copyfile(tmpFile.getAbsolutePath(), saveFile.getAbsolutePath());
+            FileUtils.copyFile(tmpFile, saveFile);
             
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().open(saveFile);
@@ -160,7 +161,7 @@ public class CheckUpdates extends Thread {
 
             try {
                 if (Desktop.isDesktopSupported())
-                    Desktop.getDesktop().browse(new URI("http://code.google.com/p/flash-tracer/downloads/list"));
+                    Desktop.getDesktop().browse(new URI(Conf.URL_PROJECT_DOWNLOAD));
             } catch (Exception ex1) {
             }
 
