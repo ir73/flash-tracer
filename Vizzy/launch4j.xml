@@ -2,7 +2,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>Vizzy.jar</jar>
-  <outfile>dist\Vizzy\Vizzy.exe</outfile>
+  <outfile>dist\win\Vizzy\Vizzy.exe</outfile>
   <errTitle>Error</errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>

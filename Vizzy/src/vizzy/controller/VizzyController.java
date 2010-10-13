@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.io.File;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -137,6 +138,10 @@ public final class VizzyController implements ILogFileListener {
                 OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("onClose", (Class[]) null));
             } catch (Exception ex) {
                 Logger.getLogger(VizzyController.class.getName()).log(Level.WARNING, null, ex);
+            }
+            File f = new File("Vizzy.app/Contents/Resources");
+            if (f.exists() && f.isDirectory()) {
+                settings.setSettingsFile(new File(f.getAbsolutePath(), Conf.VIZZY_PROPERTIES_FILENAME));
             }
         }
         try {

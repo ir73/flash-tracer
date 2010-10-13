@@ -30,7 +30,7 @@ public class ShowCodePopupTask {
     private Popup popup;
     private Point codeFormlocationOnScreen;
     private SourceAndLine source;
-    private Object lock = new Object();
+    private final Object lock = new Object();
 
     public ShowCodePopupTask() {
         
@@ -52,20 +52,24 @@ public class ShowCodePopupTask {
     }
 
     public boolean isVisible() {
-        return popup != null;
+        synchronized (lock) {
+            return popup != null;
+        }
     }
 
     public boolean isMouseAtCodePopup(Point pt) {
-        if (codeForm == null) {
-            return false;
+        synchronized (lock) {
+            if (codeForm == null) {
+                return false;
+            }
+            if ((pt.getX() > codeFormlocationOnScreen.getX() + codeForm.getWidth())
+                    || (pt.getX() < codeFormlocationOnScreen.getX())
+                    || (pt.getY() > codeFormlocationOnScreen.getY() + codeForm.getHeight())
+                    || (pt.getY() < codeFormlocationOnScreen.getY())) {
+                return false;
+            }
+            return true;
         }
-        if ((pt.getX() > codeFormlocationOnScreen.getX() + codeForm.getWidth())
-                || (pt.getX() < codeFormlocationOnScreen.getX())
-                || (pt.getY() > codeFormlocationOnScreen.getY() + codeForm.getHeight())
-                || (pt.getY() < codeFormlocationOnScreen.getY())) {
-            return false;
-        }
-        return true;
     }
 
     public void show(Point pt, SourceAndLine source) {
@@ -88,50 +92,48 @@ public class ShowCodePopupTask {
                 lines = lines.subList(fromLine, toLine);
 
                 codeForm = new CodeForm();
-                synchronized (codeForm) {
-                    codeForm.initStyles(owner.getFont());
-                    codeForm.setText(lines, source.lineNum - 1);
-                    codeForm.updateSize();
+                codeForm.initStyles(owner.getFont());
+                codeForm.setText(lines, source.lineNum - 1);
+                codeForm.updateSize();
 
-                    Point codeFormLocation = new Point();
-                    Dimension codeFormPreferredSize = codeForm.getPreferredSize();
+                Point codeFormLocation = new Point();
+                Dimension codeFormPreferredSize = codeForm.getPreferredSize();
 
-                    Point textAreaScreenLocation = owner.getLocationOnScreen();
-                    Dimension textAreaPreferredSize = owner.getPreferredSize();
-                    codeFormLocation.x = (int) (textAreaScreenLocation.x + pt.getX());
-                    codeFormLocation.y = (int) (textAreaScreenLocation.y + pt.getY());
+                Point textAreaScreenLocation = owner.getLocationOnScreen();
+                Dimension textAreaPreferredSize = owner.getPreferredSize();
+                codeFormLocation.x = (int) (textAreaScreenLocation.x + pt.getX());
+                codeFormLocation.y = (int) (textAreaScreenLocation.y + pt.getY());
 
-                    if (codeFormLocation.x + codeFormPreferredSize.width >= textAreaScreenLocation.x + textAreaPreferredSize.width) {
-                        codeFormLocation.x -= codeFormPreferredSize.width;
-                    }
-
-                    if (codeFormLocation.y + codeFormPreferredSize.height >= textAreaScreenLocation.y + textAreaPreferredSize.height) {
-                        codeFormLocation.y -= codeFormPreferredSize.height;
-                        codeFormLocation.y -= 4;
-                    } else {
-                        codeFormLocation.y += 4;
-                    }
-
-                    PopupFactory pf = PopupFactory.getSharedInstance();
-                    popup = pf.getPopup(owner, codeForm, codeFormLocation.x, codeFormLocation.y);
-                    popup.show();
-
-                    codeForm.revalidate();
-                    codeForm.repaint();
-
-                    codeFormlocationOnScreen = codeForm.getLocationOnScreen();
-
-                    SwingUtilities.invokeLater(new Runnable() {
-
-                        public void run() {
-                            try {
-                                codeForm.scrollText();
-                                codeForm.setFocus();
-                            } catch (Exception e) {
-                            }
-                        }
-                    });
+                if (codeFormLocation.x + codeFormPreferredSize.width >= textAreaScreenLocation.x + textAreaPreferredSize.width) {
+                    codeFormLocation.x -= codeFormPreferredSize.width;
                 }
+
+                if (codeFormLocation.y + codeFormPreferredSize.height >= textAreaScreenLocation.y + textAreaPreferredSize.height) {
+                    codeFormLocation.y -= codeFormPreferredSize.height;
+                    codeFormLocation.y -= 4;
+                } else {
+                    codeFormLocation.y += 4;
+                }
+
+                PopupFactory pf = PopupFactory.getSharedInstance();
+                popup = pf.getPopup(owner, codeForm, codeFormLocation.x, codeFormLocation.y);
+                popup.show();
+
+                codeForm.revalidate();
+                codeForm.repaint();
+
+                codeFormlocationOnScreen = codeForm.getLocationOnScreen();
+
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        try {
+                            codeForm.scrollText();
+                            codeForm.setFocus();
+                        } catch (Exception e) {
+                        }
+                    }
+                });
 
 
             } catch (Exception ex) {
