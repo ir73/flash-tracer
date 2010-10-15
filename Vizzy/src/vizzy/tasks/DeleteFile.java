@@ -10,14 +10,16 @@
 package vizzy.tasks;
 
 import java.io.File;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Admin
  */
 public class DeleteFile {
+
+    private static final Logger log = Logger.getLogger(DeleteFile.class);
     
-    /** Creates a new instance of DeleteFile */
     public DeleteFile(String file) {
         try {
             
@@ -27,7 +29,7 @@ public class DeleteFile {
                 bkup.delete();
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.warn("error deleting log.");
         }
     }
     

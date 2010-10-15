@@ -15,8 +15,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
@@ -24,6 +22,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
+import org.apache.log4j.Logger;
 import vizzy.model.Conf;
 import vizzy.util.StringUtils;
 
@@ -32,6 +31,8 @@ import vizzy.util.StringUtils;
  * @author sergeil
  */
 public class CodeForm extends JPanel {
+    private static final Logger log = Logger.getLogger(CodeForm.class);
+
     private int scrollPos;
     private int highlightedLinePos;
 
@@ -88,8 +89,8 @@ public class CodeForm extends JPanel {
         StyledDocument doc = jCodeTextPane.getStyledDocument();
         Style def = StyleContext.getDefaultStyleContext().
                 getStyle(StyleContext.DEFAULT_STYLE);
-        Style s = doc.addStyle("bold", def);
-        StyleConstants.setBold(s, true);
+        Style boldStyleName = doc.addStyle("bold", def);
+        StyleConstants.setBold(boldStyleName, true);
         jCodeTextPane.setFont(font);
     }
 
@@ -113,7 +114,7 @@ public class CodeForm extends JPanel {
                 }
             }
         } catch (BadLocationException ex) {
-            Logger.getLogger(CodeForm.class.getName()).log(Level.SEVERE, null, ex);
+//            log.warn("setText()", ex);
         }
     }
 
@@ -133,7 +134,7 @@ public class CodeForm extends JPanel {
                             Rectangle rect = jCodeTextPane.modelToView(highlightedLinePos);
                             jScrollPane1.getHorizontalScrollBar().setValue((int)(rect.getX()/3*2));
                         } catch (BadLocationException ex) {
-                            Logger.getLogger(CodeForm.class.getName()).log(Level.SEVERE, null, ex);
+//                            log.warn("cannot scroll text, scrollText()", ex);
                         }
                     }
                 });

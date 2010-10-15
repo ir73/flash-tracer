@@ -6,20 +6,19 @@ package vizzy.comp;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author sergeil
  */
 public class JScrollHighlightPanel extends JPanel {
+
+    private static final Logger log = Logger.getLogger(JScrollHighlightPanel.class);
 
     private ArrayList<Integer> indexes;
     private JTextArea ta;
@@ -56,34 +55,10 @@ public class JScrollHighlightPanel extends JPanel {
                     g.setColor(Color.BLACK);
                     g.drawRect(MARKER_X, y, w, MARKER_HEIGHT);
                 } catch (Exception ex) {
-                    Logger.getLogger(JScrollHighlightPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    log.warn("paint()", ex);
                 }
             }
         }
-
-//        if (indexes != null) {
-//            int height = getTa().getHeight();
-//            Point coords = new Point(getTa().getWidth(), 1);
-//            double columns = getTa().viewToModel(coords);
-//            double lineCount = Math.ceil(getTa().getText().length() / columns);
-//            double highlightPanelHeight = getHeight() - MARKER_HEIGHT;
-//            for (Integer integer : indexes) {
-//                try {
-//                    int line = (int) ((double) integer / columns);
-//                    int lineHeight = (int) (highlightPanelHeight * ((double) line / lineCount));
-//
-//                    int w = getWidth() - 5;
-//                    int y = lineHeight;
-//
-//                    g.setColor(Color.LIGHT_GRAY);
-//                    g.fillRect(MARKER_X, y, w, MARKER_HEIGHT);
-//                    g.setColor(Color.BLACK);
-//                    g.drawRect(MARKER_X, y, w, MARKER_HEIGHT);
-//                } catch (Exception ex) {
-//                    Logger.getLogger(JScrollHighlightPanel.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        }
     }
 
     public JTextArea getTa() {

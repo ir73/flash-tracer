@@ -15,6 +15,7 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Rectangle;
 import java.net.URI;
+import org.apache.log4j.Logger;
 import vizzy.controller.VizzyController;
 import vizzy.model.Conf;
 import vizzy.model.SettingsModel;
@@ -24,6 +25,8 @@ import vizzy.model.SettingsModel;
  * @author sergeil
  */
 public class AboutPanel extends javax.swing.JFrame {
+
+    private static final Logger log = Logger.getLogger(AboutPanel.class);
 
     private VizzyController controller;
     private SettingsModel settings;
@@ -152,15 +155,16 @@ public class AboutPanel extends javax.swing.JFrame {
             if (Desktop.isDesktopSupported())
                 Desktop.getDesktop().browse(new URI(Conf.URL_PROJECT_HOME));
         } catch (Exception ex1) {
-
+//            log.warn("websiteClicked() error", ex1);
         }
     }//GEN-LAST:event_websiteClicked
 
     private void emailClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_emailClicked
         try {
             if (Desktop.isDesktopSupported())
-                Desktop.getDesktop().mail(new URI("mailto:sergei.ledvanov@gmail.com"));
+                Desktop.getDesktop().mail(new URI(Conf.URL_MAILTO));
         } catch (Exception ex1) {
+//            log.warn("emailClicked() error", ex1);
         }
     }//GEN-LAST:event_emailClicked
 
@@ -175,8 +179,9 @@ public class AboutPanel extends javax.swing.JFrame {
     private void donateClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_donateClicked
         try {
             if (Desktop.isDesktopSupported())
-                Desktop.getDesktop().browse(new URI("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JPVRL8G9JYAVL&lc=EE&item_name=Vizzy%20Flash%20Tracer&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"));
+                Desktop.getDesktop().browse(new URI(Conf.URL_DONATION));
         } catch (Exception ex1) {
+//            log.warn("donateClicked() error", ex1);
         }
     }//GEN-LAST:event_donateClicked
 
@@ -196,6 +201,7 @@ public class AboutPanel extends javax.swing.JFrame {
         try {
             this.setIconImage(settings.getAppIcon());
         } catch (Exception e) {
+//            log.warn("initSizeAndPosition() error", e);
         }
         int x = (int)(rect.getX() + rect.getWidth() / 2 - getWidth( )/ 2);
         int y = (int)(rect.getY() + rect.getHeight() / 2 - getHeight()/ 2);

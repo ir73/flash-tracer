@@ -11,9 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import vizzy.model.Conf;
 import vizzy.util.DefaultHashMap;
 
@@ -22,6 +21,8 @@ import vizzy.util.DefaultHashMap;
  * @author sergeil
  */
 public class MMCFGInitializer {
+
+    private static final Logger log = Logger.getLogger(MMCFGInitializer.class);
 
     private File mmcfg;
     private DefaultHashMap<String, String> map;
@@ -65,7 +66,7 @@ public class MMCFGInitializer {
                 setMmcfgCreated(true);
             }
         } catch (Exception ex) {
-            Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn("init()", ex);
         }
     }
 
@@ -77,6 +78,7 @@ public class MMCFGInitializer {
             saveKeys(map);
             isPolicyFileRecorded = true;
         } catch (Exception e) {
+            log.warn("recordPolicyFile() ", e);
         }
     }
 
@@ -99,7 +101,7 @@ public class MMCFGInitializer {
             }
             FileUtils.writeLines(mmcfg, "UTF-8", lines, Conf.newLine);
         } catch (Exception ex) {
-            Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn("writeMMCFG", ex);
         }
     }
     
@@ -118,7 +120,7 @@ public class MMCFGInitializer {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(MMCFGInitializer.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn("readMMCFG", ex);
         }
     }
 

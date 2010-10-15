@@ -23,13 +23,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Timer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import org.apache.log4j.Logger;
 import vizzy.forms.VizzyForm;
 import vizzy.forms.panels.AboutPanel;
 import vizzy.forms.panels.OptionsForm;
@@ -55,6 +54,7 @@ import vizzy.tasks.ShowCodePopupTask;
 import vizzy.tasks.ShowCodePopupTimerTask;
 import vizzy.tasks.WordSearcher;
 import vizzy.util.OSXAdapter;
+import vizzy.util.PathUtils;
 import vizzy.util.TextTransfer;
 
 /**
@@ -84,7 +84,7 @@ public final class VizzyController implements ILogFileListener {
                 try {
                     VizzyController.controller = new VizzyController();
                 } catch (Exception ex) {
-                    Logger.getLogger(VizzyForm.class.getName()).log(Level.SEVERE, null, ex);
+                    log.error("main()", ex);
                 }
             }
         });
@@ -124,7 +124,7 @@ public final class VizzyController implements ILogFileListener {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-            Logger.getLogger(VizzyController.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("initUIManager()", ex);
         }
     }
 
@@ -137,21 +137,18 @@ public final class VizzyController implements ILogFileListener {
             try {
                 OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("onClose", (Class[]) null));
             } catch (Exception ex) {
-                Logger.getLogger(VizzyController.class.getName()).log(Level.WARNING, null, ex);
+                log.warn("setQuitHandler()", ex);
             }
         }
         String rootDir = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        if (rootDir.lastIndexOf('/') != -1) {
-            rootDir = rootDir.substring(0, rootDir.lastIndexOf('/') + 1);
-        } else {
-            rootDir = "";
-        }
-        Conf.vizzyRootDir = rootDir;
+        File dir = PathUtils.getDir(new File(rootDir));
+        Conf.vizzyRootDir = dir.getAbsolutePath();
         try {
             URL myIconUrl = this.getClass().getResource("/img/vizzy.png");
             settings.setAppIcon(new ImageIcon(myIconUrl, "Vizzy Flash Tracer").getImage());
             view.setIconImage(settings.getAppIcon());
         } catch (Exception e) {
+//            log.warn("setAppIcon()", e);
         }
     }
 
@@ -208,6 +205,7 @@ public final class VizzyController implements ILogFileListener {
         try {
             props.load(new FileInputStream(settings.getSettingsFile()));
         } catch (Exception ex) {
+//            log.warn("loadProperties()", ex);
         }
     }
 
@@ -297,7 +295,7 @@ public final class VizzyController implements ILogFileListener {
         settings.setEnableCodePopup(props.getProperty("settings.enableCodePopups", "true").equals("true"), true);
         settings.setEnableTraceClick(props.getProperty("settings.enableTraceClick", "true").equals("true"), true);
         settings.setCustomASEditor(props.getProperty("settings.customASEditor", null), true);
-        settings.setDefaultASEditor(props.getProperty("settings.isDefaultUsed", "true").equals("true"), true);
+        settings.setDefaultASEditor(props.getProperty("settings.isDefaultASEditor", "true").equals("true"), true);
         settings.setNewFeaturesPanelShown(props.getProperty("settings.newFeaturesShown" + Conf.VERSION, "false").equals("true"), true);
         settings.setTraceFont(props.getProperty("settings.font.name", settings.getDefaultFont()), 
                 props.getProperty("settings.font.size", "12"), true);
@@ -426,12 +424,11 @@ public final class VizzyController implements ILogFileListener {
         hideCodePopup();
 
         int offset = view.getTextArea().viewToModel(pt);
-        SourceAndLine source;
+        SourceAndLine source = null;
         try {
             source = settings.getHandleWordAtPosition().checkSourceFile(offset, false);
         } catch (Exception ex) {
-            Logger.getLogger(VizzyController.class.getName()).log(Level.INFO, null, ex);
-            return;
+//            log.warn("checkSourceFile()", ex);
         }
         if (source == null) {
             return;
@@ -569,21 +566,7 @@ public final class VizzyController implements ILogFileListener {
     public void textAreaMouseMoved(MouseEvent evt) {
         if (!settings.getCodePopupHandler().isVisible()) {
             startShowCodePopupTimer(new Point(evt.getX(), evt.getY()));
-        } else /*{
-            Point pt = new Point(evt.getX(), evt.getY());
-            int offset = view.getTextArea().viewToModel(pt);
-            SourceAndLine source = settings.getHandleWordAtPosition().tryPositionForSourceFile(offset);
-            if (source != null
-                    && (!settings.getCodePopupHandler().getSource().filePath.equals(source.filePath)
-                    || settings.getCodePopupHandler().getSource().lineNum != source.lineNum)) {
-                hideCodePopup();
-                stopShowCodeTimer();
-                settings.getCodePopupHandler().show(pt, source);
-                startHideCodeTimer();
-                return;
-            }
-        }*/
-        if(hideCodePopupTimer == null) {
+        } else if(hideCodePopupTimer == null) {
             startHideCodePopupTimer();
         }
     }
@@ -643,9 +626,9 @@ public final class VizzyController implements ILogFileListener {
         try {
             props.store(new FileOutputStream(settings.getSettingsFile()), "");
         } catch (FileNotFoundException ex) {
-            log.log(Level.SEVERE, "error saving setting 1.");
+            log.error("error saving setting 1.");
         } catch (IOException ex) {
-            log.log(Level.SEVERE, "error saving setting 2.");
+            log.error("error saving setting 2.");
         }
     }
 
@@ -776,7 +759,6 @@ public final class VizzyController implements ILogFileListener {
         settings.setMaxNumLines(s.getMaxNumLines(), true);
         settings.setUTF(s.isUTF(), true);
         settings.setRefreshFreq(s.getRefreshFreq(), true);
-        settings.setAlwaysOnTop(s.isAlwaysOnTop(), true);
         settings.setRestoreOnUpdate(s.isRestoreOnUpdate(), true);
         settings.setHighlightStackTraceErrors(s.isHighlightStackTraceErrors(), true);
         settings.setCustomASEditor(s.getCustomASEditor(), true);

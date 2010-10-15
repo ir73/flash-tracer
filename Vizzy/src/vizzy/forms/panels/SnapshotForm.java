@@ -11,6 +11,7 @@
 
 package vizzy.forms.panels;
 
+import org.apache.log4j.Logger;
 import vizzy.controller.VizzyController;
 import vizzy.model.SettingsModel;
 
@@ -19,6 +20,8 @@ import vizzy.model.SettingsModel;
  * @author sergeil
  */
 public class SnapshotForm extends javax.swing.JFrame {
+    private static final Logger log = Logger.getLogger(SnapshotForm.class);
+
     private VizzyController controller;
     private SettingsModel settings;
 
@@ -31,6 +34,7 @@ public class SnapshotForm extends javax.swing.JFrame {
         try {
             this.setIconImage(settings.getAppIcon());
         } catch (Exception e) {
+//            log.warn("SnapshotForm() ", e);
         }
     }
 

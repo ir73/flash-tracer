@@ -36,4 +36,7 @@ public class Conf {
     public static String vizzyRootDir;
     public static final String URL_PROJECT_HOME = "http://code.google.com/p/flash-tracer/";
     public static final String URL_PROJECT_DOWNLOAD = "http://code.google.com/p/flash-tracer/downloads/list";
+    public static final String URL_DONATION = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JPVRL8G9JYAVL&lc=EE&item_name=Vizzy%20Flash%20Tracer&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted";
+    public static final String URL_MAILTO = "mailto:sergei.ledvanov@gmail.com";
+    public static final String URL_VIZZY_PLUGIN = "http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin";
 }

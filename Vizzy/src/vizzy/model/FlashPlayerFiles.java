@@ -21,16 +21,10 @@ public class FlashPlayerFiles {
         super();
     }
 
-    /**
-     * @return the logPath
-     */
     public String getLogPath() {
         return logPath;
     }
 
-    /**
-     * @param logPath the logPath to set
-     */
     public void setLogPath(String logPath) {
         this.logPath = logPath;
     }

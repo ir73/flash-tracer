@@ -7,14 +7,15 @@ package vizzy.tasks;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author sergeil
  */
 public class FontsInitializer {
+    private static final Logger log = Logger.getLogger(FontsInitializer.class);
+    
     private Font[] fonts;
     private String[] fontNames;
 
@@ -28,7 +29,7 @@ public class FontsInitializer {
                 fontNames[i] = font.getName();
             }
         } catch (Exception ex) {
-            Logger.getLogger(FontsInitializer.class.getName()).log(Level.WARNING, null, ex);
+            log.warn("loadSystemFonts() ", ex);
         }
     }
 

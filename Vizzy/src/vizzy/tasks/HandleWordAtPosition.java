@@ -8,10 +8,9 @@ package vizzy.tasks;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
+import org.apache.log4j.Logger;
 import vizzy.model.Conf;
 import vizzy.model.SourceAndLine;
 
@@ -20,6 +19,8 @@ import vizzy.model.SourceAndLine;
  * @author sergeil
  */
 public class HandleWordAtPosition {
+
+    private static final Logger log = Logger.getLogger(HandleWordAtPosition.class);
 
     public HandleWordAtPosition() {
     }
@@ -57,11 +58,13 @@ public class HandleWordAtPosition {
         try {
             checkHTTPLink(textArea.getCaretPosition(), true);
         } catch (Exception ex) {
+//            log.warn("findObjectAtPositionAndExecute() checkHTTPLink failed", ex);
         }
 
         try {
             checkSourceFile(textArea.getCaretPosition(), true);
         } catch (Exception ex) {
+//            log.warn("findObjectAtPositionAndExecute() checkSourceFile failed", ex);
         }
     }
 
@@ -73,6 +76,7 @@ public class HandleWordAtPosition {
                     highlight = null;
                 }
             } catch (Exception e) {
+//                log.warn("removeHighlight()", e);
             }
         }
     }
@@ -83,7 +87,7 @@ public class HandleWordAtPosition {
             try {
                 highlight = textArea.getHighlighter().addHighlight(source.startPos, source.startPos + source.filePath.length(), Conf.mouseOverObjectPainter);
             } catch (BadLocationException ex) {
-                Logger.getLogger(HandleWordAtPosition.class.getName()).log(Level.INFO, null, ex);
+//                log.warn("highlightSourceLine()", ex);
             }
         }
     }

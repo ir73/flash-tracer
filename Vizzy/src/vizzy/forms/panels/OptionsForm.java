@@ -11,11 +11,15 @@
 
 package vizzy.forms.panels;
 
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Rectangle;
 import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
+import org.apache.log4j.Logger;
 import vizzy.controller.VizzyController;
 import vizzy.model.Conf;
 import vizzy.model.SettingsModel;
@@ -25,6 +29,8 @@ import vizzy.model.SettingsModel;
  * @author sergeil
  */
 public class OptionsForm extends javax.swing.JFrame {
+
+    private static final Logger log = Logger.getLogger(OptionsForm.class);
 
     private VizzyController controller;
     private SettingsModel settings;
@@ -83,6 +89,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jCustomASEditorTextFiled = new java.awt.TextField();
         jEnablePopupsCheckBox = new javax.swing.JCheckBox();
         jEnableHighlightErrorsCheckBox = new javax.swing.JCheckBox();
+        jFlashDevelopIntegrLabel = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jVersionLabel = new javax.swing.JLabel();
         jUpdatesCheckBox = new javax.swing.JCheckBox();
@@ -302,18 +309,31 @@ public class OptionsForm extends javax.swing.JFrame {
         jCustomEditorRadioButton.setBounds(30, 141, 21, 23);
         jLayeredPane1.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jCustomASEditorTextFiled.setText("C:\\svn-projects-repos\\fd\\flashdevelop_sergei\\flashdevelop\\FD3\\FlashDevelop\\Bin\\Debug\\FlashDevelop.exe %file% -line %line");
+        jCustomASEditorTextFiled.setText("\"C:\\Program Files\\FlashDevelop\\FlashDevelop.exe\" %file% -line %line");
         jCustomASEditorTextFiled.setBounds(50, 140, 300, 23);
         jLayeredPane1.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnablePopupsCheckBox.setText("<html>Enable code popup when mouse is over the stack-trace source file</html>");
         jEnablePopupsCheckBox.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jEnablePopupsCheckBox.setBounds(10, 180, 340, 50);
+        jEnablePopupsCheckBox.setBounds(10, 210, 340, 50);
         jLayeredPane1.add(jEnablePopupsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnableHighlightErrorsCheckBox.setText("Highlight errors in stack traces");
         jEnableHighlightErrorsCheckBox.setBounds(10, 20, 340, 23);
         jLayeredPane1.add(jEnableHighlightErrorsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jFlashDevelopIntegrLabel.setText("<html>Check out FlashDevelop Vizzy Plugin for better integration. <a href=\"http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin\">Read more...</a></html>");
+        jFlashDevelopIntegrLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jFlashDevelopIntegrLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jFlashDevelopIntegrLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jFlashDevelopIntegrLabelMouseEntered(evt);
+            }
+        });
+        jFlashDevelopIntegrLabel.setBounds(50, 170, 300, 40);
+        jLayeredPane1.add(jFlashDevelopIntegrLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -472,6 +492,19 @@ public class OptionsForm extends javax.swing.JFrame {
         controller.checkForUpdatesClicked();
     }//GEN-LAST:event_jCheckUpdatesButtonActionPerformed
 
+    private void jFlashDevelopIntegrLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jFlashDevelopIntegrLabelMouseClicked
+        try {
+            if (Desktop.isDesktopSupported())
+                Desktop.getDesktop().browse(new URI(Conf.URL_VIZZY_PLUGIN));
+        } catch (Exception ex1) {
+//            log.warn("websiteClicked() error", ex1);
+        }
+    }//GEN-LAST:event_jFlashDevelopIntegrLabelMouseClicked
+
+    private void jFlashDevelopIntegrLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jFlashDevelopIntegrLabelMouseEntered
+        evt.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_jFlashDevelopIntegrLabelMouseEntered
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ASEditorButtonGroup;
     private javax.swing.JButton jButton1;
@@ -487,6 +520,7 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jEnableClickCheckBox;
     private javax.swing.JCheckBox jEnableHighlightErrorsCheckBox;
     private javax.swing.JCheckBox jEnablePopupsCheckBox;
+    private javax.swing.JLabel jFlashDevelopIntegrLabel;
     private javax.swing.JTextField jFlashLogTextField;
     private javax.swing.JComboBox jFontComboBox;
     private javax.swing.JTextField jFontSizeTextField;
@@ -544,6 +578,13 @@ public class OptionsForm extends javax.swing.JFrame {
     }
 
     private void initVars() {
+        if (Conf.OSName.indexOf(Conf.OS_WINDOWS) > -1
+                || Conf.OSName.indexOf(Conf.OS_WINDOWS_VISTA) > -1) {
+            jFlashDevelopIntegrLabel.setVisible(true);
+        } else {
+            jFlashDevelopIntegrLabel.setVisible(false);
+        }
+        
         jUTFCheckBox.setSelected(settings.isUTF());
         jUpdatesCheckBox.setSelected(settings.isCheckUpdates());
         jNumLinesEnabledCheckBox.setSelected(settings.isMaxNumLinesEnabled());
@@ -592,6 +633,7 @@ public class OptionsForm extends javax.swing.JFrame {
         try {
             this.setIconImage(settings.getAppIcon());
         } catch (Exception e) {
+//            log.warn("initPositionAndSize() ", e);
         }
 
         int x = (int)(rect.getX() + rect.getWidth() / 2 - getWidth( )/ 2);

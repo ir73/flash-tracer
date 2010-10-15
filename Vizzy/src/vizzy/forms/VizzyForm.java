@@ -22,14 +22,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
 import vizzy.comp.JScrollHighlightPanel;
 import vizzy.comp.NewFeaturesPanel;
 import vizzy.controller.VizzyController;
@@ -43,6 +42,9 @@ import vizzy.model.SettingsModel;
  * @author sergeil
  */
 public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
+
+    private static final Logger log = Logger.getLogger(VizzyForm.class);
+
     private NewFeaturesPanel newFeaturesPanel;
 
     /** This method is called from within the constructor to
@@ -712,6 +714,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
             try {
                 jTraceTextArea.setText(settings.getSearcher().filter(settings.getTraceContent(), word));
             } catch (Exception ex) {
+                log.warn("onSearch()", ex);
             }
             jSearchWarnLabel.setVisible(false);
         } else {
@@ -782,7 +785,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                         try {
                             Desktop.getDesktop().browse(new URI(Conf.URL_PROJECT_HOME + "wiki/Features"));
                         } catch (Exception ex) {
-                            Logger.getLogger(VizzyForm.class.getName()).log(Level.WARNING, null, ex);
+//                            log.warn("browse()", ex);
                         }
                     }
                 }

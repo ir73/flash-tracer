@@ -5,12 +5,9 @@
 package vizzy.tasks;
 
 import edu.stanford.ejalbert.BrowserLauncher;
-import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
-import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import vizzy.model.Conf;
 
 /**
@@ -18,6 +15,8 @@ import vizzy.model.Conf;
  * @author sergeil
  */
 public class DebugPlayerDetector {
+
+    private static final Logger log = Logger.getLogger(DebugPlayerDetector.class);
 
     public DebugPlayerDetector() {
     }
@@ -42,10 +41,8 @@ public class DebugPlayerDetector {
         try {
             String p = getHtmlFile();
             new BrowserLauncher().openURLinBrowser(p);
-        } catch (BrowserLaunchingInitializingException ex1) {
-            Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex1);
-        } catch (UnsupportedOperatingSystemException ex1) {
-            Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex1);
+        } catch (Exception ex) {
+            log.warn("cannot open browser", ex);
         }
     }
 
