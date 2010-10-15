@@ -2,23 +2,31 @@
 #labels Featured
 
 ===Errors Highlighting (since 2.3)===
-ActionScript 3 Errors are highlighted (can be turned off)
+ActionScript 3 Errors are highlighted.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg
 <br/><br/><br/>
 
 
-===Stack-Trace Source Files are Click-able (since 2.3)===
-You can click on a source file in stack-trace and Vizzy will open this file in default editor or custom that you specified in options. If you are using FlashDevelop as your ActinScript editor, then it will also scroll to a proper line.
+===Stack-Trace Source Files are Clickable (since 2.3)===
+Clicking on a source file path in stack trace will open that file in default AS editor and content scrolled to a proper line (see FlashDevelop Plugin page).
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
 
 <br/><br/><br/>
 
 
+===Explore Source Code (since 2.3)===
+Moving the mouse over the stack trace source file path will open a popup with erroneous line highlighted.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/explore_code.jpg
 
-===HTTP Links are Click-able (since 2.3)===
-You can click on a link in trace output and Vizzy will open it in default browser
+<br/><br/><br/>
+
+
+
+===HTTP Links are Clickable (since 2.3)===
+Clicking any link in trace output will open it in default browser
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg
 <br/><br/><br/>
