@@ -2,9 +2,9 @@
 
 Vizzy Plugin for FlashDevelop enables opening stack trace source files in FlashDevelop, scrolling editor to a proper line and highlighting erroneous code.
 
-Here's a screenshot demonstrating what you will see in Vizzy before you click on a srouce file (highlighted with green) <br><br>
+  * Here's a screenshot demonstrating what you will see in Vizzy before you click on a srouce file (highlighted with green) <br><br>
 http://dl.dropbox.com/u/9443658/vizzy/screens/fd_source1.jpg
 
 <br><br><br>
-...and here's what happens in FlashDevelop<br><br>
+  * ...and here's what happens in FlashDevelop<br><br>
 http://dl.dropbox.com/u/9443658/vizzy/screens/fd_source2.jpg
