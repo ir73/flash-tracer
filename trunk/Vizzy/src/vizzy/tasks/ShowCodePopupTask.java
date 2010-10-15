@@ -9,13 +9,12 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import vizzy.forms.panels.CodeForm;
 import vizzy.model.SourceAndLine;
 
@@ -24,6 +23,8 @@ import vizzy.model.SourceAndLine;
  * @author sergeil
  */
 public class ShowCodePopupTask {
+
+    private static final Logger log = Logger.getLogger(ShowCodePopupTask.class);
 
     private JTextArea owner;
     private CodeForm codeForm;
@@ -137,7 +138,7 @@ public class ShowCodePopupTask {
 
 
             } catch (Exception ex) {
-                Logger.getLogger(ShowCodePopupTask.class.getName()).log(Level.SEVERE, null, ex);
+//                log.warn("show()", ex);
             }
         }
 

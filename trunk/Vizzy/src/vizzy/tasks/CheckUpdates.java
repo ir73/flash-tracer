@@ -13,11 +13,10 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import vizzy.listeners.IUpdateCheckListener;
 import vizzy.model.Conf;
 import vizzy.util.DialogUtils;
@@ -28,6 +27,8 @@ import vizzy.util.DialogUtils;
  */
 public class CheckUpdates extends Thread {
 
+    private static final Logger log = Logger.getLogger(CheckUpdates.class);
+    
     private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
     private static final String WEBSITE_FEATURES_PHRASE = "Current version features: ";
     private boolean reportIfOk;
@@ -99,6 +100,7 @@ public class CheckUpdates extends Thread {
                 }
             }
         } catch (Exception ex) {
+            log.warn("run() error", ex);
         } finally {
             listener.updateFinished();
             listener = null;
@@ -151,7 +153,7 @@ public class CheckUpdates extends Thread {
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(CheckUpdates.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn("downloadNewVersion() failed to download uptdate", ex);
 
             JOptionPane.showMessageDialog(null, "Failed to download update. Press OK to go\n"
                     + "to the web-site and to download\n"
@@ -163,6 +165,7 @@ public class CheckUpdates extends Thread {
                 if (Desktop.isDesktopSupported())
                     Desktop.getDesktop().browse(new URI(Conf.URL_PROJECT_DOWNLOAD));
             } catch (Exception ex1) {
+//                log.warn("downloadNewVersion() desktop not supported", ex);
             }
 
         } finally {

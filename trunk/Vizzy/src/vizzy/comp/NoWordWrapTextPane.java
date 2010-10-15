@@ -16,6 +16,7 @@ public class NoWordWrapTextPane extends JTextPane {
         super();
     }
 
+    @Override
     public boolean getScrollableTracksViewportWidth() {
         return false;
     }

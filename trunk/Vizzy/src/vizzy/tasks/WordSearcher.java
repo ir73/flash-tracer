@@ -17,6 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
+import org.apache.log4j.Logger;
 import vizzy.comp.JScrollHighlightPanel;
 import vizzy.model.Conf;
 
@@ -26,6 +27,8 @@ import vizzy.model.Conf;
  * @author Admin
  */
 public class WordSearcher {
+
+    private static final Logger log = Logger.getLogger(WordSearcher.class);
     
     private JTextArea textArea;
     private int lastCaretPos = 0;
@@ -99,7 +102,7 @@ public class WordSearcher {
             try {
                 highlightObjects.add(highlighter.addHighlight(lastIndex, endIndex, Conf.highlightedSearchResultPainter));
             } catch (Exception e) {
-                // Nothing to do
+//                log.warn("search()", e);
             }
             if (firstOffset == -1) {
                 firstOffset = lastIndex;

@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.util.TimerTask;
+import org.apache.log4j.Logger;
 import vizzy.listeners.ILogFileListener;
 import vizzy.model.SettingsModel;
 
@@ -21,6 +22,8 @@ import vizzy.model.SettingsModel;
  * @author Admin
  */
 public class LoadFileTask extends TimerTask {
+
+    private static final Logger log = Logger.getLogger(LoadFileTask.class);
 
     private SettingsModel settings;
     private ILogFileListener listener;
@@ -66,6 +69,7 @@ public class LoadFileTask extends TimerTask {
         } catch (FileNotFoundException ex) {
             listener.onLogFileRead("");
         } catch (Exception ex) {
+            log.warn("run() ", ex);
         } finally {
             try {
                 bo.close();

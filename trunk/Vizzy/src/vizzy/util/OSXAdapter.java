@@ -58,9 +58,12 @@ Copyright � 2003-2007 Apple, Inc., All Rights Reserved
 package vizzy.util;
 
 import java.lang.reflect.*;
+import org.apache.log4j.Logger;
 
 
 public class OSXAdapter implements InvocationHandler {
+
+    private static final Logger log = Logger.getLogger(OSXAdapter.class);
 
     protected Object targetObject;
     protected Method targetMethod;
@@ -87,8 +90,8 @@ public class OSXAdapter implements InvocationHandler {
             Method enableAboutMethod = macOSXApplication.getClass().getDeclaredMethod("setEnabledAboutMenu", new Class[] { boolean.class });
             enableAboutMethod.invoke(macOSXApplication, new Object[] { Boolean.valueOf(enableAboutMenu) });
         } catch (Exception ex) {
+            log.warn("setAboutHandler() ", ex);
             System.err.println("OSXAdapter could not access the About Menu");
-            ex.printStackTrace();
         }
     }
     

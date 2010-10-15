@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextArea;
 import javax.swing.text.Highlighter;
+import org.apache.log4j.Logger;
 import vizzy.model.Conf;
 
 /**
@@ -15,6 +16,8 @@ import vizzy.model.Conf;
  * @author sergeil
  */
 public class KeywordsHighlighter {
+
+    private static final Logger log = Logger.getLogger(KeywordsHighlighter.class);
 
     private static String TEMPLATE_ERROR = ": Error #";
     private List<Object> highlightObjects = new ArrayList<Object>();
@@ -56,6 +59,7 @@ public class KeywordsHighlighter {
                 }
             }
         } catch (Exception e) {
+            log.warn("highlight() ", e);
         }
         return highlighted;
     }
