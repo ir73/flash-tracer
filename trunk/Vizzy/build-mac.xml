@@ -4,12 +4,12 @@
 
     <property name="version" value="2.3"/>
     
-    <target name="build-vizzy-mac" description="Create OSX App bundle for Vizzy"
-        depends="clean-vizzy-mac">
-        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler"/>
-        <mkdir dir="${basedir}/dist-mac" />
+    <target name="build-vizzy-mac" description="Create OSX App bundle for Vizzy">
+        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler"
+            classpath="../../../res/mac/jarbundler/jarbundler-2.1.0.jar"/>
         <jarbundler
-            dir="${basedir}/dist-mac"
+            bundleid="flash.utils.Vizzy"
+            dir=".."
             verbose="true"
             showPlist="false"
             name="${ant.project.name}"
@@ -18,22 +18,18 @@
             version="${version}"
             stubfile="${basedir}/${ant.project.name}"
             jvmversion="1.5+"
+            infostring="Vizzy Flash Tracer, Copyright 2008-2010"
             >
                 <jarfileset dir="${basedir}" includes="lib/*.jar"/>
                 <jarfileset dir="${basedir}" includes="${ant.project.name}.jar"/>
                 <javafileset dir="${basedir}" includes="fp-detect/**"/>
+                <javaproperty name="com.apple.mrj.application.growbox.intrudes" value="false"/>
         </jarbundler>
-        <antcall target="clean-after-build" />
-    </target>
 
-    <target name="clean-vizzy-mac" description="Clean up anything we can't rebuild">
-        <delete dir="${ant.project.name}.app" quiet="true"/>
-    </target>
-
-    <target name="clean-after-build" description="Clean up">
-        <delete file="${ant.project.name}" quiet="true"/>
-        <delete file="${ant.project.name}.icns" quiet="true"/>
-        <delete file="build-mac.xml" quiet="true"/>
+        <delete includeemptydirs="true">
+            <fileset dir="." includes="**/**"/>
+        </delete>
+        
     </target>
 
 </project>
