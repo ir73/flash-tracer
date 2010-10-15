@@ -92,3 +92,10 @@ Highlight your search results to get a better picture of where they are located.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/search_highlightall.jpg
 <br/><br/><br/>
+
+
+===FlashDevelop Integration===
+For developers using FlashDevelop there's a <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">VizzyPlugin</a>.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/fd_source2.jpg
+<br/><br/><br/>
