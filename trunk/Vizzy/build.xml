@@ -16,6 +16,7 @@
     <property name="dist.dir.win" value="${dist.dir}/win"/>
     <property name="dist.dir.mac" value="${dist.dir}/mac"/>
     <property name="dist.dir.linux" value="${dist.dir}/linux"/>
+    <property name="sys.lib.dir" value="ant"/>
 
     <target name="build-vizzy-common" depends="clean, jar">
         <delete file="${dist.dir}/README.TXT" />
@@ -42,9 +43,11 @@
             <fileset dir="etc/win" />
         </copy>
 
-        <exec executable="C:/tools/launch4j/launch4jc">
-            <arg value="launch4j.xml"/>
-        </exec>
+        <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="res/win/launch4j/launch4j.jar
+		    :res/win/launch4j/lib/xstream.jar" />
+        <launch4j configFile="res/win/launch4j.xml"
+            outfile="${dist.dir.win}/${ant.project.name}/${ant.project.name}.exe"
+            />
     </target>
 
     <target name="build-vizzy-linux" depends="build-vizzy-common">
@@ -71,7 +74,8 @@
         </copy>
 
         <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
-            <fileset file="res/mac/**"/>
+            <fileset file="res/mac/Vizzy"/>
+            <fileset file="res/mac/Vizzy.icns"/>
         </copy>
         <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
             <fileset file="build-mac.xml"/>
@@ -80,11 +84,7 @@
 
     <target name="build-vizzy-all" depends="build-vizzy-win, build-vizzy-mac, build-vizzy-linux">
         <delete dir="${dist.dir}/${ant.project.name}" />
-        <zip destfile="${dist.dir}/${ant.project.name}_v${version}.zip">
-            <fileset dir="${dist.dir.mac}" />
-            <fileset dir="${dist.dir.win}" />
-            <fileset dir="${dist.dir.linux}" />
-        </zip>
+        <zip basedir="${dist.dir}" destfile="${dist.dir}/${ant.project.name}_v${version}.zip"/>
     </target>
 
     <!--
