@@ -26,7 +26,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/explore_code.jpg
 
 
 ===HTTP Links are Clickable (since 2.3)===
-Clicking any link in trace output will open it in default browser
+Clicking any link in trace output will open it in default browser.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg
 <br/><br/><br/>
@@ -34,13 +34,13 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg
 
 
 ===mm.cgf File Creation and Detection===
-Vizzy detects automatically path to your flashlog.txt file and creates all the necessary configuration files (mm.cfg) on the background. This is valid for Windows, Mac OSX and Linus operation systems
+Vizzy detects automatically path to your flashlog.txt file and creates all the necessary configuration files in the background. This is valid for Windows, Mac OSX and Linus operation systems.
 <br/><br/><br/>
 
 
 
 ===Auto-refresh, Word-wrapping, Always On Top Modes===
-You can turn auto-refresh on or off at anytime if you want to explore current trace. Turn always on top mode to avoid Vizzy appearing under other windows
+It is possible to turn auto-refresh on or off at anytime if you want to explore trace output. Turning always on top mode helps to avoid Vizzy appearing under other windows.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/bottom_menu.jpg
 <br/><br/><br/>
@@ -56,7 +56,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/filter.jpg
 
 
 ===Log Snapshots===
-You can make a snapshot of your current trace with a log snapshot feature (Alt+S). This will make a small window appear with the trace content that won't be changed. You can use this to compare your trace in current and previous debug sessions.
+Make snapshots of your trace output with log snapshot feature (Alt+S). This will force a small window appear with the trace content that won't be changed. You can use this to compare your trace in current and previous debug sessions.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/log_snapshot.jpg
 <br/><br/><br/>
@@ -64,7 +64,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/log_snapshot.jpg
 
 
 ===Customize with Options Menu===
-You can customize Vizzy's features, turn them on or off in Options menu.
+Customize Vizzy's features, turn them on or off in Options menu.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/options.jpg
 <br/><br/><br/>
@@ -80,7 +80,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/policy_file.jpg
 
 
 ===Save Search Results in Drop Down List===
-Save your previous searches. Saving is done automatically.
+Search drop down list saves 8 last search keywords.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/search_combobox.jpg
 <br/><br/><br/>
@@ -88,15 +88,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/search_combobox.jpg
 
 
 ===Highlight All===
-Highlight your search results to get a better picture of where they are located. Also, not the right vertical where all search results are marked
+Highlight your search results to get a better picture of where they are located. Also, note the right vertical panel where all search results are highlighted.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/search_highlightall.jpg
 <br/><br/><br/>
-
-
-
-===Trace Output===
-Have a better control over trace output
-<br/><br/>
-http://dl.dropbox.com/u/9443658/vizzy/screens/trace_output.jpg
- 
