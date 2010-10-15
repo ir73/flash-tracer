@@ -9,7 +9,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg
 
 
 ===Stack-Trace Source Files are Clickable (since 2.3)===
-Clicking on a source file path in stack trace will open that file in default AS editor and content scrolled to a proper line (see FlashDevelop Plugin page).
+Clicking on a source file path in stack trace will open that file in default AS editor and content scrolled to a proper line (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>).
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
 
