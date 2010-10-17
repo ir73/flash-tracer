@@ -11,6 +11,7 @@
 
 package vizzy.forms.panels;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -91,6 +92,7 @@ public class CodeForm extends JPanel {
                 getStyle(StyleContext.DEFAULT_STYLE);
         Style boldStyleName = doc.addStyle("bold", def);
         StyleConstants.setBold(boldStyleName, true);
+        StyleConstants.setForeground(boldStyleName, Color.RED);
         jCodeTextPane.setFont(font);
     }
 

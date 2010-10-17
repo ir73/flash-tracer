@@ -29,8 +29,6 @@
             <fileset dir="." includes="**/**"/>
         </delete>
 
-        <zip basedir=".." destfile="../${ant.project.name}_v${version}.zip"/>
-        
     </target>
 
 </project>
