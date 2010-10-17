@@ -184,7 +184,10 @@ public class HandleWordAtPosition {
                 int sIndex = currentWord.indexOf("[");
                 int eIndex = currentWord.lastIndexOf(":");
                 if (sIndex != -1 && eIndex != -1
-                        && sIndex < eIndex) {
+                        && sIndex < eIndex
+
+                && currentIndex > startIndex + sIndex
+                && currentIndex < startIndex + eIndex) {
                     sIndex = sIndex + 1;
                     String filePath = currentWord.substring(sIndex, eIndex);
                     if (filePath != null) {

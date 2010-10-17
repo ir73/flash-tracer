@@ -15,8 +15,8 @@ public class PathUtils {
 
     public static File getDir(File file) {
         String absolutePath = file.getAbsolutePath();
-        if (absolutePath.lastIndexOf('/') != -1) {
-            absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf('/') + 1);
+        if (absolutePath.lastIndexOf(File.separator) != -1) {
+            absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator) + 1);
         } else {
             absolutePath = "";
         }

@@ -140,9 +140,21 @@ public final class VizzyController implements ILogFileListener {
                 log.warn("setQuitHandler()", ex);
             }
         }
+
+
         String rootDir = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         File dir = PathUtils.getDir(new File(rootDir));
         Conf.vizzyRootDir = dir.getAbsolutePath();
+
+
+        if (Conf.OSName.indexOf(Conf.OS_WINDOWS) > -1) {
+            settings.setCustomASEditor(Conf.FLASHDEVELOP_EDITOR_PATH, true);
+        } else if (Conf.OSName.indexOf(Conf.OS_MAC_OS_X) > -1) {
+            settings.setCustomASEditor(Conf.TEXTEDIT_EDITOR_PATH, true);
+        } else if (Conf.OSName.indexOf(Conf.OS_LINUX) > -1) {
+            settings.setCustomASEditor(Conf.GEDIT_EDITOR_PATH, true);
+        }
+
         try {
             URL myIconUrl = this.getClass().getResource("/img/vizzy.png");
             settings.setAppIcon(new ImageIcon(myIconUrl, "Vizzy Flash Tracer").getImage());

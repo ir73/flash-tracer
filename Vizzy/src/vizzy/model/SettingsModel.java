@@ -34,7 +34,7 @@ public class SettingsModel {
     private String flashLogFileName;
     private String policyLogFileName;
     private int logType = 0;
-    private String customASEditor = "\"C:\\Program Files\\FlashDevelop\\FlashDevelop.exe\" %file% -line %line%";
+    private String customASEditor = "";
     private boolean isDefaultASEditor = true;
     private boolean highlightStackTraceErrors = true;
     private boolean isAutoRefresh = true;

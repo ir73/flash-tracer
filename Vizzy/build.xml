@@ -10,6 +10,7 @@
 <project name="Vizzy" default="build-vizzy-all" basedir=".">
     <description>Builds, tests, and runs the project Vizzy.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="nbproject/profiler-build-impl.xml"/>
 
     <property name="version" value="2.3"/>
     <property name="dist.dir" value="dist"/>

@@ -23,12 +23,13 @@
                 <jarfileset dir="${basedir}" includes="lib/*.jar"/>
                 <jarfileset dir="${basedir}" includes="${ant.project.name}.jar"/>
                 <javafileset dir="${basedir}" includes="fp-detect/**"/>
-                <javaproperty name="com.apple.mrj.application.growbox.intrudes" value="false"/>
         </jarbundler>
 
         <delete includeemptydirs="true">
             <fileset dir="." includes="**/**"/>
         </delete>
+
+        <zip basedir=".." destfile="../${ant.project.name}_v${version}.zip"/>
         
     </target>
 
