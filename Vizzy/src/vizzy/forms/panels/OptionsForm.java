@@ -97,7 +97,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jEnableClickCheckBox = new javax.swing.JCheckBox();
         jDefaultRadioButton = new javax.swing.JRadioButton();
         jCustomEditorRadioButton = new javax.swing.JRadioButton();
-        jCustomASEditorTextFiled = new java.awt.TextField();
+        jCustomASEditorTextFiled = new javax.swing.JTextField();
         jEnablePopupsCheckBox = new javax.swing.JCheckBox();
         jEnableHighlightErrorsCheckBox = new javax.swing.JCheckBox();
         jFlashDevelopIntegrLabel = new javax.swing.JLabel();
@@ -164,7 +164,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(204, Short.MAX_VALUE))
+                .addContainerGap(201, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("General", jPanel2);
@@ -298,7 +298,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jCheckBoxVerbose, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jCheckBoxStatic, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(135, Short.MAX_VALUE))
+                .addContainerGap(132, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Trace Output", jPanel1);
@@ -317,11 +317,12 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane1.add(jDefaultRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         ASEditorButtonGroup.add(jCustomEditorRadioButton);
-        jCustomEditorRadioButton.setBounds(30, 141, 21, 23);
+        jCustomEditorRadioButton.setText(" ");
+        jCustomEditorRadioButton.setBounds(30, 141, 29, 23);
         jLayeredPane1.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jCustomASEditorTextFiled.setText("\"C:\\Program Files\\FlashDevelop\\FlashDevelop.exe\" %file% -line %line");
-        jCustomASEditorTextFiled.setBounds(50, 140, 300, 23);
+        jCustomASEditorTextFiled.setToolTipText("<html>%file% - full path to the file<br>%line%  - line number\n</html>");
+        jCustomASEditorTextFiled.setBounds(60, 140, 290, 23);
         jLayeredPane1.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnablePopupsCheckBox.setText("<html>Enable code popup when mouse is over the stack-trace source file</html>");
@@ -360,7 +361,7 @@ public class OptionsForm extends javax.swing.JFrame {
             .add(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 313, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Trace Parser", jPanel5);
@@ -400,7 +401,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jVersionLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jCheckUpdatesButton)
-                .addContainerGap(247, Short.MAX_VALUE))
+                .addContainerGap(244, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Updates", jPanel4);
@@ -525,7 +526,7 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBoxTraceAll;
     private javax.swing.JCheckBox jCheckBoxVerbose;
     private javax.swing.JButton jCheckUpdatesButton;
-    private java.awt.TextField jCustomASEditorTextFiled;
+    private javax.swing.JTextField jCustomASEditorTextFiled;
     private javax.swing.JRadioButton jCustomEditorRadioButton;
     private javax.swing.JRadioButton jDefaultRadioButton;
     private javax.swing.JCheckBox jEnableClickCheckBox;

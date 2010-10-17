@@ -27,6 +27,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import vizzy.forms.VizzyForm;
@@ -154,6 +155,8 @@ public final class VizzyController implements ILogFileListener {
         } else if (Conf.OSName.indexOf(Conf.OS_LINUX) > -1) {
             settings.setCustomASEditor(Conf.GEDIT_EDITOR_PATH, true);
         }
+
+        ToolTipManager.sharedInstance().setInitialDelay(0);
 
         try {
             URL myIconUrl = this.getClass().getResource("/img/vizzy.png");
