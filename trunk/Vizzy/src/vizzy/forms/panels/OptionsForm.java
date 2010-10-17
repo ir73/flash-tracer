@@ -43,6 +43,17 @@ public class OptionsForm extends javax.swing.JFrame {
         initPositionAndSize(rect);
     }
 
+    private void checkFlashDevelop() {
+        boolean b = false;
+        if (Conf.OSName.indexOf(Conf.OS_WINDOWS) > -1) {
+            if (jCustomASEditorTextFiled.getText() != null
+                    && jCustomASEditorTextFiled.getText().indexOf("FlashDevelop") > -1) {
+                b = true;
+            }
+        }
+        jFlashDevelopIntegrLabel.setVisible(b);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -578,12 +589,7 @@ public class OptionsForm extends javax.swing.JFrame {
     }
 
     private void initVars() {
-        if (Conf.OSName.indexOf(Conf.OS_WINDOWS) > -1
-                || Conf.OSName.indexOf(Conf.OS_WINDOWS_VISTA) > -1) {
-            jFlashDevelopIntegrLabel.setVisible(true);
-        } else {
-            jFlashDevelopIntegrLabel.setVisible(false);
-        }
+        checkFlashDevelop();
         
         jUTFCheckBox.setSelected(settings.isUTF());
         jUpdatesCheckBox.setSelected(settings.isCheckUpdates());
