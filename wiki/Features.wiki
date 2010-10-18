@@ -95,7 +95,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/search_highlightall.jpg
 
 
 ===FlashDevelop Integration===
-For developers using FlashDevelop there's a <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">VizzyPlugin</a>.
+For developers who are using FlashDevelop there's a <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">VizzyPlugin</a>.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/fd_source2.jpg
 <br/><br/><br/>
