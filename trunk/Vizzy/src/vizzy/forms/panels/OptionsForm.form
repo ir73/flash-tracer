@@ -393,7 +393,7 @@
                       <Component id="jCheckBoxVerbose" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jCheckBoxStatic" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace pref="132" max="32767" attributes="0"/>
+                      <EmptySpace pref="146" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -519,6 +519,9 @@
                   <Properties>
                     <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;%file% - full path to the file&lt;br&gt;%line%  - line number&#xa;&lt;/html&gt;"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jCustomASEditorTextFiledKeyReleased"/>
+                  </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
                       <JLayeredPaneConstraints x="60" y="140" width="290" height="23" layer="0" position="-1"/>

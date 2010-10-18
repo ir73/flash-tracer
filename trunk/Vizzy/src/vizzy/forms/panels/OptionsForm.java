@@ -45,9 +45,10 @@ public class OptionsForm extends javax.swing.JFrame {
 
     private void checkFlashDevelop() {
         boolean b = false;
+        String text = jCustomASEditorTextFiled.getText();
         if (Conf.OSName.indexOf(Conf.OS_WINDOWS) > -1) {
-            if (jCustomASEditorTextFiled.getText() != null
-                    && jCustomASEditorTextFiled.getText().indexOf("FlashDevelop") > -1) {
+            if (text != null
+                    && text.indexOf("FlashDevelop") > -1) {
                 b = true;
             }
         }
@@ -298,7 +299,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jCheckBoxVerbose, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jCheckBoxStatic, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(132, Short.MAX_VALUE))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Trace Output", jPanel1);
@@ -322,6 +323,11 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane1.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jCustomASEditorTextFiled.setToolTipText("<html>%file% - full path to the file<br>%line%  - line number\n</html>");
+        jCustomASEditorTextFiled.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jCustomASEditorTextFiledKeyReleased(evt);
+            }
+        });
         jCustomASEditorTextFiled.setBounds(60, 140, 290, 23);
         jLayeredPane1.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -517,6 +523,10 @@ public class OptionsForm extends javax.swing.JFrame {
         evt.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }//GEN-LAST:event_jFlashDevelopIntegrLabelMouseEntered
 
+    private void jCustomASEditorTextFiledKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jCustomASEditorTextFiledKeyReleased
+        checkFlashDevelop();
+    }//GEN-LAST:event_jCustomASEditorTextFiledKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ASEditorButtonGroup;
     private javax.swing.JButton jButton1;
@@ -590,8 +600,6 @@ public class OptionsForm extends javax.swing.JFrame {
     }
 
     private void initVars() {
-        checkFlashDevelop();
-        
         jUTFCheckBox.setSelected(settings.isUTF());
         jUpdatesCheckBox.setSelected(settings.isCheckUpdates());
         jNumLinesEnabledCheckBox.setSelected(settings.isMaxNumLinesEnabled());
@@ -617,6 +625,8 @@ public class OptionsForm extends javax.swing.JFrame {
         } else {
             jCustomEditorRadioButton.setSelected(true);
         }
+
+        checkFlashDevelop();
     }
 
     @Override
