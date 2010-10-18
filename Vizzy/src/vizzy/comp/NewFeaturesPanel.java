@@ -50,9 +50,12 @@ public class NewFeaturesPanel extends javax.swing.JPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabelMouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabelMouseEntered(evt);
+            }
         });
 
-        jXLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jXLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         jXLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jXLabel.setText("X");
         jXLabel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -70,7 +73,7 @@ public class NewFeaturesPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                .addComponent(jLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jXLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
@@ -96,6 +99,10 @@ public class NewFeaturesPanel extends javax.swing.JPanel {
     private void jXLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabelMouseEntered
         evt.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }//GEN-LAST:event_jXLabelMouseEntered
+
+    private void jLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelMouseEntered
+        evt.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_jLabelMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
