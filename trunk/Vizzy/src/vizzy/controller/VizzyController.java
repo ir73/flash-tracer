@@ -825,4 +825,15 @@ public final class VizzyController implements ILogFileListener {
         settings.setNewFeaturesPanelShown(true, true);
     }
 
+    public void searchComboboxChanged(String text) {
+        if (text != null
+                && text.length() > 0) {
+            addSearchKeyword(text);
+            settings.getSearcher().setWord(text);
+            settings.getSearcher().setWasSearching(true);
+            startSearch(true);
+            highlightStackTraceErrors();
+        }
+    }
+
 }
