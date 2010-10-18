@@ -30,6 +30,9 @@ public class Conf {
     public static final TextAreaHighlightPainter searchResultPainter = new TextAreaHighlightPainter(new Color(150, 235, 150));
     public static final TextAreaHighlightPainter errorPainter = new TextAreaHighlightPainter(new Color(200, 200, 200));
     public static final TextAreaHighlightPainter warningPainter = new TextAreaHighlightPainter(new Color(230, 230, 230));
+    public static final Color DEFAULT_SEARCH_COMBO_COLOR = Color.white;
+    public static final Color FOUND_SEARCH_COMBO_COLOR = new Color(150, 255, 150);
+    public static final Color NOTFOUND_SEARCH_COMBO_COLOR = new Color(255, 150, 150);
 
     public static final String VERSION = "2.3";
     public static final String VIZZY_PROPERTIES_FILENAME = "vizzy.properties";

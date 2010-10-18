@@ -11,6 +11,7 @@
 
 package vizzy.forms;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -23,6 +24,7 @@ import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
@@ -60,8 +62,6 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jHighlightAllCheckbox = new javax.swing.JCheckBox();
         jFilterCheckbox = new javax.swing.JCheckBox();
-        jMultipleLabel = new javax.swing.JLabel();
-        jSearchWarnLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jSearchComboBox = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
@@ -105,7 +105,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
 
         jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Search"));
         jLayeredPane1.setMaximumSize(new java.awt.Dimension(32767, 84));
-        jLayeredPane1.setPreferredSize(new java.awt.Dimension(0, 84));
+        jLayeredPane1.setPreferredSize(new java.awt.Dimension(0, 68));
 
         jHighlightAllCheckbox.setText("Highlight All");
         jHighlightAllCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -129,15 +129,6 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jFilterCheckbox.setBounds(130, 18, 80, 15);
         jLayeredPane1.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jMultipleLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jMultipleLabel.setText("Hint: Use comma to separate keywords");
-        jMultipleLabel.setBounds(210, 18, 300, 14);
-        jLayeredPane1.add(jMultipleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jSearchWarnLabel.setText("<html></html>");
-        jSearchWarnLabel.setBounds(10, 63, 410, 14);
-        jLayeredPane1.add(jSearchWarnLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         jButton1.setText("Clear");
         jButton1.setPreferredSize(new java.awt.Dimension(59, 24));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -145,11 +136,16 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 jClearActionPerformed(evt);
             }
         });
-        jButton1.setBounds(300, 38, 90, 23);
+        jButton1.setBounds(255, 38, 70, 23);
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchComboBox.setEditable(true);
-        jSearchComboBox.setBounds(9, 38, 280, 23);
+        jSearchComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jSearchComboBoxActionPerformed(evt);
+            }
+        });
+        jSearchComboBox.setBounds(9, 38, 240, 23);
         jLayeredPane1.add(jSearchComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jPanel1.add(jLayeredPane1);
@@ -199,7 +195,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         );
         jScrollHighlightLayout.setVerticalGroup(
             jScrollHighlightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 219, Short.MAX_VALUE)
+            .add(0, 234, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
@@ -213,8 +209,8 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+            .add(jScrollHighlight, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
         );
 
         jPanel1.add(jPanel2);
@@ -256,7 +252,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         });
 
         jAutorefreshCheckBox.setSelected(true);
-        jAutorefreshCheckBox.setText("Autorefresh");
+        jAutorefreshCheckBox.setText("Auto refresh");
         jAutorefreshCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jAutorefreshCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jAutorefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -270,12 +266,12 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
-                .add(jAutorefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jAutorefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jWordWrapCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jOnTopCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 124, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 66, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 68, Short.MAX_VALUE)
                 .add(jClearTraceButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -458,6 +454,10 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         controller.formWindowDeactivated();
     }//GEN-LAST:event_formWindowLostFocus
 
+    private void jSearchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSearchComboBoxActionPerformed
+        controller.searchComboboxChanged((String)jSearchComboBox.getSelectedItem());
+    }//GEN-LAST:event_jSearchComboBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JCheckBox jAutorefreshCheckBox;
     public javax.swing.JButton jButton1;
@@ -472,7 +472,6 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    public javax.swing.JLabel jMultipleLabel;
     public javax.swing.JCheckBox jOnTopCheckbox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -480,7 +479,6 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     private javax.swing.JPanel jScrollHighlight;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox jSearchComboBox;
-    private javax.swing.JLabel jSearchWarnLabel;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.JTextArea jTraceTextArea;
     public javax.swing.JCheckBox jWordWrapCheckbox;
@@ -630,7 +628,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
             jTraceTextArea.setText(settings.getTraceContent());
         }
         jFilterCheckbox.setSelected(settings.isFilter());
-        jMultipleLabel.setVisible(settings.isFilter());
+        updateCommaTooltipCheckBox();
         jHighlightAllCheckbox.setEnabled(!settings.isFilter());
     }
     @Override
@@ -716,14 +714,10 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
             } catch (Exception ex) {
                 log.warn("onSearch()", ex);
             }
-            jSearchWarnLabel.setVisible(false);
+            updateSearchResults(false, false);
         } else {
-            String trimmedWord = word.length() > 37 ? word.substring(0, 40) + "..." : word;
             if (offset != -1) {
-                jSearchWarnLabel.setVisible(true);
-                jSearchWarnLabel.setText("<html>Found: <font color=\"blue\"><b>"
-                        + StringEscapeUtils.escapeHtml(trimmedWord)
-                        + "</b></font></html>");
+                updateSearchResults(true, true);
                 if (scrollToSearchResult) {
                     needToScrolldown = false;
                     try {
@@ -733,10 +727,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                     }
                 }
             } else {
-                jSearchWarnLabel.setVisible(true);
-                jSearchWarnLabel.setText("<html>Not found: <font color=\"red\"><b>"
-                        + StringEscapeUtils.escapeHtml(trimmedWord)
-                        + "</b></font></html>");
+                updateSearchResults(true, false);
             }
         }
     }
@@ -753,7 +744,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     public void onSearchCleared() {
         jTraceTextArea.setText(settings.getTraceContent());
         jSearchComboBox.setSelectedItem("");
-        jSearchWarnLabel.setVisible(false);
+        updateSearchResults(false, false);
         ((JScrollHighlightPanel)jScrollHighlight).setIndexes(null);
     }
 
@@ -810,6 +801,29 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         newFeaturesPanel = null;
         jPanel1.validate();
         jPanel1.repaint();
+    }
+
+    private void updateCommaTooltipCheckBox() {
+        if (settings.isFilter()) {
+            jSearchComboBox.setToolTipText("Use comma to separate multiple keywords");
+        } else {
+            jSearchComboBox.setToolTipText(null);
+        }
+    }
+
+    private void updateSearchResults(boolean show, boolean found) {
+        JComponent c = ((JComponent)jSearchComboBox.getEditor().getEditorComponent());
+        c.setOpaque(show);
+        if (!show) {
+            c.setBackground(Conf.DEFAULT_SEARCH_COMBO_COLOR);
+        } else {
+            if (found) {
+                c.setBackground(Conf.FOUND_SEARCH_COMBO_COLOR);
+            } else {
+                c.setBackground(Conf.NOTFOUND_SEARCH_COMBO_COLOR);
+            }
+        }
+
     }
 
 }
