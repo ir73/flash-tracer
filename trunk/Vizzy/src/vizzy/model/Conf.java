@@ -44,5 +44,5 @@ public class Conf {
     public static final String URL_VIZZY_PLUGIN = "http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin";
     public static final String DEFAULT_WINDOWS_EDITOR_PATH = "\"C:\\Program Files\\FlashDevelop\\FlashDevelop.exe\" \"%file%\" -line %line%";
     public static final String DEFAULT_MAC_EDITOR_PATH = "/Applications/TextEdit.app/Contents/MacOS/TextEdit %file%";
-    public static final String DEFAULT_LINUX_EDITOR_PATH = "vi %file%";
+    public static final String DEFAULT_LINUX_EDITOR_PATH = "gedit %file%";
 }
