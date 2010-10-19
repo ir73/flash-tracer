@@ -13,6 +13,7 @@
     <import file="nbproject/profiler-build-impl.xml"/>
 
     <property name="version" value="2.3"/>
+    <property name="fd_version" value="1.0"/>
     <property name="dist.dir" value="dist"/>
     <property name="dist.dir.win" value="${dist.dir}/win"/>
     <property name="dist.dir.mac" value="${dist.dir}/mac"/>
@@ -43,6 +44,10 @@
         <copy todir="${dist.dir.win}/${ant.project.name}" overwrite="true">
             <fileset dir="etc/win" />
         </copy>
+
+        <!--    fdz file creation    -->
+        <zip basedir="res/win/FD/fdz"
+            destfile="${dist.dir}/VizzyPlugin_v${fd_version}.fdz"/>
 
         <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="res/win/launch4j/launch4j.jar
 		    :res/win/launch4j/lib/xstream.jar" />
@@ -85,7 +90,9 @@
 
     <target name="build-vizzy-all" depends="build-vizzy-win, build-vizzy-mac, build-vizzy-linux">
         <delete dir="${dist.dir}/${ant.project.name}" />
-        <zip basedir="${dist.dir}" destfile="${dist.dir}/${ant.project.name}_v${version}.zip"/>
+        <zip destfile="${dist.dir}/${ant.project.name}_v${version}.zip" 
+            basedir="${dist.dir}"
+            excludes="*.*"/>
     </target>
 
     <!--
