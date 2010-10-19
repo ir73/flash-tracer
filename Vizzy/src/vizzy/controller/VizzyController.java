@@ -149,11 +149,11 @@ public final class VizzyController implements ILogFileListener {
 
 
         if (Conf.OSName.indexOf(Conf.OS_WINDOWS) > -1) {
-            settings.setCustomASEditor(Conf.FLASHDEVELOP_EDITOR_PATH, true);
+            settings.setCustomASEditor(Conf.DEFAULT_WINDOWS_EDITOR_PATH, true);
         } else if (Conf.OSName.indexOf(Conf.OS_MAC_OS_X) > -1) {
-            settings.setCustomASEditor(Conf.TEXTEDIT_EDITOR_PATH, true);
+            settings.setCustomASEditor(Conf.DEFAULT_MAC_EDITOR_PATH, true);
         } else if (Conf.OSName.indexOf(Conf.OS_LINUX) > -1) {
-            settings.setCustomASEditor(Conf.GEDIT_EDITOR_PATH, true);
+            settings.setCustomASEditor(Conf.DEFAULT_LINUX_EDITOR_PATH, true);
         }
 
         ToolTipManager.sharedInstance().setInitialDelay(0);

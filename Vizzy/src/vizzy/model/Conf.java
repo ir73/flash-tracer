@@ -42,7 +42,7 @@ public class Conf {
     public static final String URL_DONATION = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JPVRL8G9JYAVL&lc=EE&item_name=Vizzy%20Flash%20Tracer&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted";
     public static final String URL_MAILTO = "mailto:sergei.ledvanov@gmail.com";
     public static final String URL_VIZZY_PLUGIN = "http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin";
-    public static final String FLASHDEVELOP_EDITOR_PATH = "\"C:\\Program Files\\FlashDevelop\\FlashDevelop.exe\" \"%file%\" -line %line%";
-    public static final String TEXTEDIT_EDITOR_PATH = "/Applications/TextEdit.app/Contents/MacOS/TextEdit \"%file%\"";
-    public static final String GEDIT_EDITOR_PATH = "gedit %file%";
+    public static final String DEFAULT_WINDOWS_EDITOR_PATH = "\"C:\\Program Files\\FlashDevelop\\FlashDevelop.exe\" \"%file%\" -line %line%";
+    public static final String DEFAULT_MAC_EDITOR_PATH = "/Applications/TextEdit.app/Contents/MacOS/TextEdit %file%";
+    public static final String DEFAULT_LINUX_EDITOR_PATH = "vi %file%";
 }
