@@ -1,4 +1,5 @@
 #summary Troubleshooting issues
+#labels Deprecated
 
 = Details =
 
