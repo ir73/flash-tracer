@@ -11,7 +11,6 @@
 
 package vizzy.forms;
 
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -24,13 +23,13 @@ import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import vizzy.comp.BGComboBoxEditor;
+import vizzy.comp.BGComboBoxEditorComponent;
 import vizzy.comp.JScrollHighlightPanel;
 import vizzy.comp.NewFeaturesPanel;
 import vizzy.controller.VizzyController;
@@ -130,22 +129,23 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jLayeredPane1.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jButton1.setText("Clear");
-        jButton1.setPreferredSize(new java.awt.Dimension(59, 24));
+        jButton1.setPreferredSize(new java.awt.Dimension(70, 23));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jClearActionPerformed(evt);
             }
         });
-        jButton1.setBounds(255, 38, 70, 23);
+        jButton1.setBounds(255, 37, 70, 23);
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchComboBox.setEditable(true);
+        jSearchComboBox.setPreferredSize(new java.awt.Dimension(240, 24));
         jSearchComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jSearchComboBoxActionPerformed(evt);
             }
         });
-        jSearchComboBox.setBounds(9, 38, 240, 23);
+        jSearchComboBox.setBounds(9, 37, 240, 24);
         jLayeredPane1.add(jSearchComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jPanel1.add(jLayeredPane1);
@@ -500,6 +500,8 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     @Override
     public void onInit() {
         initComponents();
+        jSearchComboBox.setEditor(new BGComboBoxEditor());
+        jSearchComboBox.setOpaque(true);
     }
     @Override
     public void onAfterInit() {
@@ -812,20 +814,16 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     }
 
     private void updateSearchResults(boolean show, boolean found) {
-        JComponent c = ((JComponent)jSearchComboBox.getEditor().getEditorComponent());
-        if (Conf.OSName.indexOf(Conf.OS_WINDOWS) > -1) {
-            c.setOpaque(show);
-        }
+        BGComboBoxEditorComponent c = ((BGComboBoxEditorComponent)jSearchComboBox.getEditor().getEditorComponent());
         if (!show) {
-            c.setBackground(Conf.DEFAULT_SEARCH_COMBO_COLOR);
+            c.removeHighlight();
         } else {
             if (found) {
-                c.setBackground(Conf.FOUND_SEARCH_COMBO_COLOR);
+                c.highlight(Conf.FOUND_SEARCH_COMBO_COLOR);
             } else {
-                c.setBackground(Conf.NOTFOUND_SEARCH_COMBO_COLOR);
+                c.highlight(Conf.NOTFOUND_SEARCH_COMBO_COLOR);
             }
         }
-
     }
 
 }
