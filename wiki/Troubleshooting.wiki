@@ -1,0 +1,27 @@
+#summary Troubleshooting issues
+
+==Troubleshooting==
+If you do not see anything in your Vizzy debug screen, please check the following:
+<br><br>
+<b>Debug Flash Player</b>
+<br>
+Check that you have debug flash player installed instead of a regular one. To check, just right click on your any flash object and if you see Debugger option there, then you have debug flash player installed. 
+Install debug Flash Players from http://www.adobe.com/support/flashplayer/downloads.html
+By default, Vizzy should detect flash player automatically at first launch.
+<br><br>
+<b>mm.cfg</b>
+<br>
+Check that you have mm.cfg file in your user's directory (Macintosh OS X: /Library/Application Support/Macromedia, Windows 2000/XP: c:\Documents and Settings\username\, Windows Vista: C:\Users\username, Linux: /home/username)
+If it does not exist, please create mm.cfg in that directly with 2 lines of content:
+{{{
+TraceOutputFileEnable=1
+ErrorReportingEnable=1
+}}}
+<br><br>
+<b>flashlog.txt</b>
+<br>
+Check that Vizzy has correctly detected path to your flashlog.txt file. Open Vizzy -> Extra -> Options -> Log File. In "flashlog.txt" input field you should see a path to flashlog.txt. If it's not correct, please fix it and click OK.
+<br><br>
+<b>Locking a file</b>
+<br>
+If you have Flash CS5+ installed you should check your processes for running Adobe CS5 Service Manager (you should see it in Windows Task Manager). You should terminate that process because it locks flashlog.txt file for some reason and does not allow to clear it from external applications.
