@@ -242,7 +242,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
             }
         });
 
-        jOnTopCheckbox.setText("Always On Top");
+        jOnTopCheckbox.setText("Always on Top");
         jOnTopCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jOnTopCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jOnTopCheckbox.addActionListener(new java.awt.event.ActionListener() {
@@ -252,7 +252,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         });
 
         jAutorefreshCheckBox.setSelected(true);
-        jAutorefreshCheckBox.setText("Auto refresh");
+        jAutorefreshCheckBox.setText("Auto Refresh");
         jAutorefreshCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jAutorefreshCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jAutorefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -813,7 +813,9 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
 
     private void updateSearchResults(boolean show, boolean found) {
         JComponent c = ((JComponent)jSearchComboBox.getEditor().getEditorComponent());
-        c.setOpaque(show);
+        if (Conf.OSName.indexOf(Conf.OS_WINDOWS) > -1) {
+            c.setOpaque(show);
+        }
         if (!show) {
             c.setBackground(Conf.DEFAULT_SEARCH_COMBO_COLOR);
         } else {

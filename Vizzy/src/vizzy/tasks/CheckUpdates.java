@@ -82,7 +82,7 @@ public class CheckUpdates extends Thread {
                             + "Note: if you do not want to receive update\n"
                             + "notifications anymore, you can turn\n" +
                             "them off in Options menu.\n\n" +
-                            "Here is a list of features that new version has:\n" +
+                            "New features:\n" +
                             newFeatures,
                             "New Version",
                             JOptionPane.YES_NO_OPTION,
@@ -95,7 +95,7 @@ public class CheckUpdates extends Thread {
                     }
                 } else {
                     if (reportIfOk) {
-                        JOptionPane.showMessageDialog(null, "You have the latest version already!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "You have the latest version!", "Info", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
