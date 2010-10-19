@@ -4,7 +4,7 @@
  */
 package vizzy.tasks;
 
-import edu.stanford.ejalbert.BrowserLauncher;
+import java.awt.Desktop;
 import java.io.File;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
@@ -39,17 +39,12 @@ public class DebugPlayerDetector {
 
     private void detect() {
         try {
-            String p = getHtmlFile();
-            new BrowserLauncher().openURLinBrowser(p);
+            File f = new File(Conf.vizzyRootDir, "fp-detect/fp-detect.html");
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(f);
+            }
         } catch (Exception ex) {
             log.warn("cannot open browser", ex);
         }
-    }
-
-    private String getHtmlFile() {
-        File f = new File(Conf.vizzyRootDir, "fp-detect/fp-detect.html");
-        String p = f.getAbsolutePath();
-        p = "file://" + p.replaceAll("\\\\", "/");
-        return p;
     }
 }
