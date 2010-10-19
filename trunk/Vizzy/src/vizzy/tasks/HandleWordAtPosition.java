@@ -151,7 +151,7 @@ public class HandleWordAtPosition {
                     Desktop.getDesktop().open(file);
                 }
             } else if (customASEditor != null) {
-                String command = customASEditor.replace("%file%", "\"" + source.filePath + "\"").replace("%line%", String.valueOf(source.lineNum));
+                String command = customASEditor.replace("%file%", "" + source.filePath + "").replace("%line%", String.valueOf(source.lineNum));
                 Runtime.getRuntime().exec(command);
             }
         }
