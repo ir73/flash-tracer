@@ -1,0 +1,5 @@
+C:\svn-projects-repos\fd\flashdevelop_sergei\flashdevelop\FD3\External\Plugins\VizzyPlugin\obj\Debug\ResolveAssemblyReference.cache
+C:\svn-projects-repos\fd\flashdevelop_sergei\flashdevelop\FD3\FlashDevelop\Bin\Debug\Plugins\VizzyPlugin.dll
+C:\svn-projects-repos\fd\flashdevelop_sergei\flashdevelop\FD3\FlashDevelop\Bin\Debug\Plugins\VizzyPlugin.pdb
+C:\svn-projects-repos\fd\flashdevelop_sergei\flashdevelop\FD3\External\Plugins\VizzyPlugin\obj\Debug\VizzyPlugin.dll
+C:\svn-projects-repos\fd\flashdevelop_sergei\flashdevelop\FD3\External\Plugins\VizzyPlugin\obj\Debug\VizzyPlugin.pdb
