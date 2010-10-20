@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
@@ -130,13 +131,13 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jLayeredPane1.add(jFilterCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jButton1.setText("Clear");
-        jButton1.setPreferredSize(new java.awt.Dimension(70, 23));
+        jButton1.setPreferredSize(new java.awt.Dimension(80, 23));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jClearActionPerformed(evt);
             }
         });
-        jButton1.setBounds(255, 37, 70, 23);
+        jButton1.setBounds(255, 37, 80, 23);
         jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSearchComboBox.setEditable(true);
@@ -267,12 +268,12 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
-                .add(jAutorefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jAutorefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jWordWrapCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jOnTopCheckbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 124, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 68, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 56, Short.MAX_VALUE)
                 .add(jClearTraceButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -283,8 +284,8 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 .add(jAutorefreshCheckBox)
                 .add(logTypeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(jClearTraceButton)
-                .add(jWordWrapCheckbox)
-                .add(jOnTopCheckbox))
+                .add(jOnTopCheckbox)
+                .add(jWordWrapCheckbox))
         );
 
         jPanel1.add(jPanel3);
@@ -501,7 +502,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     @Override
     public void onInit() {
         initComponents();
-        searchComboboxBorder = jSearchComboBox.getBorder();
+        searchComboboxBorder = ((JComponent)jSearchComboBox.getEditor().getEditorComponent()).getBorder();
     }
     @Override
     public void onAfterInit() {
@@ -814,13 +815,14 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     }
 
     private void updateSearchResults(boolean show, boolean found) {
+        JComponent editor = (JComponent)jSearchComboBox.getEditor().getEditorComponent();
         if (!show) {
-            jSearchComboBox.setBorder(searchComboboxBorder);
+            editor.setBorder(searchComboboxBorder);
         } else {
             if (found) {
-                jSearchComboBox.setBorder(BorderFactory.createLineBorder(Conf.FOUND_SEARCH_COMBO_COLOR, 2));
+                editor.setBorder(BorderFactory.createLineBorder(Conf.FOUND_SEARCH_COMBO_COLOR, 2));
             } else {
-                jSearchComboBox.setBorder(BorderFactory.createLineBorder(Conf.NOTFOUND_SEARCH_COMBO_COLOR, 2));
+                editor.setBorder(BorderFactory.createLineBorder(Conf.NOTFOUND_SEARCH_COMBO_COLOR, 2));
             }
         }
     }
