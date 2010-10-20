@@ -22,14 +22,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.Date;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
 import javax.swing.text.BadLocationException;
 import org.apache.log4j.Logger;
-import vizzy.comp.BGComboBoxEditor;
-import vizzy.comp.BGComboBoxEditorComponent;
 import vizzy.comp.JScrollHighlightPanel;
 import vizzy.comp.NewFeaturesPanel;
 import vizzy.controller.VizzyController;
@@ -47,6 +47,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     private static final Logger log = Logger.getLogger(VizzyForm.class);
 
     private NewFeaturesPanel newFeaturesPanel;
+    private Border searchComboboxBorder;
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -500,8 +501,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     @Override
     public void onInit() {
         initComponents();
-        jSearchComboBox.setEditor(new BGComboBoxEditor());
-        jSearchComboBox.setOpaque(true);
+        searchComboboxBorder = jSearchComboBox.getBorder();
     }
     @Override
     public void onAfterInit() {
@@ -814,14 +814,13 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     }
 
     private void updateSearchResults(boolean show, boolean found) {
-        BGComboBoxEditorComponent c = ((BGComboBoxEditorComponent)jSearchComboBox.getEditor().getEditorComponent());
         if (!show) {
-            c.removeHighlight();
+            jSearchComboBox.setBorder(searchComboboxBorder);
         } else {
             if (found) {
-                c.highlight(Conf.FOUND_SEARCH_COMBO_COLOR);
+                jSearchComboBox.setBorder(BorderFactory.createLineBorder(Conf.FOUND_SEARCH_COMBO_COLOR, 2));
             } else {
-                c.highlight(Conf.NOTFOUND_SEARCH_COMBO_COLOR);
+                jSearchComboBox.setBorder(BorderFactory.createLineBorder(Conf.NOTFOUND_SEARCH_COMBO_COLOR, 2));
             }
         }
     }
