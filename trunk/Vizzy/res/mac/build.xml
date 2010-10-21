@@ -9,7 +9,7 @@
             classpath="../../../res/mac/jarbundler/jarbundler-2.1.0.jar"/>
         <jarbundler
             bundleid="flash.utils.Vizzy"
-            dir=".."
+            dir="${basedir}"
             verbose="true"
             showPlist="false"
             name="${ant.project.name}"
@@ -25,14 +25,15 @@
             <javafileset dir="${basedir}" includes="fp-detect/**"/>
         </jarbundler>
 
-        <move file="build.xml" tofile="../build.xml" />
+<!--        <move file="build.xml" tofile="../build.xml" />
         <move file="${ant.project.name}-bg.png" tofile="../${ant.project.name}-bg.png" />
         <move file="${ant.project.name}.icns" tofile="../${ant.project.name}.icns" />
-        <move file="DS_Store" tofile="../DS_Store" />
+        <move file="DS_Store" tofile="../DS_Store" />-->
 
-        <delete includeemptydirs="true">
+<!--        <delete includeemptydirs="true">
             <fileset dir="." includes="**/**"/>
-        </delete>
+        </delete>-->
+        <antcall target="dmg" />
 
     </target>
 
@@ -113,8 +114,8 @@
         </exec>
 
     <!-- Delete the temporary image -->
-        <delete file="${app.name}-tmp.dmg"
-            quiet="yes" failonerror="false"/>
+<!--        <delete file="${app.name}-tmp.dmg"
+            quiet="yes" failonerror="false"/>-->
     </target>
 
 
