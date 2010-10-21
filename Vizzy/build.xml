@@ -80,11 +80,11 @@
         </copy>
 
         <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
-            <fileset file="res/mac/Vizzy"/>
+            <fileset file="res/mac/VizzyLauncher"/>
             <fileset file="res/mac/Vizzy.icns"/>
-        </copy>
-        <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
-            <fileset file="build-mac.xml"/>
+            <fileset file="res/mac/build.xml"/>
+            <fileset file="res/mac/Vizzy-bg.png"/>
+            <fileset file="res/mac/DS_Store"/>
         </copy>
     </target>
 
