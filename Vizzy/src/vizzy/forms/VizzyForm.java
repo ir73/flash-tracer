@@ -37,6 +37,7 @@ import vizzy.controller.VizzyController;
 import vizzy.listeners.INewFeaturesListener;
 import vizzy.listeners.IVizzyView;
 import vizzy.model.Conf;
+import vizzy.model.SearchResult;
 import vizzy.model.SettingsModel;
 
 /**
@@ -65,6 +66,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jFilterCheckbox = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
         jSearchComboBox = new javax.swing.JComboBox();
+        jRegexpCheckbox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTraceTextArea = new javax.swing.JTextArea();
@@ -149,6 +151,17 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         });
         jSearchComboBox.setBounds(9, 37, 240, 24);
         jLayeredPane1.add(jSearchComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jRegexpCheckbox.setText("RegExp");
+        jRegexpCheckbox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRegexpCheckbox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jRegexpCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRegexpCheckboxChecked(evt);
+            }
+        });
+        jRegexpCheckbox.setBounds(212, 18, 100, 15);
+        jLayeredPane1.add(jRegexpCheckbox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jPanel1.add(jLayeredPane1);
 
@@ -457,8 +470,16 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     }//GEN-LAST:event_formWindowLostFocus
 
     private void jSearchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSearchComboBoxActionPerformed
-        controller.searchComboboxChanged((String)jSearchComboBox.getSelectedItem());
+        if (!settings.isUIActionsAvailable()) return;
+        if (evt.getActionCommand().equals("comboBoxChanged")) {
+            controller.searchComboboxChanged((String)jSearchComboBox.getSelectedItem());
+        }
     }//GEN-LAST:event_jSearchComboBoxActionPerformed
+
+    private void jRegexpCheckboxChecked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRegexpCheckboxChecked
+        if (!settings.isUIActionsAvailable()) return;
+        controller.regexpClicked(jRegexpCheckbox.isSelected());
+    }//GEN-LAST:event_jRegexpCheckboxChecked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JCheckBox jAutorefreshCheckBox;
@@ -478,6 +499,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    public javax.swing.JCheckBox jRegexpCheckbox;
     private javax.swing.JPanel jScrollHighlight;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox jSearchComboBox;
@@ -534,10 +556,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 }
             }
         });
-    }
 
-    private void initVars() {
-        traceAreaScrollBar = jScrollPane1.getVerticalScrollBar();
         jSearchComboBox.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent e) {
             }
@@ -548,6 +567,10 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 controller.searchKeyReleased((String) jSearchComboBox.getSelectedItem(), e);
             }
         });
+    }
+
+    private void initVars() {
+        traceAreaScrollBar = jScrollPane1.getVerticalScrollBar();
         getHighLightScroll().setTa(jTraceTextArea);
     }
 
@@ -633,6 +656,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jFilterCheckbox.setSelected(settings.isFilter());
         updateCommaTooltipCheckBox();
         jHighlightAllCheckbox.setEnabled(!settings.isFilter());
+        jRegexpCheckbox.setEnabled(!settings.isFilter());
     }
     @Override
     public void onAutoRefreshChanged(boolean autoRefresh) {
@@ -691,7 +715,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
             needToScrolldown = true;
             ((JScrollHighlightPanel) jScrollHighlight).setIndexes(null);
         } else {
-            boolean filteringOff = !(settings.getSearcher().isWasSearching() && settings.getSearcher().isFilter());
+            boolean filteringOff = !(settings.getSearcher().isWasSearching() && settings.isFilter());
             if (filteringOff) {
                 jTraceTextArea.setText(traceContent);
             }
@@ -710,27 +734,27 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     }
     
     @Override
-    public void onSearch(String word, int offset, boolean scrollToSearchResult) {
-        if (settings.getSearcher().isFilter()) {
+    public void onSearch(String word, SearchResult searchResult, boolean scrollToSearchResult) {
+        if (settings.isFilter()) {
             try {
                 jTraceTextArea.setText(settings.getSearcher().filter(settings.getTraceContent(), word));
             } catch (Exception ex) {
                 log.warn("onSearch()", ex);
             }
-            updateSearchResults(false, false);
+            highlightSearchComboBox(false, false);
         } else {
-            if (offset != -1) {
-                updateSearchResults(true, true);
+            if (searchResult != null) {
+                highlightSearchComboBox(true, true);
                 if (scrollToSearchResult) {
                     needToScrolldown = false;
                     try {
                         jTraceTextArea.scrollRectToVisible(jTraceTextArea
-                                .modelToView(offset));
+                                .modelToView(searchResult.offset));
                     } catch (BadLocationException e) {
                     }
                 }
             } else {
-                updateSearchResults(true, false);
+                highlightSearchComboBox(true, false);
             }
         }
     }
@@ -747,7 +771,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     public void onSearchCleared() {
         jTraceTextArea.setText(settings.getTraceContent());
         jSearchComboBox.setSelectedItem("");
-        updateSearchResults(false, false);
+        highlightSearchComboBox(false, false);
         ((JScrollHighlightPanel)jScrollHighlight).setIndexes(null);
     }
 
@@ -814,7 +838,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         }
     }
 
-    private void updateSearchResults(boolean show, boolean found) {
+    private void highlightSearchComboBox(boolean show, boolean found) {
         JComponent editor = (JComponent)jSearchComboBox.getEditor().getEditorComponent();
         if (!show) {
             editor.setBorder(searchComboboxBorder);
@@ -825,6 +849,10 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
                 editor.setBorder(BorderFactory.createLineBorder(Conf.NOTFOUND_SEARCH_COMBO_COLOR, 2));
             }
         }
+    }
+
+    public void onRegexpChanged(boolean regexp) {
+        jRegexpCheckbox.setSelected(regexp);
     }
 
 }

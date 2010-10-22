@@ -35,6 +35,7 @@ public class SettingsModel {
     private String policyLogFileName;
     private int logType = 0;
     private String customASEditor = "";
+    private boolean isRegexp = false;
     private boolean isDefaultASEditor = true;
     private boolean highlightStackTraceErrors = true;
     private boolean isAutoRefresh = true;
@@ -99,7 +100,6 @@ public class SettingsModel {
 
     public void setHighlightAll(boolean b, boolean doFireEvent) {
         isHightlightAll = b;
-        searcher.setHighlightAll(this.isHightlightAll);
         if (doFireEvent && listener != null) {
             getListener().onHightlightAllChanged(this.isHightlightAll);
         }
@@ -121,7 +121,6 @@ public class SettingsModel {
 
     public void setFilter(boolean b, boolean doFireEvent) {
         isFilter = b;
-        searcher.setFilter(this.isFilter);
         if (doFireEvent && listener != null) {
             getListener().onFilterChanged(this.isFilter);
         }
@@ -539,9 +538,9 @@ public class SettingsModel {
         this.isUIActionsAvailable = isUIActionsAvailable;
     }
 
-    public void search(String word, int offset, boolean scrollToSearchResult) {
+    public void search(String word, SearchResult searchResult, boolean scrollToSearchResult) {
         if (listener != null) {
-            listener.onSearch(word, offset, scrollToSearchResult);
+            listener.onSearch(word, searchResult, scrollToSearchResult);
         }
     }
 
@@ -627,6 +626,16 @@ public class SettingsModel {
         }
     }
 
+    public boolean isRegexp() {
+        return isRegexp;
+    }
+
+    public void setRegexp(boolean isRegexp, boolean doFireEvent) {
+        this.isRegexp = isRegexp;
+        if (doFireEvent && listener != null) {
+            getListener().onRegexpChanged(this.isRegexp);
+        }
+    }
     
 
 }

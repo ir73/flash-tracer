@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
+import vizzy.model.SearchResult;
 import vizzy.model.SettingsModel;
 
 /**
@@ -71,7 +72,7 @@ public interface ISettingsListener {
 
     public void onTraceContentChanged(String traceContent);
 
-    public void onSearch(String word, int lastCarPos, boolean scrollToSearchResult);
+    public void onSearch(String word, SearchResult searchResult, boolean scrollToSearchResult);
 
     public void onOptionsClosed();
 
@@ -94,5 +95,7 @@ public interface ISettingsListener {
     public void onShowNewFeaturesPanel();
 
     public void onNewFeaturesPanelShownChanged(boolean wasNewFeaturesPanelShown);
+
+    public void onRegexpChanged(boolean regexp);
 
 }

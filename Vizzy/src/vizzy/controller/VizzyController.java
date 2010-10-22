@@ -39,6 +39,7 @@ import vizzy.listeners.IUpdateCheckListener;
 import vizzy.listeners.IVizzyView;
 import vizzy.model.Conf;
 import vizzy.model.FlashPlayerFiles;
+import vizzy.model.SearchResult;
 import vizzy.model.SettingsModel;
 import vizzy.model.SourceAndLine;
 import vizzy.tasks.CheckUpdates;
@@ -225,7 +226,7 @@ public final class VizzyController implements ILogFileListener {
     }
 
     private void initVars() {
-        settings.setSearcher(new WordSearcher());
+        settings.setSearcher(new WordSearcher(settings));
         settings.setKeywordsHighlighter(new KeywordsHighlighter());
         settings.setHandleWordAtPosition(new HandleWordAtPosition());
         settings.setCodePopupHandler(new ShowCodePopupTask());
@@ -339,7 +340,8 @@ public final class VizzyController implements ILogFileListener {
         settings.setTraceContent(log, true);
 
         if (settings.getSearcher().isWasSearching()) {
-            startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
+            startSearch(false, false);
+//            startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
         }
 
         highlightStackTraceErrors();
@@ -514,9 +516,7 @@ public final class VizzyController implements ILogFileListener {
     }
 
     public void clearSearchClicked() {
-        settings.getSearcher().setWord("");
-        settings.getSearcher().clearHighlights();
-        settings.getSearcher().setWasSearching(false);
+        settings.getSearcher().clearSearch();
         highlightStackTraceErrors();
         settings.clearSearch();
     }
@@ -563,7 +563,8 @@ public final class VizzyController implements ILogFileListener {
         if (settings.getSearcher().isWasSearching()) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
+                    startSearch(false, false);
+//                    startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
                 }
             });
         }
@@ -647,26 +648,28 @@ public final class VizzyController implements ILogFileListener {
         }
     }
 
-    public void searchKeyReleased(String selectedItem, KeyEvent evt) {
-        if (selectedItem == null) {
+    public void searchKeyReleased(String text, KeyEvent evt) {
+        if (text == null) {
             return;
         }
-        if (selectedItem.equals("")) {
-            clearSearchClicked();
-        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            addSearchKeyword(selectedItem);
-            settings.getSearcher().setWord(selectedItem);
-            settings.getSearcher().setWasSearching(true);
-            startSearch(true);
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (text.equals("")) {
+                clearSearchClicked();
+                return;
+            }
+            settings.setUIActionsAvailable(false);
+            addSearchKeyword(text);
+            settings.getSearcher().setWord(text);
+            startSearch(true, true);
             highlightStackTraceErrors();
-        } 
+            settings.setUIActionsAvailable(true);
+        }
     }
 
     public void highlightAllClicked(boolean selected, Object selectedItem) {
         setHighlightAll(selected, true);
         if (selectedItem != null && !selectedItem.equals("")) {
-            settings.getSearcher().setWasSearching(true);
-            startSearch(true);
+            startSearch(false, true);
             highlightStackTraceErrors();
         }
     }
@@ -674,34 +677,33 @@ public final class VizzyController implements ILogFileListener {
     public void filterClicked(boolean selected, Object selectedItem) {
         setFilter(selected, true);
         if (selectedItem != null && !selectedItem.equals("")) {
-            settings.getSearcher().setWasSearching(true);
-            startSearch(false);
+            startSearch(true, false);
             highlightStackTraceErrors();
         }
     }
 
-    private void startSearch(boolean scrollToSearchResult) {
-        startSearch(settings.getSearcher().getLastCaretPos(), scrollToSearchResult);
-    }
+//    private void startSearch(boolean scrollToSearchResult) {
+//        startSearch(settings.getSearcher().getLastCaretPos(), scrollToSearchResult);
+//    }
 
-    private void startSearch(int lastCarPos, boolean scrollToSearchResult) {
+    private void startSearch(boolean searchNext, boolean scrollToSearchResult) {
         String word = (String) settings.getSearcher().getWord();
-        if (word == null) {
+        if (word == null || word.equals("")) {
             return;
         }
-        
-        if (settings.getSearcher().isFilter()) {
-            settings.search(word, -1, scrollToSearchResult);
+
+        if (settings.isFilter()) {
+            settings.search(word, null, scrollToSearchResult);
         } else {
-            int offset = settings.getSearcher().search(settings.getTraceContent(), lastCarPos);
-            settings.search(word, offset, scrollToSearchResult);
-            if (offset != -1) {
-                if (scrollToSearchResult) {
-                        settings.getSearcher().setLastCaretPos(offset + 1);
-                }
-            } else {
-                settings.getSearcher().setLastCaretPos(0);
-            }
+            SearchResult searchResult = settings.getSearcher().search(settings.getTraceContent(), searchNext);
+            settings.search(word, searchResult, scrollToSearchResult);
+//            if (searchResult != null) {
+//                if (scrollToSearchResult) {
+//                        settings.getSearcher().setLastCaretPos(searchResult.offset + searchResult.wordSize);
+//                }
+//            } else {
+//                settings.getSearcher().setLastCaretPos(0);
+//            }
         }
     }
 
@@ -712,12 +714,13 @@ public final class VizzyController implements ILogFileListener {
         if (evt.getKeyCode() == KeyEvent.VK_F3
                 && text != null
                 && text.length() > 0) {
+            settings.setUIActionsAvailable(false);
+            settings.highlightTraceKeyword(text);
             addSearchKeyword(text);
             settings.getSearcher().setWord(text);
-            settings.getSearcher().setWasSearching(true);
-            settings.highlightTraceKeyword(text);
-            startSearch(true);
+            startSearch(true, true);
             highlightStackTraceErrors();
+            settings.setUIActionsAvailable(true);
         }
     }
 
@@ -828,11 +831,24 @@ public final class VizzyController implements ILogFileListener {
     public void searchComboboxChanged(String text) {
         if (text != null
                 && text.length() > 0) {
+            settings.setUIActionsAvailable(false);
             addSearchKeyword(text);
             settings.getSearcher().setWord(text);
-            settings.getSearcher().setWasSearching(true);
-            startSearch(true);
+            startSearch(false, true);
             highlightStackTraceErrors();
+            settings.setUIActionsAvailable(true);
+        }
+    }
+
+    public void regexpClicked(boolean selected) {
+        settings.setRegexp(selected, true);
+        if (settings.getSearcher().isWasSearching()) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    startSearch(false, false);
+//                    startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
+                }
+            });
         }
     }
 
