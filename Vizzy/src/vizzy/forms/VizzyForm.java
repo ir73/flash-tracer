@@ -732,30 +732,40 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
     public JTextArea getTextArea() {
         return jTraceTextArea;
     }
-    
+
     @Override
     public void onSearch(String word, SearchResult searchResult, boolean scrollToSearchResult) {
-        if (settings.isFilter()) {
-            try {
-                jTraceTextArea.setText(settings.getSearcher().filter(settings.getTraceContent(), word));
-            } catch (Exception ex) {
-                log.warn("onSearch()", ex);
-            }
-            highlightSearchComboBox(false, false);
-        } else {
-            if (searchResult != null) {
-                highlightSearchComboBox(true, true);
-                if (scrollToSearchResult) {
-                    needToScrolldown = false;
-                    try {
-                        jTraceTextArea.scrollRectToVisible(jTraceTextArea
-                                .modelToView(searchResult.offset));
-                    } catch (BadLocationException e) {
-                    }
+        if (searchResult != null) {
+            highlightSearchComboBox(true, true);
+            if (scrollToSearchResult) {
+                needToScrolldown = false;
+                try {
+                    jTraceTextArea.scrollRectToVisible(jTraceTextArea.modelToView(searchResult.offset));
+                } catch (BadLocationException e) {
                 }
-            } else {
-                highlightSearchComboBox(true, false);
             }
+        } else {
+            highlightSearchComboBox(true, false);
+        }
+    }
+
+    @Override
+    public void afterFilter(String content) {
+        try {
+            jTraceTextArea.setText(content);
+        } catch (Exception ex) {
+            log.warn("onSearch()", ex);
+        }
+        highlightSearchComboBox(false, false);
+    }
+    @Override
+    public void beforeFilter() {
+        try {
+            jTraceTextArea.setText(settings.getTraceContent());
+            jTraceTextArea.repaint();
+            jTraceTextArea.validate();
+        } catch (Exception ex) {
+            log.warn("onSearch()", ex);
         }
     }
     @Override

@@ -548,7 +548,6 @@ public class SettingsModel {
         if (listener != null) {
             listener.onHighlightTraceKeyword(text);
         }
-        
     }
 
     public void optionsClosed() {
@@ -634,6 +633,18 @@ public class SettingsModel {
         this.isRegexp = isRegexp;
         if (doFireEvent && listener != null) {
             getListener().onRegexpChanged(this.isRegexp);
+        }
+    }
+
+    public void beforeFilter() {
+        if (listener != null) {
+            listener.beforeFilter();
+        }
+    }
+
+    public void afterFilter(String content) {
+        if (listener != null) {
+            listener.afterFilter(content);
         }
     }
     

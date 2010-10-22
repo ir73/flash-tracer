@@ -69,7 +69,7 @@ public class WordSearcher {
 
     public void setWord(String word) {
         if (word != null) {
-            if (!word.toLowerCase().equals(this.word)) {
+            if (!word.equals(this.word)) {
                 nextSearchPos = 0;
                 lastSearchPos = 0;
             }
@@ -85,19 +85,6 @@ public class WordSearcher {
         clearHighlights();
         wasSearching = false;
     }
-
-//    private int findClosest(Pattern pattern, String substring) {
-//        int lastIndex = -1;
-//        if (settings.isRegexp()) {
-//            String[] matcher = pattern.split(substring, 2);
-//            if (matcher.length > 1) {
-//                lastIndex = matcher[0].length();
-//            }
-//        } else {
-//            lastIndex = substring.indexOf(word);
-//        }
-//        return lastIndex;
-//    }
 
     class MyHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
         public MyHighlightPainter(Color color) {
@@ -121,14 +108,19 @@ public class WordSearcher {
             return null;
         }
 
+        String sWord;
+        String sContent;
         if (!settings.isRegexp()) {
-            word = word.toLowerCase();
-            content = content.toLowerCase();
+            sWord = word.toLowerCase();
+            sContent = content.toLowerCase();
+        } else {
+            sWord = word;
+            sContent = content;
         }
 
         int position = nextPos ? nextSearchPos : lastSearchPos;
         int tmpIndex;
-        int wordSize = word.length();
+        int wordSize = sWord.length();
         int lastIndex = -1;
         int firstOffset = -1;
         Highlighter highlighter = getTextArea().getHighlighter();
@@ -139,11 +131,11 @@ public class WordSearcher {
         Matcher matcher = null;
         if (settings.isRegexp()) {
             try {
-                pattern = Pattern.compile(word);
+                pattern = Pattern.compile(sWord);
             } catch (Exception e) {
                 return null;
             }
-            matcher = pattern.matcher(content);
+            matcher = pattern.matcher(sContent);
         }
         
 
@@ -158,7 +150,7 @@ public class WordSearcher {
                 return null;
             }
         } else {
-            lastIndex = content.indexOf(word, position);
+            lastIndex = sContent.indexOf(sWord, position);
         }
 
         // if match not found try to search from the beginning
@@ -173,7 +165,7 @@ public class WordSearcher {
                     return null;
                 }
             } else {
-                lastIndex = content.indexOf(word);
+                lastIndex = sContent.indexOf(sWord);
             }
         }
 
@@ -210,7 +202,7 @@ public class WordSearcher {
             } else {
                 lastIndex = 0;
                 while (true) {
-                    lastIndex = content.indexOf(word, lastIndex);
+                    lastIndex = sContent.indexOf(sWord, lastIndex);
                     if (lastIndex == -1) {
                         break;
                     }
@@ -237,10 +229,6 @@ public class WordSearcher {
         return new SearchResult(firstOffset, wordSize);
     }
 
-//    public void setLastCaretPos(int lastCaretPos) {
-//        this.lastCaretPos = lastCaretPos;
-//    }
-
     public boolean isWasSearching() {
         return wasSearching;
     }
@@ -252,28 +240,28 @@ public class WordSearcher {
         }
     }
 
-    public String filter(String content, String word) throws Exception {
+    public String filter(String content) throws Exception {
         wasSearching = true;
 
-        word = word.toLowerCase();
-        content = content.toLowerCase();
-        
         clearHighlights();
         
         if (word == null || word.equals("")) {
             return "";
         }
 
-        String[] words = word.split(",");
+        String sWord = word.toLowerCase();
+        String sContent = content.toLowerCase();
+
+        String[] words = sWord.split(",");
         
         StringBuilder sb = new StringBuilder("");
-        getTextArea().setText(content);
+//        getTextArea().setText(content);
         int totalLines = getTextArea().getLineCount();
 
         for (int i=0; i < totalLines; i++) {
             int start = getTextArea().getLineStartOffset(i);
             int end   = getTextArea().getLineEndOffset(i);
-            String lineText = content.substring(start, end);
+            String lineText = sContent.substring(start, end);
 
             for (int j = 0; j < words.length; j++) {
                 String w = words[j];
@@ -282,9 +270,7 @@ public class WordSearcher {
                     break;
                 }
             }
-            
         }
-        
         return sb.toString();
     }
     
