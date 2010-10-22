@@ -98,4 +98,8 @@ public interface ISettingsListener {
 
     public void onRegexpChanged(boolean regexp);
 
+    public void beforeFilter();
+
+    public void afterFilter(String content);
+
 }

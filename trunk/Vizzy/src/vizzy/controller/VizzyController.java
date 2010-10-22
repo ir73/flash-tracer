@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Timer;
+import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -693,7 +694,14 @@ public final class VizzyController implements ILogFileListener {
         }
 
         if (settings.isFilter()) {
-            settings.search(word, null, scrollToSearchResult);
+            settings.beforeFilter();
+            String content;
+            try {
+                content = settings.getSearcher().filter(settings.getTraceContent());
+                settings.afterFilter(content);
+            } catch (Exception ex) {
+                java.util.logging.Logger.getLogger(VizzyController.class.getName()).log(Level.SEVERE, "filtering exception", ex);
+            }
         } else {
             SearchResult searchResult = settings.getSearcher().search(settings.getTraceContent(), searchNext);
             settings.search(word, searchResult, scrollToSearchResult);
