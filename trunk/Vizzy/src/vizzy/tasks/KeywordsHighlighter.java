@@ -35,7 +35,7 @@ public class KeywordsHighlighter {
 
     private JTextArea textArea;
 
-    public boolean highlight() {
+    public synchronized boolean highlight() {
         Highlighter highlighter = getTextArea().getHighlighter();
         
         clearHighlights();
@@ -64,7 +64,7 @@ public class KeywordsHighlighter {
         return highlighted;
     }
 
-    public void clearHighlights() {
+    public synchronized void clearHighlights() {
         Highlighter highlighter = getTextArea().getHighlighter();
         for (Object object : highlightObjects) {
             highlighter.removeHighlight(object);
