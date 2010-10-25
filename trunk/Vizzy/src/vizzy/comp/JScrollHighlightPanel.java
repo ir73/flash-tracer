@@ -24,6 +24,7 @@ public class JScrollHighlightPanel extends JPanel {
     private JTextArea ta;
     private final static int MARKER_HEIGHT = 3;
     private final static int MARKER_X = 2;
+    private boolean allowHighlighting = false;
 
     public ArrayList<Integer> getIndexes() {
         return indexes;
@@ -37,6 +38,10 @@ public class JScrollHighlightPanel extends JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+
+        if (!allowHighlighting) {
+            return;
+        }
 
         if (indexes != null) {
             double textAreaHeight = (double)getTa().getHeight();
@@ -67,5 +72,13 @@ public class JScrollHighlightPanel extends JPanel {
 
     public void setTa(JTextArea ta) {
         this.ta = ta;
+    }
+
+    public boolean isAllowHighlighting() {
+        return allowHighlighting;
+    }
+
+    public void setAllowHighlighting(boolean allowHighlighting) {
+        this.allowHighlighting = allowHighlighting;
     }
 }
