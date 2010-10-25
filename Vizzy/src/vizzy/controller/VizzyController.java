@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Timer;
-import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -341,10 +340,8 @@ public final class VizzyController implements ILogFileListener {
         settings.setTraceContent(log, true);
 
         if (settings.getSearcher().isWasSearching()) {
-            startSearch(false, false);
-//            startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
+            startSearch(settings.getSearcher().getLastSearchPos(), false);
         }
-
         highlightStackTraceErrors();
     }
 
@@ -564,8 +561,8 @@ public final class VizzyController implements ILogFileListener {
         if (settings.getSearcher().isWasSearching()) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    startSearch(false, false);
-//                    startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
+                    startSearch(settings.getSearcher().getLastSearchPos(), false);
+                    highlightStackTraceErrors();
                 }
             });
         }
@@ -649,46 +646,53 @@ public final class VizzyController implements ILogFileListener {
         }
     }
 
-    public void searchKeyReleased(String text, KeyEvent evt) {
-        if (text == null) {
-            return;
-        }
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            if (text.equals("")) {
-                clearSearchClicked();
-                return;
-            }
-            settings.setUIActionsAvailable(false);
-            addSearchKeyword(text);
-            settings.getSearcher().setWord(text);
-            startSearch(true, true);
-            highlightStackTraceErrors();
-            settings.setUIActionsAvailable(true);
-        }
-    }
-
-    public void highlightAllClicked(boolean selected, Object selectedItem) {
-        setHighlightAll(selected, true);
-        if (selectedItem != null && !selectedItem.equals("")) {
-            startSearch(false, true);
-            highlightStackTraceErrors();
-        }
-    }
-
-    public void filterClicked(boolean selected, Object selectedItem) {
-        setFilter(selected, true);
-        if (selectedItem != null && !selectedItem.equals("")) {
-            startSearch(true, false);
-            highlightStackTraceErrors();
-        }
-    }
-
-//    private void startSearch(boolean scrollToSearchResult) {
-//        startSearch(settings.getSearcher().getLastCaretPos(), scrollToSearchResult);
+//    public void searchKeyReleased(String text, KeyEvent evt) {
+//        if (text == null) {
+//            return;
+//        }
+//        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+//            if (text.equals("")) {
+//                clearSearchClicked();
+//                return;
+//            }
+//            settings.setUIActionsAvailable(false);
+//            addSearchKeyword(text);
+//            settings.getSearcher().setWord(text);
+//            startSearch(true, true);
+//            highlightStackTraceErrors();
+//            settings.setUIActionsAvailable(true);
+//        }
 //    }
 
-    private void startSearch(boolean searchNext, boolean scrollToSearchResult) {
-        String word = (String) settings.getSearcher().getWord();
+    public void highlightAllClicked(boolean selected) {
+        setHighlightAll(selected, true);
+        if (settings.getSearcher().isWasSearching()) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    startSearch(settings.getSearcher().getLastSearchPos(), true);
+                    highlightStackTraceErrors();
+                }
+            });
+        }
+    }
+
+    public void filterClicked(boolean selected) {
+        setFilter(selected, true);
+        if (settings.getSearcher().isWasSearching()) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    startSearch(settings.getSearcher().getLastSearchPos(), true);
+                    highlightStackTraceErrors();
+                }
+            });
+        }
+    }
+
+    private void startSearch(int position, boolean scrollToSearchResult) {
+        startSearch(settings.getSearcher().getWord(), position, scrollToSearchResult);
+    }
+
+    private void startSearch(String word, int position, boolean scrollToSearchResult) {
         if (word == null || word.equals("")) {
             return;
         }
@@ -697,21 +701,14 @@ public final class VizzyController implements ILogFileListener {
             settings.beforeFilter();
             String content;
             try {
-                content = settings.getSearcher().filter(settings.getTraceContent());
+                content = settings.getSearcher().filter(word, settings.getTraceContent());
                 settings.afterFilter(content);
             } catch (Exception ex) {
-                java.util.logging.Logger.getLogger(VizzyController.class.getName()).log(Level.SEVERE, "filtering exception", ex);
+                log.warn("filtering exception", ex);
             }
         } else {
-            SearchResult searchResult = settings.getSearcher().search(settings.getTraceContent(), searchNext);
+            SearchResult searchResult = settings.getSearcher().search(word, settings.getTraceContent(), position);
             settings.search(word, searchResult, scrollToSearchResult);
-//            if (searchResult != null) {
-//                if (scrollToSearchResult) {
-//                        settings.getSearcher().setLastCaretPos(searchResult.offset + searchResult.wordSize);
-//                }
-//            } else {
-//                settings.getSearcher().setLastCaretPos(0);
-//            }
         }
     }
 
@@ -721,12 +718,15 @@ public final class VizzyController implements ILogFileListener {
     public void textAreaKeyPressed(String text, KeyEvent evt) {
         if (evt.getKeyCode() == KeyEvent.VK_F3
                 && text != null
-                && text.length() > 0) {
+                && text.length() > 0
+                && !settings.isFilter()) {
+            boolean isNewSearch = !text.equals(settings.getSearcher().getWord());
             settings.setUIActionsAvailable(false);
             settings.highlightTraceKeyword(text);
             addSearchKeyword(text);
-            settings.getSearcher().setWord(text);
-            startSearch(true, true);
+            startSearch(text, 
+                    isNewSearch ? view.getTextArea().getCaretPosition() : settings.getSearcher().getNextSearchPos(),
+                    true);
             highlightStackTraceErrors();
             settings.setUIActionsAvailable(true);
         }
@@ -837,15 +837,25 @@ public final class VizzyController implements ILogFileListener {
     }
 
     public void searchComboboxChanged(String text) {
-        if (text != null
-                && text.length() > 0) {
-            settings.setUIActionsAvailable(false);
-            addSearchKeyword(text);
-            settings.getSearcher().setWord(text);
-            startSearch(false, true);
-            highlightStackTraceErrors();
-            settings.setUIActionsAvailable(true);
+        if (text == null) {
+            return;
         }
+        if (text.equals("")) {
+            clearSearchClicked();
+            return;
+        }
+        boolean isNewSearch = !text.equals(settings.getSearcher().getWord());
+        int position;
+        if (isNewSearch) {
+            position = 0;
+        } else {
+            position = settings.getSearcher().getNextSearchPos();
+        }
+        settings.setUIActionsAvailable(false);
+        addSearchKeyword(text);
+        startSearch(text, position, true);
+        highlightStackTraceErrors();
+        settings.setUIActionsAvailable(true);
     }
 
     public void regexpClicked(boolean selected) {
@@ -853,8 +863,8 @@ public final class VizzyController implements ILogFileListener {
         if (settings.getSearcher().isWasSearching()) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    startSearch(false, false);
-//                    startSearch(settings.getSearcher().getLastCaretPos() - 1, false);
+                    startSearch(settings.getSearcher().getLastSearchPos(), true);
+                    highlightStackTraceErrors();
                 }
             });
         }
