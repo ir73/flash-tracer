@@ -251,9 +251,11 @@ public final class VizzyController implements ILogFileListener {
     private void initCheckUpdates() {
         if (settings.isCheckUpdates()) {
             Date nowDate = new Date();
-            long compareResult = nowDate.getTime() - settings.getLastUpdateDate().getTime();
-            if (compareResult > 7 * 24 * 60 * 60 * 1000) {
-                settings.setLastUpdateDate(new Date(), false);
+            Date lastUpdateDate = settings.getLastUpdateDate();
+            Date weekAgoDate = new Date(nowDate.getTime() - Conf.UPDATE_CHECK_FREQ);
+            int diff = weekAgoDate.compareTo(lastUpdateDate);
+            if (diff > 0) {
+                settings.setLastUpdateDate(nowDate, false);
                 checkUpdatesThread = new CheckUpdates(false, new IUpdateCheckListener() {
                     public void offerUpdate() {
                         settings.setAlwaysOnTopUI(false, true);
@@ -315,6 +317,8 @@ public final class VizzyController implements ILogFileListener {
         settings.setNewFeaturesPanelShown(props.getProperty("settings.newFeaturesShown" + Conf.VERSION, "false").equals("true"), true);
         settings.setTraceFont(props.getProperty("settings.font.name", settings.getDefaultFont()), 
                 props.getProperty("settings.font.size", "12"), true);
+        settings.setFontColor(props.getProperty("settings.font.color"), true);
+        settings.setBgColor(props.getProperty("settings.textArea.color"), true);
         settings.setSearchKeywords(props.getProperty("search.keywords", "").split("\\|\\|\\|"), true);
         settings.setFilter(false, true);
         setLogType(props.getProperty("settings.logtype", "0"), true);
@@ -623,6 +627,8 @@ public final class VizzyController implements ILogFileListener {
         props.setProperty("settings.isDefaultASEditor", String.valueOf(settings.isDefaultASEditor()));
         props.setProperty("settings.newFeaturesShown" + Conf.VERSION, String.valueOf(settings.wasNewFeaturesPanelShown()));
         props.setProperty("update.last", String.valueOf(settings.getLastUpdateDate().getTime()));
+        props.setProperty("settings.font.color", String.valueOf(settings.getFontColor().getRGB()));
+        props.setProperty("settings.textArea.color", String.valueOf(settings.getBgColor().getRGB()));
 
         StringBuilder keywords = new StringBuilder();
         DefaultComboBoxModel searchKeywordsModel = settings.getSearchKeywordsModel();
@@ -773,6 +779,8 @@ public final class VizzyController implements ILogFileListener {
     public void optionsOK(SettingsModel s, HashMap<String, String> mmCFG) {
         settings.setUIActionsAvailable(false);
         settings.setTraceFont(s.getTraceFont(), true);
+        settings.setFontColor(s.getFontColor(), true);
+        settings.setBgColor(s.getBgColor(), true);
 
         settings.setFlashLogFileName(s.getFlashLogFileName(), true);
         if (settings.getLogType() == 0) {

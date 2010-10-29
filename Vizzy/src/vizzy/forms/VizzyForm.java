@@ -11,13 +11,12 @@
 
 package vizzy.forms;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
@@ -879,6 +878,14 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
 
     public void onRegexpChanged(boolean regexp) {
         jRegexpCheckbox.setSelected(regexp);
+    }
+
+    public void onFontColorChanged(Color fontColor) {
+        jTraceTextArea.setForeground(fontColor);
+    }
+
+    public void onBgColorChanged(Color bgColor) {
+        jTraceTextArea.setBackground(bgColor);
     }
 
 }

@@ -23,7 +23,9 @@
     <target name="build-vizzy-common" depends="clean, jar">
         <delete file="${dist.dir}/README.TXT" />
         <copy todir="${dist.dir}" overwrite="true">
-            <fileset dir="etc/common" />
+            <fileset dir="etc/common">
+                <include name="**" />
+            </fileset>
         </copy>
 
         <!--    move files to dist/Vizzy    -->
@@ -42,7 +44,9 @@
         </copy>
 
         <copy todir="${dist.dir.win}/${ant.project.name}" overwrite="true">
-            <fileset dir="etc/win" />
+            <fileset dir="etc/win">
+                <include name="**" />
+            </fileset>
         </copy>
 
         <!--    fdz file creation    -->
@@ -64,7 +68,9 @@
         </copy>
 
         <copy todir="${dist.dir.linux}/${ant.project.name}" overwrite="true">
-            <fileset dir="etc/linux" />
+            <fileset dir="etc/linux">
+                <include name="**" />
+            </fileset>
         </copy>
     </target>
 
@@ -76,7 +82,9 @@
         </copy>
 
         <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">
-            <fileset dir="etc/mac" />
+            <fileset dir="etc/mac">
+                <include name="**" />
+            </fileset>
         </copy>
 
         <copy todir="${dist.dir.mac}/${ant.project.name}" overwrite="true">

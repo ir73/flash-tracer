@@ -5,6 +5,7 @@
 
 package vizzy.model;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -65,6 +66,8 @@ public class SettingsModel {
     private boolean isUIActionsAvailable;
     private boolean enableTraceClick;
     private boolean enableCodePopup;
+    private Color bgColor = Color.white;
+    private Color fontColor = Color.black;
 
     private KeywordsHighlighter keywordsHighlighter;
     private HandleWordAtPosition handleWordAtPosition;
@@ -178,7 +181,7 @@ public class SettingsModel {
         if (last != null) {
             Date newDate = new Date(Long.valueOf(last));
             if (lastUpdateDate == null || lastUpdateDate.before(newDate)) {
-                setLastUpdateDate(lastUpdateDate, doFireEvent);
+                setLastUpdateDate(newDate, doFireEvent);
             }
         }
     }
@@ -645,6 +648,40 @@ public class SettingsModel {
     public void afterFilter(String content) {
         if (listener != null) {
             listener.afterFilter(content);
+        }
+    }
+
+    public Color getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(Color bgColor, boolean doFireEvent) {
+        this.bgColor = bgColor;
+        if (doFireEvent && listener != null) {
+            getListener().onBgColorChanged(this.bgColor);
+        }
+    }
+
+    public Color getFontColor() {
+        return fontColor;
+    }
+
+    public void setFontColor(Color fontColor, boolean doFireEvent) {
+        this.fontColor = fontColor;
+        if (doFireEvent && listener != null) {
+            getListener().onFontColorChanged(this.fontColor);
+        }
+    }
+
+    public void setFontColor(String property, boolean b) {
+        if (property != null) {
+            setFontColor(new Color(Integer.parseInt(property)), b);
+        }
+    }
+
+    public void setBgColor(String property, boolean b) {
+        if (property != null) {
+            setBgColor(new Color(Integer.parseInt(property)), b);
         }
     }
     
