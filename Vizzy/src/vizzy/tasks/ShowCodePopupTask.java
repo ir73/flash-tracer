@@ -93,7 +93,7 @@ public class ShowCodePopupTask {
                 lines = lines.subList(fromLine, toLine);
 
                 codeForm = new CodeForm();
-                codeForm.initStyles(owner.getFont());
+                codeForm.initStyles(owner.getFont(), owner.getForeground(), owner.getBackground());
                 codeForm.setText(lines, source.lineNum - 1);
                 codeForm.updateSize();
 
