@@ -86,7 +86,7 @@ public class CodeForm extends JPanel {
         setBounds(0, 0, dim.width, dim.height);
     }
 
-    public void initStyles(Font font) {
+    public void initStyles(Font font, Color foreground, Color background) {
         StyledDocument doc = jCodeTextPane.getStyledDocument();
         Style def = StyleContext.getDefaultStyleContext().
                 getStyle(StyleContext.DEFAULT_STYLE);
@@ -94,6 +94,8 @@ public class CodeForm extends JPanel {
         StyleConstants.setBold(boldStyleName, true);
         StyleConstants.setForeground(boldStyleName, Color.RED);
         jCodeTextPane.setFont(font);
+        jCodeTextPane.setForeground(foreground);
+        jCodeTextPane.setBackground(background);
     }
 
     public void setText(List<String> lines, int boldLineNum) {
