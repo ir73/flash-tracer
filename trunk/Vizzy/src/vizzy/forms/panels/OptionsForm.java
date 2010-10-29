@@ -11,6 +11,7 @@
 
 package vizzy.forms.panels;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Rectangle;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import org.apache.log4j.Logger;
 import vizzy.controller.VizzyController;
@@ -70,10 +72,15 @@ public class OptionsForm extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLayeredPane2 = new javax.swing.JLayeredPane();
         jLabel3 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jFontSizeTextField = new javax.swing.JTextField();
         jFontComboBox = new javax.swing.JComboBox();
+        jLabel5 = new javax.swing.JLabel();
         jRestoreCheckBox = new javax.swing.JCheckBox();
+        jLayeredPane5 = new javax.swing.JLayeredPane();
+        bgColorLabel = new javax.swing.JLabel();
+        fontColorLabel = new javax.swing.JLabel();
+        bgColorPanel = new javax.swing.JPanel();
+        fontColorPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLayeredPane3 = new javax.swing.JLayeredPane();
         jUTFCheckBox = new javax.swing.JCheckBox();
@@ -129,10 +136,6 @@ public class OptionsForm extends javax.swing.JFrame {
         jLabel3.setText("Font size:");
         jLabel3.setBounds(290, 20, 80, 14);
         jLayeredPane2.add(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jLabel2.setText("Font:");
-        jLabel2.setBounds(10, 20, 260, 14);
-        jLayeredPane2.add(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jFontSizeTextField.setBounds(290, 40, 80, 23);
         jLayeredPane2.add(jFontSizeTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -140,9 +143,73 @@ public class OptionsForm extends javax.swing.JFrame {
         jFontComboBox.setBounds(10, 40, 270, 23);
         jLayeredPane2.add(jFontComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jLabel5.setText("Font:");
+        jLabel5.setBounds(10, 20, 260, 14);
+        jLayeredPane2.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         jRestoreCheckBox.setText("<html>Restore window on trace update if window minimized</html>");
         jRestoreCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jRestoreCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        jLayeredPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("Colors"));
+
+        bgColorLabel.setText("Background color:");
+        bgColorLabel.setBounds(190, 20, 180, 14);
+        jLayeredPane5.add(bgColorLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        fontColorLabel.setText("Font color: ");
+        fontColorLabel.setBounds(10, 20, 130, 14);
+        jLayeredPane5.add(fontColorLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        bgColorPanel.setBackground(new java.awt.Color(255, 255, 0));
+        bgColorPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        bgColorPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bgColorPanelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bgColorPanelMouseEntered(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout bgColorPanelLayout = new org.jdesktop.layout.GroupLayout(bgColorPanel);
+        bgColorPanel.setLayout(bgColorPanelLayout);
+        bgColorPanelLayout.setHorizontalGroup(
+            bgColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 18, Short.MAX_VALUE)
+        );
+        bgColorPanelLayout.setVerticalGroup(
+            bgColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 18, Short.MAX_VALUE)
+        );
+
+        bgColorPanel.setBounds(190, 40, 20, 20);
+        jLayeredPane5.add(bgColorPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        fontColorPanel.setBackground(new java.awt.Color(255, 51, 51));
+        fontColorPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        fontColorPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fontColorPanelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                fontColorPanelMouseEntered(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout fontColorPanelLayout = new org.jdesktop.layout.GroupLayout(fontColorPanel);
+        fontColorPanel.setLayout(fontColorPanelLayout);
+        fontColorPanelLayout.setHorizontalGroup(
+            fontColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 18, Short.MAX_VALUE)
+        );
+        fontColorPanelLayout.setVerticalGroup(
+            fontColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 18, Short.MAX_VALUE)
+        );
+
+        fontColorPanel.setBounds(10, 40, 20, 20);
+        jLayeredPane5.add(fontColorPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -150,6 +217,9 @@ public class OptionsForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
                         .add(27, 27, 27)
                         .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 356, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -165,7 +235,9 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(201, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(119, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("General", jPanel2);
@@ -299,7 +371,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jCheckBoxVerbose, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jCheckBoxStatic, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(146, Short.MAX_VALUE))
+                .addContainerGap(132, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Trace Output", jPanel1);
@@ -527,8 +599,30 @@ public class OptionsForm extends javax.swing.JFrame {
         checkFlashDevelop();
     }//GEN-LAST:event_jCustomASEditorTextFiledKeyReleased
 
+    private void bgColorPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bgColorPanelMouseEntered
+        evt.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_bgColorPanelMouseEntered
+
+    private void fontColorPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fontColorPanelMouseEntered
+        evt.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_fontColorPanelMouseEntered
+
+    private void fontColorPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fontColorPanelMouseClicked
+        Color color = JColorChooser.showDialog(this, "Font Color", fontColorPanel.getBackground());
+        fontColorPanel.setBackground(color);
+    }//GEN-LAST:event_fontColorPanelMouseClicked
+
+    private void bgColorPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bgColorPanelMouseClicked
+        Color color = JColorChooser.showDialog(this, "Background Color", bgColorPanel.getBackground());
+        bgColorPanel.setBackground(color);
+    }//GEN-LAST:event_bgColorPanelMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ASEditorButtonGroup;
+    private javax.swing.JLabel bgColorLabel;
+    private javax.swing.JPanel bgColorPanel;
+    private javax.swing.JLabel fontColorLabel;
+    private javax.swing.JPanel fontColorPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBoxBuffer;
@@ -549,15 +643,16 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JTextField jFreqTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;
     private javax.swing.JLayeredPane jLayeredPane3;
     private javax.swing.JLayeredPane jLayeredPane4;
+    private javax.swing.JLayeredPane jLayeredPane5;
     private javax.swing.JCheckBox jNumLinesEnabledCheckBox;
     private javax.swing.JTextField jNumLinesTextField;
     private javax.swing.JButton jOKButton;
@@ -596,6 +691,9 @@ public class OptionsForm extends javax.swing.JFrame {
         s.setDefaultASEditor(jDefaultRadioButton.isSelected(), false);
         s.setEnableCodePopup(jEnablePopupsCheckBox.isSelected(), false);
         s.setEnableTraceClick(jEnableClickCheckBox.isSelected(), false);
+        s.setBgColor(bgColorPanel.getBackground(), false);
+        s.setFontColor(fontColorPanel.getBackground(), false);
+
         controller.optionsOK(s, m);
     }
 
@@ -620,6 +718,8 @@ public class OptionsForm extends javax.swing.JFrame {
         jCustomASEditorTextFiled.setText(settings.getCustomASEditor());
         jEnableClickCheckBox.setSelected(settings.isEnableTraceClick());
         jEnablePopupsCheckBox.setSelected(settings.isEnableCodePopup());
+        fontColorPanel.setBackground(settings.getFontColor());
+        bgColorPanel.setBackground(settings.getBgColor());
         if (settings.isDefaultASEditor()) {
             jDefaultRadioButton.setSelected(true);
         } else {

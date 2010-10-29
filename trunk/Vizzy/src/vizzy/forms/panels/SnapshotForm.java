@@ -11,6 +11,7 @@
 
 package vizzy.forms.panels;
 
+import java.awt.Color;
 import org.apache.log4j.Logger;
 import vizzy.controller.VizzyController;
 import vizzy.model.SettingsModel;
@@ -107,6 +108,8 @@ public class SnapshotForm extends javax.swing.JFrame {
         jTextArea.setText(text);
         jTextArea.setFont(settings.getTraceFont());
         jTextArea.setLineWrap(settings.isWordWrap());
+        jTextArea.setBackground(settings.getBgColor());
+        jTextArea.setForeground(settings.getFontColor());
         setVisible(true);
     }
 

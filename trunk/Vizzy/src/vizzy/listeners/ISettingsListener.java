@@ -5,12 +5,12 @@
 
 package vizzy.listeners;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
 import vizzy.model.SearchResult;
-import vizzy.model.SettingsModel;
 
 /**
  *
@@ -101,5 +101,9 @@ public interface ISettingsListener {
     public void beforeFilter();
 
     public void afterFilter(String content);
+
+    public void onFontColorChanged(Color fontColor);
+
+    public void onBgColorChanged(Color bgColor);
 
 }
