@@ -48,13 +48,13 @@ public class KeywordsHighlighter {
         boolean highlighted = false;
 
         try {
-            for (int i=0; i < totalLines; i++) {
+            for (int i = 0; i < totalLines; i++) {
                 start = getTextArea().getLineStartOffset(i);
                 end = getTextArea().getLineEndOffset(i);
                 lineText = getTextArea().getText(start, end - start);
                 ind = lineText.indexOf(TEMPLATE_ERROR);
                 if (ind != -1) {
-                    highlightObjects.add(highlighter.addHighlight(start, start + ind, Conf.errorPainter));
+                    highlightObjects.add(highlighter.addHighlight(start, start + lineText.indexOf(":", ind + 1), Conf.errorPainter));
                     highlighted = true;
                 }
             }
