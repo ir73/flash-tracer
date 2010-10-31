@@ -116,6 +116,11 @@ public class ShowCodePopupTask {
                     codeFormLocation.y += 4;
                 }
 
+                if (textAreaPreferredSize.width > codeFormPreferredSize.width) {
+                    if (codeFormLocation.x < textAreaScreenLocation.x) {
+                        codeFormLocation.x = textAreaScreenLocation.x;                    }
+                }
+
                 PopupFactory pf = PopupFactory.getSharedInstance();
                 popup = pf.getPopup(owner, codeForm, codeFormLocation.x, codeFormLocation.y);
                 popup.show();
