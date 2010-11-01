@@ -393,8 +393,8 @@ public class OptionsForm extends javax.swing.JFrame {
         jEnablePopupsCheckBox.setBounds(10, 90, 340, 40);
         jLayeredPane1.add(jEnablePopupsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jEnableVizzyTraceCheckBox.setText("Parse VizzyTrace system messages");
-        jEnableVizzyTraceCheckBox.setToolTipText("Parses and removes VizzyTrace library extra data from trace content. See more information in the home page.");
+        jEnableVizzyTraceCheckBox.setText("Connect VizzyTrace library");
+        jEnableVizzyTraceCheckBox.setToolTipText("Parses VizzyTrace library debug information. See more information in product wiki page.");
         jEnableVizzyTraceCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jEnableVizzyTraceCheckBoxActionPerformed(evt);
