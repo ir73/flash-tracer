@@ -106,4 +106,6 @@ public interface ISettingsListener {
 
     public void onBgColorChanged(Color bgColor);
 
+    public void onEnableParsingSourceLines(boolean enableParsingSourceLines);
+
 }

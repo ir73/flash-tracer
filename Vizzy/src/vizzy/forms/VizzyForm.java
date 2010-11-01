@@ -888,4 +888,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jTraceTextArea.setBackground(bgColor);
     }
 
+    public void onEnableParsingSourceLines(boolean enableParsingSourceLines) {
+    }
+
 }

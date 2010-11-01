@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import vizzy.forms.panels.SnapshotForm;
 import vizzy.listeners.ISettingsListener;
@@ -66,6 +67,8 @@ public class SettingsModel {
     private boolean isUIActionsAvailable;
     private boolean enableTraceClick;
     private boolean enableCodePopup;
+    private boolean enableParsingSourceLines = false;
+    private Map<Integer, SourceAndLine> sourceLines;
     private Color bgColor = Color.white;
     private Color fontColor = Color.black;
 
@@ -682,6 +685,25 @@ public class SettingsModel {
     public void setBgColor(String property, boolean b) {
         if (property != null) {
             setBgColor(new Color(Integer.parseInt(property)), b);
+        }
+    }
+
+    public Map<Integer, SourceAndLine> getSourceLines() {
+        return sourceLines;
+    }
+
+    public void setSourceLines(Map<Integer, SourceAndLine> sourceLines) {
+        this.sourceLines = sourceLines;
+    }
+
+    public boolean isEnableParsingSourceLines() {
+        return enableParsingSourceLines;
+    }
+
+    public void setEnableParsingSourceLines(boolean enableParsingSourceLines, boolean doFireEvent) {
+        this.enableParsingSourceLines = enableParsingSourceLines;
+        if (doFireEvent && listener != null) {
+            getListener().onEnableParsingSourceLines(this.enableParsingSourceLines);
         }
     }
     
