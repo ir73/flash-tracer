@@ -10,7 +10,7 @@ Download VizzyTrace.swc from Downloads page. Copy it to your project's source di
 Make sure "Permit Debugging" is checked in your fla file project.
 
 ==Code Changes==
-This tool requires a tiny code change in your project: replace all existing native "trace" function calls with "t".
+This tool requires a tiny code change in your project: replace all existing native `trace` function calls with `t`.
 
 {{{
 t("hello world!");
