@@ -4,7 +4,10 @@
 Adding SWC to your project allows to open source files directly from Vizzy on click. 
 
 ==Installation==
-Download VizzyTrace.swc from Downloads page. Copy it to your project's source directory. Add swf to your fla file project (in case of Flash IDE) or link as swc in case of Flash Builder. Open Vizzy, goto Extra->Options, open Trace Parser tab, tick "Connect VizzyTrace library".
+Download VizzyTrace.swc from Downloads page. Copy it to your project's source directory. Add swf to your fla file project (in case of Flash IDE) or link as swc in case of Flash Builder. 
+<br>Open Vizzy, goto Extra->Options, open Trace Parser tab, tick "Connect VizzyTrace library".
+<br>
+Make sure "Permit Debugging" is checked in your fla file project.
 
 ==Code Changes==
 This tool requires a tiny code change in your project: replace all existing native "trace" function calls with "t".
