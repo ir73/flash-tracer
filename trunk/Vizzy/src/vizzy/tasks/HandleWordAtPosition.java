@@ -8,10 +8,12 @@ package vizzy.tasks;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
+import java.util.logging.Level;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import org.apache.log4j.Logger;
 import vizzy.model.Conf;
+import vizzy.model.SettingsModel;
 import vizzy.model.SourceAndLine;
 
 /**
@@ -21,8 +23,10 @@ import vizzy.model.SourceAndLine;
 public class HandleWordAtPosition {
 
     private static final Logger log = Logger.getLogger(HandleWordAtPosition.class);
+    private final SettingsModel settings;
 
-    public HandleWordAtPosition() {
+    public HandleWordAtPosition(SettingsModel settings) {
+        this.settings = settings;
     }
 
     public JTextArea getTextArea() {
@@ -56,13 +60,17 @@ public class HandleWordAtPosition {
         }
 
         try {
-            checkHTTPLink(textArea.getCaretPosition(), true);
+            if (checkHTTPLink(textArea.getCaretPosition(), true) != null) {
+                return;
+            }
         } catch (Exception ex) {
 //            log.warn("findObjectAtPositionAndExecute() checkHTTPLink failed", ex);
         }
 
         try {
-            checkSourceFile(textArea.getCaretPosition(), true);
+            if (checkSourceFile(textArea.getCaretPosition(), true) != null) {
+                return;
+            }
         } catch (Exception ex) {
 //            log.warn("findObjectAtPositionAndExecute() checkSourceFile failed", ex);
         }
@@ -175,9 +183,15 @@ public class HandleWordAtPosition {
                     new MinPositionParam("\r", true)},
                 false);
 
+        if (endIndex == -1) {
+            endIndex = text.length() +10;
+        }
+
         if (endIndex != -1 && startIndex != -1
                 && startIndex < endIndex) {
             currentWord = text.substring(startIndex, endIndex); // whole line
+
+            // check stack trace
             if (currentWord != null
                     && currentWord.startsWith("\tat ")
                     && currentWord.endsWith("]")) {
@@ -198,6 +212,19 @@ public class HandleWordAtPosition {
                         }
                     }
                 }
+                
+            }
+            // check Vizzy Plugin
+            int lineOfOffset;
+            try {
+                lineOfOffset = textArea.getLineOfOffset(currentIndex);
+            } catch (BadLocationException ex) {
+                return null;
+            }
+            if (settings.getSourceLines() != null
+                    && settings.getSourceLines().containsKey(lineOfOffset)) {
+                SourceAndLine sal = settings.getSourceLines().get(lineOfOffset);
+                return sal;
             }
         }
         return null;

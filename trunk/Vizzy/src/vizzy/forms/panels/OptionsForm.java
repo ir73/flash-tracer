@@ -21,6 +21,7 @@ import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import vizzy.controller.VizzyController;
 import vizzy.model.Conf;
@@ -103,12 +104,15 @@ public class OptionsForm extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jEnableClickCheckBox = new javax.swing.JCheckBox();
+        jEnablePopupsCheckBox = new javax.swing.JCheckBox();
+        jEnableVizzyTraceCheckBox = new javax.swing.JCheckBox();
+        jEnableHighlightErrorsCheckBox = new javax.swing.JCheckBox();
+        jLayeredPane6 = new javax.swing.JLayeredPane();
+        jFlashDevelopIntegrLabel = new javax.swing.JLabel();
         jDefaultRadioButton = new javax.swing.JRadioButton();
         jCustomEditorRadioButton = new javax.swing.JRadioButton();
+        jLabel2 = new javax.swing.JLabel();
         jCustomASEditorTextFiled = new javax.swing.JTextField();
-        jEnablePopupsCheckBox = new javax.swing.JCheckBox();
-        jEnableHighlightErrorsCheckBox = new javax.swing.JCheckBox();
-        jFlashDevelopIntegrLabel = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jVersionLabel = new javax.swing.JLabel();
         jUpdatesCheckBox = new javax.swing.JCheckBox();
@@ -154,11 +158,11 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("Colors"));
 
         bgColorLabel.setText("Background color:");
-        bgColorLabel.setBounds(190, 20, 180, 14);
+        bgColorLabel.setBounds(190, 20, 180, 15);
         jLayeredPane5.add(bgColorLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         fontColorLabel.setText("Font color: ");
-        fontColorLabel.setBounds(10, 20, 130, 14);
+        fontColorLabel.setBounds(10, 20, 130, 15);
         jLayeredPane5.add(fontColorLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         bgColorPanel.setBackground(new java.awt.Color(255, 255, 0));
@@ -378,39 +382,32 @@ public class OptionsForm extends javax.swing.JFrame {
 
         jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Smart Trace Parser"));
 
-        jEnableClickCheckBox.setText("<html>1. Open HTTP links on click.<br>2. Open source files from stack traces on click with using:</html>");
+        jEnableClickCheckBox.setText("<html>1. Open HTTP links on click.<br>2. Open source files from stack traces on click.</html>");
         jEnableClickCheckBox.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jEnableClickCheckBox.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
-        jEnableClickCheckBox.setBounds(10, 60, 340, 50);
+        jEnableClickCheckBox.setBounds(10, 50, 340, 40);
         jLayeredPane1.add(jEnableClickCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        ASEditorButtonGroup.add(jDefaultRadioButton);
-        jDefaultRadioButton.setText("Default application");
-        jDefaultRadioButton.setBounds(30, 110, 320, 23);
-        jLayeredPane1.add(jDefaultRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        ASEditorButtonGroup.add(jCustomEditorRadioButton);
-        jCustomEditorRadioButton.setText(" ");
-        jCustomEditorRadioButton.setBounds(30, 141, 29, 23);
-        jLayeredPane1.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jCustomASEditorTextFiled.setToolTipText("<html>%file% - full path to the file<br>%line%  - line number\n</html>");
-        jCustomASEditorTextFiled.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jCustomASEditorTextFiledKeyReleased(evt);
-            }
-        });
-        jCustomASEditorTextFiled.setBounds(60, 140, 290, 23);
-        jLayeredPane1.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnablePopupsCheckBox.setText("<html>Enable code popup when mouse is over the stack-trace source file</html>");
         jEnablePopupsCheckBox.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jEnablePopupsCheckBox.setBounds(10, 210, 340, 50);
+        jEnablePopupsCheckBox.setBounds(10, 90, 340, 40);
         jLayeredPane1.add(jEnablePopupsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jEnableHighlightErrorsCheckBox.setText("Highlight errors in stack traces");
-        jEnableHighlightErrorsCheckBox.setBounds(10, 20, 340, 23);
+        jEnableVizzyTraceCheckBox.setText("Parse VizzyTrace system messages");
+        jEnableVizzyTraceCheckBox.setToolTipText("Parses and removes VizzyTrace library extra data from trace content. See more information in the home page.");
+        jEnableVizzyTraceCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jEnableVizzyTraceCheckBoxActionPerformed(evt);
+            }
+        });
+        jEnableVizzyTraceCheckBox.setBounds(10, 130, 360, 23);
+        jLayeredPane1.add(jEnableVizzyTraceCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jEnableHighlightErrorsCheckBox.setText("Highlight thrown errors from stack traces");
+        jEnableHighlightErrorsCheckBox.setBounds(10, 20, 360, 23);
         jLayeredPane1.add(jEnableHighlightErrorsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLayeredPane6.setBorder(javax.swing.BorderFactory.createTitledBorder("Actionscript Editor"));
 
         jFlashDevelopIntegrLabel.setText("<html>Check out FlashDevelop Vizzy Plugin for better integration. <a href=\"http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin\">Read more...</a></html>");
         jFlashDevelopIntegrLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
@@ -422,24 +419,51 @@ public class OptionsForm extends javax.swing.JFrame {
                 jFlashDevelopIntegrLabelMouseEntered(evt);
             }
         });
-        jFlashDevelopIntegrLabel.setBounds(50, 170, 300, 40);
-        jLayeredPane1.add(jFlashDevelopIntegrLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jFlashDevelopIntegrLabel.setBounds(30, 100, 310, 30);
+        jLayeredPane6.add(jFlashDevelopIntegrLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        ASEditorButtonGroup.add(jDefaultRadioButton);
+        jDefaultRadioButton.setText("Default application");
+        jDefaultRadioButton.setBounds(10, 40, 320, 23);
+        jLayeredPane6.add(jDefaultRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        ASEditorButtonGroup.add(jCustomEditorRadioButton);
+        jCustomEditorRadioButton.setText(" ");
+        jCustomEditorRadioButton.setBounds(10, 70, 29, 23);
+        jLayeredPane6.add(jCustomEditorRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabel2.setText("Open source files with:");
+        jLabel2.setBounds(10, 20, 280, 15);
+        jLayeredPane6.add(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jCustomASEditorTextFiled.setToolTipText("<html>%file% - full path to the file<br>%line%  - line number\n</html>");
+        jCustomASEditorTextFiled.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jCustomASEditorTextFiledKeyReleased(evt);
+            }
+        });
+        jCustomASEditorTextFiled.setBounds(40, 70, 290, 23);
+        jLayeredPane6.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel5Layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 313, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 166, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Trace Parser", jPanel5);
@@ -617,6 +641,18 @@ public class OptionsForm extends javax.swing.JFrame {
         bgColorPanel.setBackground(color);
     }//GEN-LAST:event_bgColorPanelMouseClicked
 
+    private void jEnableVizzyTraceCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jEnableVizzyTraceCheckBoxActionPerformed
+        if (jEnableVizzyTraceCheckBox.isSelected()) {
+            JOptionPane.showMessageDialog(null, "This feature might require plenty of\n"
+                    + "processor resources, so Vizzy has set load file\n"
+                    + "limit to 25,000. You can change it according to\n"
+                    + "your needs.", "Warning", JOptionPane.WARNING_MESSAGE);
+            jNumLinesEnabledCheckBox.setSelected(true);
+            jNumLinesTextField.setText("25000");
+            jNumLinesTextField.setEnabled(true);
+        }
+    }//GEN-LAST:event_jEnableVizzyTraceCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ASEditorButtonGroup;
     private javax.swing.JLabel bgColorLabel;
@@ -636,6 +672,7 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox jEnableClickCheckBox;
     private javax.swing.JCheckBox jEnableHighlightErrorsCheckBox;
     private javax.swing.JCheckBox jEnablePopupsCheckBox;
+    private javax.swing.JCheckBox jEnableVizzyTraceCheckBox;
     private javax.swing.JLabel jFlashDevelopIntegrLabel;
     private javax.swing.JTextField jFlashLogTextField;
     private javax.swing.JComboBox jFontComboBox;
@@ -643,6 +680,7 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JTextField jFreqTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -653,6 +691,7 @@ public class OptionsForm extends javax.swing.JFrame {
     private javax.swing.JLayeredPane jLayeredPane3;
     private javax.swing.JLayeredPane jLayeredPane4;
     private javax.swing.JLayeredPane jLayeredPane5;
+    private javax.swing.JLayeredPane jLayeredPane6;
     private javax.swing.JCheckBox jNumLinesEnabledCheckBox;
     private javax.swing.JTextField jNumLinesTextField;
     private javax.swing.JButton jOKButton;
@@ -693,6 +732,7 @@ public class OptionsForm extends javax.swing.JFrame {
         s.setEnableTraceClick(jEnableClickCheckBox.isSelected(), false);
         s.setBgColor(bgColorPanel.getBackground(), false);
         s.setFontColor(fontColorPanel.getBackground(), false);
+        s.setEnableParsingSourceLines(jEnableVizzyTraceCheckBox.isSelected(), false);
 
         controller.optionsOK(s, m);
     }
@@ -718,6 +758,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jCustomASEditorTextFiled.setText(settings.getCustomASEditor());
         jEnableClickCheckBox.setSelected(settings.isEnableTraceClick());
         jEnablePopupsCheckBox.setSelected(settings.isEnableCodePopup());
+        jEnableVizzyTraceCheckBox.setSelected(settings.isEnableParsingSourceLines());
         fontColorPanel.setBackground(settings.getFontColor());
         bgColorPanel.setBackground(settings.getBgColor());
         if (settings.isDefaultASEditor()) {

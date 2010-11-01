@@ -6,6 +6,8 @@ package vizzy.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JTextArea;
 import javax.swing.text.Highlighter;
 import org.apache.log4j.Logger;
@@ -19,7 +21,7 @@ public class KeywordsHighlighter {
 
     private static final Logger log = Logger.getLogger(KeywordsHighlighter.class);
 
-    private static String TEMPLATE_ERROR = ": Error #";
+    private static final Pattern templateError = Pattern.compile("\\bError #[0-9]+:");
     private List<Object> highlightObjects = new ArrayList<Object>();
 
     public KeywordsHighlighter() {
@@ -50,17 +52,15 @@ public class KeywordsHighlighter {
         try {
             int indEnd;
             int i;
+            Matcher matcher;
             for (i = 0; i < totalLines; i++) {
                 start = getTextArea().getLineStartOffset(i);
                 end = getTextArea().getLineEndOffset(i);
                 lineText = getTextArea().getText(start, end - start);
-                ind = lineText.indexOf(TEMPLATE_ERROR);
-                if (ind != -1) {
-                    indEnd = lineText.indexOf(":", ind + 1);
-                    if (indEnd != -1) {
-                        highlightObjects.add(highlighter.addHighlight(start, start + indEnd, Conf.errorPainter));
-                        highlighted = true;
-                    }
+                matcher = templateError.matcher(lineText);
+                if (matcher.find()) {
+                    highlightObjects.add(highlighter.addHighlight(start + matcher.start(), start + matcher.end(), Conf.errorPainter));
+                    highlighted = true;
                 }
             }
         } catch (Exception e) {

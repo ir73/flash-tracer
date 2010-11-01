@@ -21,14 +21,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import vizzy.forms.VizzyForm;
 import vizzy.forms.panels.AboutPanel;
@@ -97,12 +100,48 @@ public final class VizzyController implements ILogFileListener {
         start();
     }
 
+    private String parseLogSourceData(String log) {
+        Map<Integer, SourceAndLine> sourceLines = new ConcurrentHashMap<Integer, SourceAndLine>();
+        String[] split = log.split(Conf.newLine);
+        SourceAndLine sal;
+        String fileAndLine;
+        int lastIndexOf;
+        int endInd;
+        for (Integer i = 0; i < split.length; i++) {
+            String string = split[i];
+            endInd = string.indexOf("|!vft| ");
+            if (endInd != -1) {
+                if (string.indexOf("|vft|") == 0) {
+                    if (endInd != -1) {
+                        fileAndLine = string.substring(5, endInd);
+                        lastIndexOf = fileAndLine.lastIndexOf(":");
+                        if (lastIndexOf != -1) {
+                            try {
+                                sal = new SourceAndLine(fileAndLine.substring(0, lastIndexOf), Integer.parseInt(fileAndLine.substring(lastIndexOf + 1)), 0);
+                            } catch (Exception e) {
+                                continue;
+                            }
+                            sourceLines.put(i, sal);
+                            split[i] = string.substring(endInd + 7);
+                        }
+                    }
+                } else {
+                    split[i] = string.substring(endInd + 7);
+                }
+            }
+        }
+        log = StringUtils.join(split, Conf.newLine);
+        settings.setSourceLines(sourceLines);
+        return log;
+    }
+
     private void start() {
+        initUIManager();
         settings = new SettingsModel();
         view = new VizzyForm(this, settings);
         settings.setListener(view);
         settings.setUIActionsAvailable(false);
-        initUIManager();
+        
         settings.onInit();
         init();
     }
@@ -118,6 +157,7 @@ public final class VizzyController implements ILogFileListener {
         initCurrentLogTimer();
         initPlayerDetection();
         initCheckUpdates();
+        initNewFeatures();
         settings.setUIActionsAvailable(true);
         settings.onAfterInit();
     }
@@ -127,6 +167,12 @@ public final class VizzyController implements ILogFileListener {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
             log.error("initUIManager()", ex);
+        }
+    }
+
+    private void initNewFeatures() {
+        if (!settings.wasNewFeaturesPanelShown()) {
+            settings.showNewFeaturesPanel();
         }
     }
 
@@ -228,7 +274,7 @@ public final class VizzyController implements ILogFileListener {
     private void initVars() {
         settings.setSearcher(new WordSearcher(settings));
         settings.setKeywordsHighlighter(new KeywordsHighlighter());
-        settings.setHandleWordAtPosition(new HandleWordAtPosition());
+        settings.setHandleWordAtPosition(new HandleWordAtPosition(settings));
         settings.setCodePopupHandler(new ShowCodePopupTask());
 
         settings.getSearcher().setTextArea(view.getTextArea());
@@ -309,7 +355,8 @@ public final class VizzyController implements ILogFileListener {
         settings.setHighlightAll(props.getProperty("settings.highlight_all", "true").equals("true"), true);
         settings.setAutoRefresh(props.getProperty("settings.autorefresh", "true").equals("true"), true);
         settings.setWordWrap(props.getProperty("settings.wordwrap", "true").equals("true"), true);
-        settings.setHighlightStackTraceErrors(props.getProperty("settings.enableHighlightErrors", "true").equals("true"), true);
+        settings.setEnableParsingSourceLines(props.getProperty("settings.parseSourceLines", "false").equals("true"), true);
+        settings.setHighlightStackTraceErrors(props.getProperty("settings.enableHighlightErrors", "false").equals("true"), true);
         settings.setEnableCodePopup(props.getProperty("settings.enableCodePopups", "true").equals("true"), true);
         settings.setEnableTraceClick(props.getProperty("settings.enableTraceClick", "true").equals("true"), true);
         settings.setCustomASEditor(props.getProperty("settings.customASEditor", null), true);
@@ -340,6 +387,10 @@ public final class VizzyController implements ILogFileListener {
             return;
         }
 
+        if (settings.isEnableParsingSourceLines()) {
+            log = parseLogSourceData(log);
+        }
+        
         settings.setRecentHash(currentHash, false);
         settings.setTraceContent(log, true);
 
@@ -364,10 +415,7 @@ public final class VizzyController implements ILogFileListener {
 
     private void highlightStackTraceErrors() {
         if (settings.isHighlightStackTraceErrors()) {
-            boolean highlighted = settings.getKeywordsHighlighter().highlight();
-            if (!settings.wasNewFeaturesPanelShown() && highlighted) {
-                settings.showNewFeaturesPanel();
-            }
+            settings.getKeywordsHighlighter().highlight();
         }
     }
 
@@ -626,6 +674,7 @@ public final class VizzyController implements ILogFileListener {
         props.setProperty("settings.customASEditor", String.valueOf(settings.getCustomASEditor()));
         props.setProperty("settings.isDefaultASEditor", String.valueOf(settings.isDefaultASEditor()));
         props.setProperty("settings.newFeaturesShown" + Conf.VERSION, String.valueOf(settings.wasNewFeaturesPanelShown()));
+        props.setProperty("settings.parseSourceLines", String.valueOf(settings.isEnableParsingSourceLines()));
         props.setProperty("update.last", String.valueOf(settings.getLastUpdateDate().getTime()));
         props.setProperty("settings.font.color", String.valueOf(settings.getFontColor().getRGB()));
         props.setProperty("settings.textArea.color", String.valueOf(settings.getBgColor().getRGB()));
@@ -799,6 +848,7 @@ public final class VizzyController implements ILogFileListener {
         settings.setDefaultASEditor(s.isDefaultASEditor(), true);
         settings.setEnableCodePopup(s.isEnableCodePopup(), true);
         settings.setEnableTraceClick(s.isEnableTraceClick(), true);
+        settings.setEnableParsingSourceLines(s.isEnableParsingSourceLines(), true);
 
         mmcfgInitializer.saveKeys(mmCFG);
 
