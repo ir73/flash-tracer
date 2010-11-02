@@ -1,6 +1,7 @@
 #summary SWC for making trace clickable
 
 ==Overview==
+Available since 2.3<br><br>
 Adding SWC to your project allows to open corresponding source file on text click in Vizzy. Also, moving a mouse cursor over the trace line will cause a popup open with trace line highlighted. Tracer knows from where every line was dispatched and can therefore can open proper file and even highlight a line with `trace`.
 
 ==Installation==
