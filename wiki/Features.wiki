@@ -27,7 +27,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
 
 
 ===Trace Lines are Clickable (since 2.3)===
-Use VizzyTrace SWC library and be able to explore source directly from Vizzy popup or to click on every trace line which will open that file in preferred Actionscript editor (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>).
+Use <a href="http://code.google.com/p/flash-tracer/wiki/VizzyTrace">VizzyTrace</a> SWC library and be able to explore source directly from Vizzy popup or to click on every trace line which will open that file in preferred Actionscript editor (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>).
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/trace_code_popup.jpg
 
