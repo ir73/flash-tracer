@@ -6,6 +6,7 @@ Adding SWC to your project allows to open corresponding source file on text clic
 ==Installation==
   * Download VizzyTrace.swc from Downloads page. Copy it to your project's `src` or `lib` directory. Add swc to library path of fla file project (in case of Flash IDE) or link as swc in case of Flash Builder project. 
   * Open Vizzy, go to `Extra` -> `Options`, open `Trace Parser` tab, tick `Connect VizzyTrace library`.
+  * If using FlashDevelop, see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">VizzyPlugin</a> installation instructions.
   * Make sure `Permit Debugging` is checked in your fla file project.
 
 ==Code Changes==
@@ -18,3 +19,9 @@ You can turn to a native trace anytime with the following piece of code:
 VizzyTrace.mode = VizzyTrace.SIMPLE;
 }}}
 In the background, `t` adds debug information to trace statement about file path and line number from where `trace` is dispatched. This allows to click on any line in Vizzy Flash Tracer which will cause that file to open in your preferred Actionscript editor and even highlighting line with `trace` (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">VizzyPlugin</a>). 
+
+==Screenshots==
+  * The mouse hovers a trace line and popup appears<br>
+<img src="http://dl.dropbox.com/u/9443658/vizzy/screens/trace_code_popup.jpg"/>
+  * Once clicked, corresponding source file is opened and trace line highlighted<br>
+<img src="http://dl.dropbox.com/u/9443658/vizzy/screens/open_trace.jpg"/>
