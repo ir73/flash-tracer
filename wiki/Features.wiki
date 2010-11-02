@@ -1,6 +1,6 @@
 #summary Features of Vizzy Flash Tracer
 #labels Featured
-
+<wiki:toc max_depth="3" />
 ===Errors Highlighting (since 2.3)===
 ActionScript 3 Errors are highlighted.
 <br/><br/>
