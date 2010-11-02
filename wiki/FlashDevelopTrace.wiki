@@ -1,19 +1,20 @@
-#summary SWC for opening source files from Vizzy
+#summary SWC for making trace clickable
 
 ==Overview==
-Adding SWC to your project allows to open source files directly from Vizzy on click. 
+Adding SWC to your project allows to open corresponding source file on text click in Vizzy. Also, moving a mouse cursor over the trace line will cause a popup open with trace line highlighted. Tracer knows from where every line was dispatched and can therefore can open proper file and even highlight a line with `trace`.
 
 ==Installation==
-Download VizzyTrace.swc from Downloads page. Copy it to your project's source directory. Add swf to your fla file project (in case of Flash IDE) or link as swc in case of Flash Builder. 
-<br>Open Vizzy, goto Extra->Options, open Trace Parser tab, tick "Connect VizzyTrace library".
-<br>
-Make sure "Permit Debugging" is checked in your fla file project.
+  * Download VizzyTrace.swc from Downloads page. Copy it to your project's `src` or `lib` directory. Add swc to library path of fla file project (in case of Flash IDE) or link as swc in case of Flash Builder project. 
+  * Open Vizzy, go to `Extra` -> `Options`, open `Trace Parser` tab, tick `Connect VizzyTrace library`.
+  * Make sure `Permit Debugging` is checked in your fla file project.
 
 ==Code Changes==
-This tool requires a tiny code change in your project: replace all existing native `trace` function calls with `t`.
-
+The only code change is required is replacing native `trace` with `t`. No imports required or something else. Package function `t` has the same syntax as native `trace` so passing comma separated parameters is supported.
 {{{
 t("hello world!");
 }}}
-
-This function adds debug information to trace statements which allows you to click on any line in Vizzy Tracer which would cause proper source file open and in case of FlashDevelop, proper line highlighted (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">VizzyPlugin</a>). 
+You can turn to a native trace anytime with the following piece of code:
+{{{
+VizzyTrace.mode = VizzyTrace.SIMPLE;
+}}}
+In the background, `t` adds debug information to trace statement about file path and line number from where `trace` is dispatched. This allows to click on any line in Vizzy Flash Tracer which will cause that file to open in your preferred Actionscript editor and even highlighting line with `trace` (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">VizzyPlugin</a>). 
