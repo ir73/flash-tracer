@@ -8,13 +8,6 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg
 <br/><br/><br/>
 
 
-===Stack-Trace Source Files are Clickable (since 2.3)===
-Clicking on a source file path in stack trace will open that file in default AS editor and content scrolled to a proper line (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>).
-<br/><br/>
-http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
-
-<br/><br/><br/>
-
 
 ===Explore Source Code (since 2.3)===
 Moving the mouse over the stack trace source file path will open a popup with erroneous line highlighted.
@@ -23,6 +16,22 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/explore_code.jpg
 
 <br/><br/><br/>
 
+
+
+===Stack-Trace Source Files are Clickable (since 2.3)===
+Clicking on a source file path in stack trace will open that file in default AS editor and content scrolled to a proper line (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>). 
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
+
+<br/><br/><br/>
+
+
+===Trace Lines are Clickable (since 2.3)===
+Use VizzyTrace SWC library and be able to explore source directly from Vizzy popup or to click on every trace line which will open that file in preferred Actionscript editor (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>).
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/trace_code_popup.jpg
+
+<br/><br/><br/>
 
 
 ===HTTP Links are Clickable (since 2.3)===
