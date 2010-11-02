@@ -645,10 +645,10 @@ public class OptionsForm extends javax.swing.JFrame {
         if (jEnableVizzyTraceCheckBox.isSelected()) {
             JOptionPane.showMessageDialog(null, "This feature might require plenty of\n"
                     + "processor resources, so Vizzy has set load file\n"
-                    + "limit to 25,000. You can change it according to\n"
+                    + "limit to 50,000. You can change it according to\n"
                     + "your needs.", "Warning", JOptionPane.WARNING_MESSAGE);
             jNumLinesEnabledCheckBox.setSelected(true);
-            jNumLinesTextField.setText("25000");
+            jNumLinesTextField.setText("50000");
             jNumLinesTextField.setEnabled(true);
         }
     }//GEN-LAST:event_jEnableVizzyTraceCheckBoxActionPerformed

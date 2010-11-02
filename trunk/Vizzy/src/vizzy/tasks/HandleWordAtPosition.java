@@ -8,7 +8,6 @@ package vizzy.tasks;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
-import java.util.logging.Level;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import org.apache.log4j.Logger;
@@ -46,6 +45,7 @@ public class HandleWordAtPosition {
         }
     }
 
+    public static final String HTTPS_TEMPLATE = "https://";
     public static final String HTTP_TEMPLATE = "http://";
     public static final String FILE_TEMPLATE = "file:///";
     private String customASEditor;
@@ -112,6 +112,7 @@ public class HandleWordAtPosition {
         // CHECK FOR HTTP LINK
         startIndex = getMinPosition(text, currentIndex,
                 new MinPositionParam[]{
+                    new MinPositionParam(HTTPS_TEMPLATE, false),
                     new MinPositionParam(HTTP_TEMPLATE, false),
                     new MinPositionParam(FILE_TEMPLATE, false),
                     new MinPositionParam("\n", true),
@@ -223,8 +224,15 @@ public class HandleWordAtPosition {
             }
             if (settings.getSourceLines() != null
                     && settings.getSourceLines().containsKey(lineOfOffset)) {
-                SourceAndLine sal = settings.getSourceLines().get(lineOfOffset);
-                return sal;
+                String debugLine = settings.getSourceLines().get(lineOfOffset);
+                if (debugLine != null && debugLine.length() > 0) {
+                    debugLine = debugLine.substring(5);
+                    int semiColIndex = debugLine.lastIndexOf(":");
+                    if (semiColIndex != -1) {
+                        return new SourceAndLine(debugLine.substring(0, semiColIndex),
+                                Integer.parseInt(debugLine.substring(semiColIndex + 1).trim()), 0);
+                    }
+                }
             }
         }
         return null;

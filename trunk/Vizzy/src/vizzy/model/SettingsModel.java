@@ -68,7 +68,7 @@ public class SettingsModel {
     private boolean enableTraceClick;
     private boolean enableCodePopup;
     private boolean enableParsingSourceLines = false;
-    private Map<Integer, SourceAndLine> sourceLines;
+    private Map<Integer, String> sourceLines;
     private Color bgColor = Color.white;
     private Color fontColor = Color.black;
 
@@ -688,11 +688,11 @@ public class SettingsModel {
         }
     }
 
-    public Map<Integer, SourceAndLine> getSourceLines() {
+    public Map<Integer, String> getSourceLines() {
         return sourceLines;
     }
 
-    public void setSourceLines(Map<Integer, SourceAndLine> sourceLines) {
+    public void setSourceLines(Map<Integer, String> sourceLines) {
         this.sourceLines = sourceLines;
     }
 

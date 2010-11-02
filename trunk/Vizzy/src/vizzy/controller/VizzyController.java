@@ -101,38 +101,24 @@ public final class VizzyController implements ILogFileListener {
     }
 
     private String parseLogSourceData(String log) {
-        Map<Integer, SourceAndLine> sourceLines = new ConcurrentHashMap<Integer, SourceAndLine>();
-        String[] split = log.split(Conf.newLine);
-        SourceAndLine sal;
-        String fileAndLine;
-        int lastIndexOf;
-        int endInd;
-        for (Integer i = 0; i < split.length; i++) {
+        Map<Integer, String> sourceLines = new ConcurrentHashMap<Integer, String>();
+        String[] split = log.split("\\n");
+        StringBuilder sb = new StringBuilder();
+        Integer lines = 0;
+        for (int i = 0; i < split.length; i++) {
             String string = split[i];
-            endInd = string.indexOf("|!vft| ");
-            if (endInd != -1) {
-                if (string.indexOf("|vft|") == 0) {
-                    if (endInd != -1) {
-                        fileAndLine = string.substring(5, endInd);
-                        lastIndexOf = fileAndLine.lastIndexOf(":");
-                        if (lastIndexOf != -1) {
-                            try {
-                                sal = new SourceAndLine(fileAndLine.substring(0, lastIndexOf), Integer.parseInt(fileAndLine.substring(lastIndexOf + 1)), 0);
-                            } catch (Exception e) {
-                                continue;
-                            }
-                            sourceLines.put(i, sal);
-                            split[i] = string.substring(endInd + 7);
-                        }
-                    }
-                } else {
-                    split[i] = string.substring(endInd + 7);
+            if (string.startsWith("|vft|")) {
+                sourceLines.put(lines, string);
+            } else {
+                if (lines > 0) {
+                    sb.append("\n");
                 }
+                sb.append(split[i]);
+                lines++;
             }
         }
-        log = StringUtils.join(split, Conf.newLine);
         settings.setSourceLines(sourceLines);
-        return log;
+        return sb.toString();
     }
 
     private void start() {
