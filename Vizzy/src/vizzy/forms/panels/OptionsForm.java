@@ -142,9 +142,9 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Font"));
 
         jLabel3.setText("Font size:");
-        jLabel3.setBounds(290, 20, 80, 14);
+        jLabel3.setBounds(330, 20, 80, 14);
         jLayeredPane2.add(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jFontSizeTextField.setBounds(290, 40, 80, 23);
+        jFontSizeTextField.setBounds(330, 40, 80, 23);
         jLayeredPane2.add(jFontSizeTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jFontComboBox.setModel(new DefaultComboBoxModel(settings.getFontNames()));
@@ -162,7 +162,7 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("Colors"));
 
         bgColorLabel.setText("Background color:");
-        bgColorLabel.setBounds(190, 20, 180, 15);
+        bgColorLabel.setBounds(230, 20, 180, 15);
         jLayeredPane5.add(bgColorLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         fontColorLabel.setText("Font color: ");
@@ -191,7 +191,7 @@ public class OptionsForm extends javax.swing.JFrame {
             .add(0, 18, Short.MAX_VALUE)
         );
 
-        bgColorPanel.setBounds(190, 40, 20, 20);
+        bgColorPanel.setBounds(230, 40, 20, 20);
         jLayeredPane5.add(bgColorPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         fontColorPanel.setBackground(new java.awt.Color(255, 51, 51));
@@ -227,13 +227,13 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
+                        .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
                         .add(27, 27, 27)
                         .add(jRestoreCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 356, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -245,7 +245,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jLayeredPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLayeredPane5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(119, Short.MAX_VALUE))
+                .addContainerGap(122, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("General", jPanel2);
@@ -253,13 +253,13 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Log file"));
 
         jUTFCheckBox.setText("read file as UTF-8");
-        jUTFCheckBox.setBounds(200, 16, 170, 20);
+        jUTFCheckBox.setBounds(240, 16, 170, 20);
         jLayeredPane3.add(jUTFCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel4.setText("flash log location:");
         jLabel4.setBounds(10, 20, 180, 14);
         jLayeredPane3.add(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jFlashLogTextField.setBounds(10, 40, 250, 23);
+        jFlashLogTextField.setBounds(10, 40, 290, 23);
         jLayeredPane3.add(jFlashLogTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel1.setText("Log file read frequency (in milliseconds):");
@@ -276,7 +276,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 browseButtonClicked(evt);
             }
         });
-        jButton1.setBounds(271, 40, 100, 23);
+        jButton1.setBounds(310, 40, 100, 23);
         jLayeredPane3.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Limit"));
@@ -284,12 +284,12 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane4.add(jNumLinesTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel8.setText("Max amount of bytes to load from end of file:");
-        jLabel8.setBounds(10, 120, 360, 14);
+        jLabel8.setBounds(10, 120, 410, 14);
         jLayeredPane4.add(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel11.setText("<html>This is usually required when the log file gets too big and that might cause slower performance. Setting this limit is not mandatory because Vizzy will set this automatically if runs out of memory.</html>");
         jLabel11.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jLabel11.setBounds(10, 40, 360, 70);
+        jLabel11.setBounds(10, 40, 410, 70);
         jLayeredPane4.add(jLabel11, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jNumLinesEnabledCheckBox.setText("Load limited amount of bytes from the end of file only");
@@ -300,18 +300,18 @@ public class OptionsForm extends javax.swing.JFrame {
                 jNumLinesEnabledCheckBoxActionPerformed(evt);
             }
         });
-        jNumLinesEnabledCheckBox.setBounds(10, 20, 350, 15);
+        jNumLinesEnabledCheckBox.setBounds(10, 20, 410, 15);
         jLayeredPane4.add(jNumLinesEnabledCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+            .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLayeredPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 385, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLayeredPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 436, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLayeredPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -324,7 +324,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Log File", jPanel3);
+        jTabbedPane1.addTab("Log", jPanel3);
 
         jCheckBoxBuffer.setText("<html>Buffer trace output. Use this if you trace really much which causes your CPU work with 100% load</html>");
 
@@ -360,11 +360,11 @@ public class OptionsForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxVerbose, 0, 0, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxBuffer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxTraceAll, 0, 0, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxStatic, 0, 0, Short.MAX_VALUE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxStatic, 0, 0, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jCheckBoxBuffer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 428, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -379,7 +379,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jCheckBoxVerbose, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jCheckBoxStatic, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(132, Short.MAX_VALUE))
+                .addContainerGap(135, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Trace Output", jPanel1);
@@ -387,26 +387,28 @@ public class OptionsForm extends javax.swing.JFrame {
         jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Smart Trace Parser"));
 
         jEnableClickCheckBox.setText("<html>1. Open HTTP links on double click.<br>2. Open source files from stack traces on double click.</html>");
-        jEnableClickCheckBox.setBounds(10, 50, 340, 40);
+        jEnableClickCheckBox.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        jEnableClickCheckBox.setBounds(10, 50, 410, 40);
         jLayeredPane1.add(jEnableClickCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnablePopupsCheckBox.setText("<html>Enable code popup when mouse is over the stack-trace source file</html>");
-        jEnablePopupsCheckBox.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jEnablePopupsCheckBox.setBounds(10, 120, 340, 33);
+        jEnablePopupsCheckBox.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        jEnablePopupsCheckBox.setBounds(10, 120, 410, 33);
         jLayeredPane1.add(jEnablePopupsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnableVizzyTraceCheckBox.setText("<html>Connect VizzyTrace library</html>");
         jEnableVizzyTraceCheckBox.setToolTipText("Parses VizzyTrace library debug information. See more information in product wiki page.");
+        jEnableVizzyTraceCheckBox.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jEnableVizzyTraceCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jEnableVizzyTraceCheckBoxActionPerformed(evt);
             }
         });
-        jEnableVizzyTraceCheckBox.setBounds(10, 180, 360, 23);
+        jEnableVizzyTraceCheckBox.setBounds(10, 200, 410, 23);
         jLayeredPane1.add(jEnableVizzyTraceCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jEnableHighlightErrorsCheckBox.setText("Highlight thrown errors from stack traces");
-        jEnableHighlightErrorsCheckBox.setBounds(10, 20, 360, 23);
+        jEnableHighlightErrorsCheckBox.setBounds(10, 20, 410, 23);
         jLayeredPane1.add(jEnableHighlightErrorsCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabelClickInfo.setText("<html>(<a href=\"http://code.google.com/p/flash-tracer/wiki/Features#HTTP_Links_are_Clickable_(since_2.3)\">what's this?</a>)</html>");
@@ -418,7 +420,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 jFlashDevelopIntegrLabelMouseEntered(evt);
             }
         });
-        jLabelClickInfo.setBounds(30, 90, 120, 16);
+        jLabelClickInfo.setBounds(30, 95, 210, 16);
         jLayeredPane1.add(jLabelClickInfo, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabelCodePopupInfo.setText("<html>(<a href=\"http://code.google.com/p/flash-tracer/wiki/Features#Explore_Source_Code_(since_2.3)\">what's this?</a>)</html>");
@@ -430,7 +432,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 jFlashDevelopIntegrLabelMouseEntered(evt);
             }
         });
-        jLabelCodePopupInfo.setBounds(30, 156, 80, 16);
+        jLabelCodePopupInfo.setBounds(30, 158, 290, 16);
         jLayeredPane1.add(jLabelCodePopupInfo, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabelVizzyTraceInfo.setText("<html>(<a href=\"http://code.google.com/p/flash-tracer/wiki/VizzyTrace\">what's this?</a>)</html>");
@@ -442,7 +444,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 jFlashDevelopIntegrLabelMouseEntered(evt);
             }
         });
-        jLabelVizzyTraceInfo.setBounds(30, 206, 80, 16);
+        jLabelVizzyTraceInfo.setBounds(30, 230, 330, 16);
         jLayeredPane1.add(jLabelVizzyTraceInfo, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
@@ -451,15 +453,15 @@ public class OptionsForm extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(93, Short.MAX_VALUE))
+                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Trace Parser", jPanel5);
@@ -499,7 +501,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 jCustomASEditorTextFiledKeyReleased(evt);
             }
         });
-        jCustomASEditorTextFiled.setBounds(30, 65, 300, 23);
+        jCustomASEditorTextFiled.setBounds(32, 65, 300, 23);
         jLayeredPane6.add(jCustomASEditorTextFiled, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
@@ -508,7 +510,7 @@ public class OptionsForm extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -516,7 +518,7 @@ public class OptionsForm extends javax.swing.JFrame {
             .add(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jLayeredPane6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 147, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addContainerGap(187, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Applications", jPanel6);
@@ -545,7 +547,7 @@ public class OptionsForm extends javax.swing.JFrame {
                     .add(jCheckUpdatesButton)
                     .add(jUpdatesCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 353, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jVersionLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(82, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -556,7 +558,7 @@ public class OptionsForm extends javax.swing.JFrame {
                 .add(jVersionLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jCheckUpdatesButton)
-                .addContainerGap(244, Short.MAX_VALUE))
+                .addContainerGap(247, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Updates", jPanel4);
@@ -573,22 +575,22 @@ public class OptionsForm extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
+                .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(114, 114, 114)
+                        .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(jOKButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 94, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .add(jButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(137, 137, 137))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jButton2)
