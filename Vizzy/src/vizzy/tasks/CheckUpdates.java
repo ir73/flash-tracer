@@ -29,8 +29,6 @@ public class CheckUpdates extends Thread {
 
     private static final Logger log = Logger.getLogger(CheckUpdates.class);
     
-    private static final String WEBSITE_UPDATE_PHRASE = "Current version is: ";
-    private static final String WEBSITE_FEATURES_PHRASE = "Current version features: ";
     private boolean reportIfOk;
     private IUpdateCheckListener listener;
 
@@ -59,17 +57,17 @@ public class CheckUpdates extends Thread {
 
             String r = response.toString();
 
-            int i = r.indexOf(WEBSITE_UPDATE_PHRASE);
+            int i = r.indexOf(Conf.WEBSITE_UPDATE_PHRASE);
             int i2 = r.indexOf(";", i);
             if (i > -1) {
-                String newVer = r.substring(i + WEBSITE_UPDATE_PHRASE.length(), i2);
+                String newVer = r.substring(i + Conf.WEBSITE_UPDATE_PHRASE.length(), i2);
                 double newVerd = Double.parseDouble(newVer);
                 double verd = Double.parseDouble(Conf.VERSION);
                 if (newVerd > verd) {
 
-                    i = r.indexOf(WEBSITE_FEATURES_PHRASE);
+                    i = r.indexOf(Conf.WEBSITE_FEATURES_PHRASE);
                     i2 = r.indexOf(";", i);
-                    String newFeatures = r.substring(i + WEBSITE_FEATURES_PHRASE.length(), i2);
+                    String newFeatures = r.substring(i + Conf.WEBSITE_FEATURES_PHRASE.length(), i2);
                     newFeatures = newFeatures.replaceAll("\\|", "\n");
 
                     listener.offerUpdate();
@@ -109,9 +107,8 @@ public class CheckUpdates extends Thread {
     }
 
     private void downloadNewVersion(String newVer) {
-        String filename = "Vizzy_v" + newVer + ".zip";
+        String filename = String.format("Vizzy-%s-%s.zip", Conf.OSShortName, newVer);
         String fileUrl = "http://flash-tracer.googlecode.com/files/" + filename;
-        System.out.println("f " + fileUrl);
         try {
 
             DialogUtils.showDialog("Downloading " + filename + "...");
@@ -121,7 +118,7 @@ public class CheckUpdates extends Thread {
             URLConnection openConnection = u.openConnection();
             InputStream isr = openConnection.getInputStream();
 
-            File tmpFile = File.createTempFile("vizzy", ".zip");
+            File tmpFile = File.createTempFile("vizzy-" + newVer, ".zip");
             FileOutputStream fos = new FileOutputStream(tmpFile);
             int len = 0;
             while ((len = isr.read(bytes)) != -1) {
