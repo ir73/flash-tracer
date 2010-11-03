@@ -542,10 +542,24 @@ public final class VizzyController implements ILogFileListener {
         stopHideCodePopupTimer();
     }
 
-    public void textAreaMouseReleased(String selection) {
-        if (selection == null || "".equals(selection)) {
+    public void textAreaDoubleClicked(Point pt) {
+        int viewToModel = view.getTextArea().viewToModel(pt);
+        SwingUtilities.invokeLater(new HW(viewToModel));
+    }
+
+    class HW implements Runnable {
+        private final int offset;
+        public HW(int offset) {
+            this.offset = offset;
+        }
+        public void run() {
+            view.getTextArea().setSelectionStart(offset);
+            view.getTextArea().setSelectionEnd(offset);
             handleWordAtPosition();
         }
+    }
+
+    public void textAreaMouseReleased() {
         if (settings.isAutoRefresh()) {
             startReadLogFileTimer();
         }

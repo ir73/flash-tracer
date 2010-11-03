@@ -36,7 +36,7 @@
             </fileset>
         </move>
 
-        <copy tofile="${dist.dir}/VizzyTrace_v${vizzy_trace_version}.swc" overwrite="true">
+        <copy tofile="${dist.dir}/VizzyTrace-${vizzy_trace_version}.swc" overwrite="true">
             <fileset file="res/VizzyTrace.swc"  />
         </copy>
     </target>
@@ -56,7 +56,7 @@
 
         <!--    fdz file creation    -->
         <zip basedir="res/win/FD/fdz"
-            destfile="${dist.dir}/VizzyPlugin_v${vizzy_plugin_version}.fdz"/>
+            destfile="${dist.dir}/VizzyPlugin-${vizzy_plugin_version}.fdz"/>
 
         <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="res/win/launch4j/launch4j.jar
 		    :res/win/launch4j/lib/xstream.jar" />

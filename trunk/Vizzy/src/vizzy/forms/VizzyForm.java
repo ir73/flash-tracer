@@ -27,6 +27,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.text.BadLocationException;
 import org.apache.log4j.Logger;
@@ -167,7 +168,7 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         jPanel2.setPreferredSize(new java.awt.Dimension(0, 0));
 
         jTraceTextArea.setColumns(20);
-        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12));
+        jTraceTextArea.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
         jTraceTextArea.setLineWrap(true);
         jTraceTextArea.setRows(5);
         jTraceTextArea.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
@@ -176,6 +177,9 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
             }
         });
         jTraceTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTraceTextAreaMouseClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jTraceTextAreaMouseExited(evt);
             }
@@ -400,12 +404,6 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         controller.textAreaMousePressed();
     }//GEN-LAST:event_jTraceTextAreaMousePressed
 
-    private void jTraceTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseReleased
-        if (!settings.isUIActionsAvailable()) return;
-        String selection = jTraceTextArea.getSelectedText();
-        controller.textAreaMouseReleased(selection);
-    }//GEN-LAST:event_jTraceTextAreaMouseReleased
-
     private void jClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jClearActionPerformed
         if (!settings.isUIActionsAvailable()) return;
         controller.clearSearchClicked();
@@ -479,6 +477,19 @@ public class VizzyForm extends javax.swing.JFrame implements IVizzyView {
         if (!settings.isUIActionsAvailable()) return;
         controller.regexpClicked(jRegexpCheckbox.isSelected());
     }//GEN-LAST:event_jRegexpCheckboxChecked
+
+    private void jTraceTextAreaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseClicked
+        if (!settings.isUIActionsAvailable()) return;
+        if ((evt.getClickCount() == 2)) {
+            String selection = jTraceTextArea.getSelectedText();
+            controller.textAreaDoubleClicked(evt.getPoint());
+        }
+    }//GEN-LAST:event_jTraceTextAreaMouseClicked
+
+    private void jTraceTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTraceTextAreaMouseReleased
+        if (!settings.isUIActionsAvailable()) return;
+        controller.textAreaMouseReleased();
+    }//GEN-LAST:event_jTraceTextAreaMouseReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JCheckBox jAutorefreshCheckBox;
