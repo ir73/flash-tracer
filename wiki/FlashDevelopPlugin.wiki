@@ -12,7 +12,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/open_trace.jpg
   # Download VizzyPlugin.fdz from Downloads page. 
   # Double click it and install. 
   # Restart FlashDevelop.
-  # Open Vizzy, go to `Extra` -> `Options` -> `Trace Parser` tab. In Actionscript Editor section choose second option. Make sure that path to FlashDevelop is correct.
+  # Open Vizzy, go to `Extra` -> `Options` -> `Applications` tab. Choose second option. Make sure that path to FlashDevelop is correct.
 
 *If you would like to be able to see code popup and click on every trace line, see <a href="http://code.google.com/p/flash-tracer/wiki/VizzyTrace">VizzyTrace</a> for instructions.*
 
