@@ -12,7 +12,7 @@ Adding SWC to your project allows to open corresponding source file on text clic
   * Make sure `Permit Debugging` is checked in your fla file project.
 
 ==Code Changes==
-The only code change is required is replacing native `trace` with `t`. No imports required or something else. Package function `t` has the same syntax as native `trace` so passing comma separated parameters is supported.
+The only code change is required is replacing native `trace` with `t`. No imports required or something else. Package function `trc` has the same syntax as native `trace` so passing comma separated parameters is supported.
 {{{
 t("hello world!");
 }}}
