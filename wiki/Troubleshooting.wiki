@@ -3,6 +3,10 @@
 ==Troubleshooting==
 If you do not see anything in your Vizzy debug screen, please check the following:
 <br><br>
+<b>Vizzy and Program Files folder</b>
+<br>
+Windows users should not put Vizzy to `Program Files` folder because Windows does not allow applications in that folder to modify files. Put Vizzy to some other locations like your Desktop.
+<br><br>
 <b>Debug Flash Player</b>
 <br>
 Check that you have debug flash player installed instead of a regular one. To check, just right click on your any flash object and if you see Debugger option there, then you have debug flash player installed. 
