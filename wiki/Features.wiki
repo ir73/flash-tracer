@@ -1,6 +1,13 @@
 #summary Features of Vizzy Flash Tracer
 #labels Featured
 <wiki:toc max_depth="3" />
+===JSON parser===
+JSON code can be displayed in a human readable way in a popup. Select json text with a mouse and move the mouse over it.
+<br/><br/>
+http://dl.dropbox.com/u/9443658/vizzy/screens/json.jpg
+<br/><br/><br/>
+
+
 ===Errors Highlighting===
 ActionScript 3 Errors are highlighted.
 <br/><br/>
