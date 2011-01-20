@@ -1,8 +1,8 @@
 #summary Features of Vizzy Flash Tracer
 #labels Featured
 <wiki:toc max_depth="3" />
-===JSON parser===
-JSON code can be displayed in a human readable way in a popup. Select json text with a mouse and move the mouse over it.
+===JSON formatter===
+JSON code can be displayed in a human readable way in a popup. Select json text with a mouse and right click on it.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/json.jpg
 <br/><br/><br/>
@@ -17,7 +17,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg
 
 
 ===Explore Source Code===
-Moving the mouse over the stack trace source file path will open a popup with erroneous line highlighted.
+Right click stack trace source file path will open a popup with erroneous line highlighted.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/explore_code.jpg
 
@@ -26,7 +26,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/explore_code.jpg
 
 
 ===Stack-Trace Source Files are Clickable===
-Clicking on a source file path in stack trace will open that file in default AS editor and content scrolled to a proper line (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>). 
+Double clicking on a source file path in stack trace will open that file in default AS editor and content scrolled to a proper line (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>). 
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg
 
@@ -40,7 +40,7 @@ Press Ctrl+F (or Command+F) to hide or show search panel.
 
 
 ===Trace Lines are Clickable===
-Use <a href="http://code.google.com/p/flash-tracer/wiki/VizzyTrace">VizzyTrace</a> SWC library and be able to explore source directly from Vizzy popup or to click on every trace line which will open that file in preferred Actionscript editor (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>).
+Use <a href="http://code.google.com/p/flash-tracer/wiki/VizzyTrace">VizzyTrace</a> SWC library and be able to explore source directly from Vizzy popup or to double click on every trace line which will open that file in preferred Actionscript editor (see <a href="http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin">FlashDevelop Plugin page</a>).
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/trace_code_popup.jpg
 
@@ -48,7 +48,7 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/trace_code_popup.jpg
 
 
 ===HTTP Links are Clickable===
-Clicking any link in trace output will open it in default browser.
+Double clicking any link in trace output will open it in default browser.
 <br/><br/>
 http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg
 <br/><br/><br/>
