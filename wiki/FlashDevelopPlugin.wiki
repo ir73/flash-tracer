@@ -20,6 +20,6 @@ http://dl.dropbox.com/u/9443658/vizzy/screens/open_trace.jpg
   * To see it's working, compile a buggy code in debug mode. 
   * Let it execute in browser. 
   * Now move the mouse over the stack trace source file and notice a code popup.
-  * Click it and it will open in FlashDevelop with proper line highlighted.
+  * Double click it and it will open in FlashDevelop with proper line highlighted.
 
 http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_code_popup.jpg
