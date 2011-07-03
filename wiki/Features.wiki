@@ -1,6 +1,11 @@
 #summary Features of Vizzy Flash Tracer
 #labels Featured
 <wiki:toc max_depth="3" />
+===Hotkeys===
+Press Ctrl+E to delete all log content. 
+Press Ctrl+L to toggle line numbers.
+
+
 ===JSON formatter===
 JSON code can be displayed in a human readable way in a popup. Select json text with a mouse and right click on it.
 <br/><br/>
