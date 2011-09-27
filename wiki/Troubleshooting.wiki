@@ -34,7 +34,7 @@ If you have Flash CS5+ installed you should check your processes for running Ado
 <br>
 Chrome has a built in Flash Player plugin, so you have to disable it first and install debug plugin instead.
 
-Go to Preferences - Under the Hood - Content Settings (button) - Plugins - Disable individual plug-ins (text). Disable built in plugin. Be careful: if you just disable the flash, it is going to disable all flash plugins because both the built-in and the external one are nested under one entry called "Flash." On the top right hand corner of the plugins page, there is a "[+] Details" link. Upon clicking that, it expands the "flash" entry and you can see two plugins. Disable only the built-in one. (thanks Sashi for the tip).
+Go to Preferences - Under the Hood - Content Settings (button) - Plugins - Disable individual plug-ins (text). Disable built in plugin. Be careful: if you just disable the flash, it is going to disable all flash plugins because both the built-in and the external one are nested under one entry called "Flash." On the top right hand corner of the plugins page, there is a "[+] Details" link. Upon clicking that, it expands the "flash" entry and you can see two plugins. Disable only the built-in one. (thanks Shashi for the tip).
 
 <br>
 
