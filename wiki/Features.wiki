@@ -1,10 +1,15 @@
 #summary Features of Vizzy Flash Tracer
 #labels Featured
 <wiki:toc max_depth="3" />
+===Custom highlights===
+You can define custom keywords and color to highlight lines in a log that start with the keyword you prefer.
+http://dl.dropbox.com/u/9443658/vizzy/screens/json.jpg
+<br/><br/><br/>
+
 ===Hotkeys===
 Press Ctrl+E to delete all log content. 
 Press Ctrl+L to toggle line numbers.
-
+<br/><br/><br/>
 
 ===JSON formatter===
 JSON code can be displayed in a human readable way in a popup. Select json text with a mouse and right click on it.
