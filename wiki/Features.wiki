@@ -3,7 +3,7 @@
 <wiki:toc max_depth="3" />
 ===Custom highlights===
 You can define custom keywords and color to highlight lines in a log that start with the keyword you prefer.
-http://dl.dropbox.com/u/9443658/vizzy/screens/json.jpg
+http://dl.dropbox.com/u/9443658/vizzy/screens/custom_highlights.jpg
 <br/><br/><br/>
 
 ===Hotkeys===
