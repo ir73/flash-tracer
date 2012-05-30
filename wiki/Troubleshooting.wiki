@@ -36,6 +36,12 @@ Chrome has a built in Flash Player plugin, so you have to disable it first and i
 
 Go to Preferences - Under the Hood - Content Settings (button) - Plugins - Disable individual plug-ins (text). Disable built in plugin. Be careful: if you just disable the flash, it is going to disable all flash plugins because both the built-in and the external one are nested under one entry called "Flash." On the top right hand corner of the plugins page, there is a "[+] Details" link. Upon clicking that, it expands the "flash" entry and you can see two plugins. Disable only the built-in one. (thanks Shashi for the tip).
 
+<br><br>
+<b>Firefox issues</b>
+<br>
+Flash runs in a separate process in Firefox, called plugincontainer.exe. This enables keeping browser running if your plugin content hangs or starts working slow. However, this procecss might lock flashlog.txt file and block Vizzy from deleting it. If you notice, that you cannot clear flash log in Vizzy, then try killing plugincontainer.exe from task manager first.
+
+
 <br>
 
 Scripting extension in Photoshop is also blocking flash log file. It's located here: C:\Program Files\Adobe\Adobe Photoshop CS5 (64 Bit)\Plug-ins\Extensions. You should delete these files or just backup them to other folder:
