@@ -1,0 +1,131 @@
+
+### Custom highlights ###
+You can define custom keywords and color to highlight lines in a log that start with the keyword you prefer.
+![http://dl.dropbox.com/u/9443658/vizzy/screens/custom_highlights.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/custom_highlights.jpg)
+<br /><br /><br />
+
+### Hotkeys ###
+Press Ctrl+E to delete all log content.
+Press Ctrl+L to toggle line numbers.
+<br /><br /><br />
+
+### JSON formatter ###
+JSON code can be displayed in a human readable way in a popup. Select json text with a mouse and right click on it.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/json.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/json.jpg)
+<br /><br /><br />
+
+
+### Errors Highlighting ###
+ActionScript 3 Errors are highlighted.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/errors_detected.jpg)
+<br /><br /><br />
+
+
+
+### Explore Source Code ###
+Right click stack trace source file path will open a popup with erroneous line highlighted.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/explore_code.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/explore_code.jpg)
+
+<br /><br /><br />
+
+
+
+### Stack-Trace Source Files are Clickable ###
+Double clicking on a source file path in stack trace will open that file in default AS editor and content scrolled to a proper line (see <a href='http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin'>FlashDevelop Plugin page</a>).
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/stacktrace_source.jpg)
+
+<br /><br /><br />
+
+
+### Search Panel could be hidden ###
+Press Ctrl+F (or Command+F) to hide or show search panel.
+
+<br /><br /><br />
+
+
+### Trace Lines are Clickable ###
+Use <a href='http://code.google.com/p/flash-tracer/wiki/VizzyTrace'>VizzyTrace</a> SWC library and be able to explore source directly from Vizzy popup or to double click on every trace line which will open that file in preferred Actionscript editor (see <a href='http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin'>FlashDevelop Plugin page</a>).
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/trace_code_popup.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/trace_code_popup.jpg)
+
+<br /><br /><br />
+
+
+### HTTP Links are Clickable ###
+Double clicking any link in trace output will open it in default browser.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/http_links.jpg)
+<br /><br /><br />
+
+
+
+### mm.cgf File Creation and Detection ###
+Vizzy detects automatically path to your flashlog.txt file and creates all the necessary configuration files in the background. This is valid for Windows, Mac OSX and Linus operation systems.
+<br /><br /><br />
+
+
+
+### Auto-refresh, Word-wrapping, Always On Top Modes ###
+It is possible to turn auto-refresh on or off at anytime if you want to explore trace output. Turning always on top mode helps to avoid Vizzy appearing under other windows.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/bottom_menu.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/bottom_menu.jpg)
+<br /><br /><br />
+
+
+
+### Filter Search Results ###
+It is possible to filter lines that contain search keywords. It's possible to filter multiple keywords with comma
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/filter.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/filter.jpg)
+<br /><br />
+
+
+
+### Log Snapshots ###
+Make snapshots of your trace output with log snapshot feature (Alt+S). This will force a small window appear with the trace content that won't be changed. You can use this to compare your trace in current and previous debug sessions.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/log_snapshot.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/log_snapshot.jpg)
+<br /><br /><br />
+
+
+
+### Customize with Options Menu ###
+Customize Vizzy's features, turn them on or off in Options menu.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/options.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/options.jpg)
+<br /><br /><br />
+
+
+
+### Policy File ###
+Use drop down list to quickly switch to a policy file and back to flash log.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/policy_file.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/policy_file.jpg)
+
+<br /><br /><br />
+
+
+### Save Search Results in Drop Down List ###
+Search drop down list saves 8 last search keywords.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/search_combobox.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/search_combobox.jpg)
+<br /><br /><br />
+
+
+
+### Highlight All ###
+Highlight your search results to get a better picture of where they are located. Also, note the right vertical panel where all search results are highlighted.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/search_highlightall.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/search_highlightall.jpg)
+<br /><br /><br />
+
+
+### FlashDevelop Integration ###
+For developers who are using FlashDevelop there's a <a href='http://code.google.com/p/flash-tracer/wiki/FlashDevelopPlugin'>VizzyPlugin</a>.
+<br /><br />
+![http://dl.dropbox.com/u/9443658/vizzy/screens/fd_source2.jpg](http://dl.dropbox.com/u/9443658/vizzy/screens/fd_source2.jpg)
+<br /><br /><br />

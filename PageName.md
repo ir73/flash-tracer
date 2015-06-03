@@ -1,0 +1,3 @@
+# Details #
+
+If you experience issues setting up debug flash player, installing or launching Vizzy, please refer to Troubleshooting chapter in the product page http://code.google.com/p/flash-tracer/#Troubleshooting
